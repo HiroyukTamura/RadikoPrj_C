@@ -89,10 +89,20 @@ const rp = require('request-promise');
 const csv = require('csvtojson');
 const exec = require('child_process').exec;
 const iconv = require('iconv-lite');
-// const sudo = require('sudo-prompt');
 const Sudoer = require('electron-sudo').default;
+let masterJson;
+let vpnJson;
+let postGotJsons;
 
 const RADIKO_URL = 'http://radiko.jp/#!/ts/TBS/20180427180000';
+
+console.log = function (...val) {
+    const vals = val.join(' ') + '\n';
+    fs.appendFile('./debug.log', vals, function (err) {
+        if (err)
+            throw err;
+    });
+};
 
 function createWindow () {
     // Create the browser window.
@@ -106,9 +116,11 @@ function createWindow () {
         slashes: true
     }));
 
-    new OpenVpn().init();
-
-    // new GateVpnCsv().requestCsv();
+    // new OpenVpn().init();
+    masterJson = new MasterJson();
+    masterJson.requestJson();
+    vpnJson = new GateVpnCsv();
+    vpnJson.requestCsv();
 }
 
 app.on('ready', createWindow);
@@ -132,23 +144,85 @@ app.on('activate', () => {
     }
 });
 
+class MasterJson {
+    constructor(){
+        this.json = null;
+    }
+    requestJson(){
+        const self = this;
+        request('http://wppsc.html.xdomain.jp/VpnGate/list.txt', function (error, response, body) {
+            if (error) {
+                console.log('requestJson', error);
+            } else {
+                self.json = JSON.parse(body);
+                if (vpnJson.isComplete && !postGotJsons) {
+                    new PostGotJsons();
+                }
+            }
+        });
+    }
+}
 
 class GateVpnCsv {
     constructor(){
         this.GATE_VPN_URL = 'http://www.vpngate.net/api/iphone/';
         this.csvRowArr = [];
+        this.isComplete = false;
     }
+
     requestCsv() {
+        const self = this;
         csv()
             .fromStream(request.get(this.GATE_VPN_URL))
             .on('csv',(csvRow)=>{
-                if (csvRow[6] === 'JP')
-                    this.csvRowArr.push(csvRow);
+                if (csvRow[6] === 'JP') {
+                    self.csvRowArr.push(csvRow);
+                }
             })
             .on('done',(error)=>{
                 const log = error ? error : '成功';
                 console.log('requestCsv', log);
+                self.isComplete = true;
+                if (masterJson.json && !postGotJsons) {
+                    new PostGotJsons();
+                }
             });
+    }
+}
+
+class PostGotJsons {
+    constructor() {
+        this.extractedIps = {
+            "hokkaido-tohoku": null,
+            "kanto": null,
+            "hokuriku-koushinetsu": null,
+            "chubu": null,
+            "kinki": null,
+            "chugoku-shikoku": null,
+            "kyushu": null
+        };
+        this.regions = Object.keys(this.extractedIps);
+
+        this.extract();
+    }
+
+    extract(){
+        const self = this;
+        const masterIps = Object.keys(masterJson.json);
+        vpnJson.csvRowArr.forEach(function (row) {
+            const num = masterIps.indexOf(row[1]);
+            if (num === -1) {
+                console.warn('!!!知らないIPアドレスだ!!!', row[1]);
+            } else {
+                let regionRow = self.extractedIps[masterJson.json[row[1]]];
+                console.warn(regionRow);
+                if (!regionRow || row[4] > regionRow[4]) {
+                    console.warn('こっち');
+                    regionRow = row;
+                }
+            }
+        });
+        console.log(JSON.stringify(this.extractedIps));
     }
 }
 
@@ -163,6 +237,9 @@ class OpenVpn {
         // await this.sudoer.exec(cmd);
         this.cp.stdout.on('data', function(data) {
             // const str = iconv.decode(data, "Shift_JIS");
+            if (data && data.toString().indexOf('All TAP-Windows adapters on this system are currently in use') !== -1) {
+                console.log('↓↓↓↓対応すべきエラーが発生↓↓↓↓');
+            }
             console.log('stdout', data);
         });
         this.cp.stderr.on('data', function(data) {
