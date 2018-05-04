@@ -1,5 +1,5 @@
 $oneHourHeight:240px;
-$columnWidth:248px;
+$columnWidth:258px;
 
 $textBlack:rgba(0,0,0,.87);
 $textGray:rgba(0,0,0,.54);
@@ -32,12 +32,22 @@ $textGray:rgba(0,0,0,.54);
         }
       }
       .column {
-        padding-top: $oneHourHeight/2;
         flex-grow: 1;
         min-width: $columnWidth;
         height: 24 * $oneHourHeight;
         display: flex;
         flex-direction: column;
+        .station-img {
+          width: 100%;
+          height: $oneHourHeight/2;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          img {
+            width: 200px;
+            height: auto;
+          }
+        }
         .prg-card-w {
           $space:4px 8px;
           padding: $space;

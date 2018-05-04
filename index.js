@@ -90,6 +90,8 @@ const csv = require('csvtojson');
 const exec = require('child_process').exec;
 const iconv = require('iconv-lite');
 const Sudoer = require('electron-sudo').default;
+const cheerio = require('cheerio');
+var parseString = require('xml2js').parseString;
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -121,6 +123,7 @@ function createWindow () {
     // masterJson.requestJson();
     // vpnJson = new GateVpnCsv();
     // vpnJson.requestCsv();
+    new TimeTableScraper().getRegionWithPuptter();
 }
 
 app.on('ready', createWindow);
@@ -143,6 +146,56 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+class TimeTableScraper {
+    // http://radiko.jp/v3/station/list/JP13.xml
+    constructor(){
+        // this.URL ='http://radiko.jp/v2/api/program/station/weekly?station_id=TBS';
+        this.URL ='http://radiko.jp/';
+    }
+    async getRegionWithPuptter(){
+        // const FLASH_PATH = 'C:\\windows\\system32\\Macromed\\Flash\\pepflashplayer64_29_0_0_140.dll';
+        const browser = await puppeteer.launch({
+            // userDataDir: 'User Data',
+            executablePath: 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+            args: [
+                '--enable-usermedia-screen-capturing',
+                '--allow-http-screen-capture',
+                '--no-sandbox',
+                // '--no-sandbox',
+                // '--ppapi-flash-path= '+ FLASH_PATH,
+                // "--allow-running-insecure-content",
+                // "--allow-insecure-websocket-from-https-origin",
+                // "--allow-outdated-plugins",
+            ]
+        });
+        const page = await browser.newPage();
+        let isGotPage = false;
+        page.on('response', response => {
+            // console.log(path.dirname(response.url()));
+            if (!isGotPage && response.status() === 200 && path.dirname(response.url()) === 'http://radiko.jp/v3/station/list') {
+                isGotPage = true;
+                response.text().then(function (status) {
+                    console.warn('こっち');
+                    parseString(status, function (err, data) {
+                        if (err) {
+                            //todo エラー処理
+                            console.warn(err);
+                        } else {
+                            const jsonD = JSON.stringify(data);
+                            for (let i = 0; i < jsonD['stations']['station'].length; i++) {
+                                console.warn(jsonD['stations']['station'][i]);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+        await page.goto(this.URL);
+        await page.waitFor(20*1000);
+        await browser.close();
+    }
+}
 
 class MasterJson {
     constructor(){

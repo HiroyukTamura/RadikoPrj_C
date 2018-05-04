@@ -7,18 +7,26 @@
 .mdl-layout__content .mdl-layout__tab-panel .page-content {
   display: flex; }
   .mdl-layout__content .mdl-layout__tab-panel .page-content .column-head .cell {
-    width: 124px;
+    width: 129px;
     height: 240px;
     display: flex;
     justify-content: center;
     align-items: center; }
   .mdl-layout__content .mdl-layout__tab-panel .page-content .column {
-    padding-top: 120px;
     flex-grow: 1;
-    min-width: 248px;
+    min-width: 258px;
     height: 5760px;
     display: flex;
     flex-direction: column; }
+    .mdl-layout__content .mdl-layout__tab-panel .page-content .column .station-img {
+      width: 100%;
+      height: 120px;
+      display: flex;
+      justify-content: center;
+      align-items: center; }
+      .mdl-layout__content .mdl-layout__tab-panel .page-content .column .station-img img {
+        width: 200px;
+        height: 46.51163px; }
     .mdl-layout__content .mdl-layout__tab-panel .page-content .column .prg-card-w {
       padding: 4px 8px;
       height: 232px;

@@ -13,6 +13,7 @@
   "author": "Hiroyuki Tamura",
   "license": "Apache-2.0",
   "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
     "child_process": "^1.0.2",
     "csvtojson": "^1.1.9",
     "electron-sudo": "^4.0.12",
@@ -41,7 +42,9 @@
     "sudo-prompt": "^8.2.0",
     "webdriverajax": "^2.2.0",
     "webdriverio": "^4.12.0",
-    "xhook": "^1.4.7"
+    "xhook": "^1.4.7",
+    "xml2js": "^0.4.19",
+    "xmljson": "^0.2.0"
   },
   "devDependencies": {
     "electron": "^1.8.6",
