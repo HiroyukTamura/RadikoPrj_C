@@ -1,0 +1,13 @@
+.mdl-layout__content {
+  .mdl-layout__tab-panel {
+    .page-content {
+      display: flex;
+      .column {
+        flex-grow: 1;
+        min-width: 150px;
+        height: 24*150px;
+        background-color: gray;
+      }
+    }
+  }
+}

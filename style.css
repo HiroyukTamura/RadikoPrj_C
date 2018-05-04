@@ -1,0 +1,7 @@
+.mdl-layout__content .mdl-layout__tab-panel .page-content {
+  display: flex; }
+  .mdl-layout__content .mdl-layout__tab-panel .page-content .column {
+    flex-grow: 1;
+    min-width: 150px;
+    height: 3600px;
+    background-color: gray; }
