@@ -214,16 +214,19 @@ class PostGotJsons {
             if (num === -1) {
                 console.warn('!!!知らないIPアドレスだ!!!', row[1]);
             } else {
-                let regionRow = self.extractedIps[masterJson.json[row[1]]];
-                console.warn(regionRow);
-                if (!regionRow || row[4] > regionRow[4]) {
-                    console.warn('こっち');
-                    regionRow = row;
-                }
+                let regionRow = self.extractedIps[masterJson.json[row[1]]];//ここ、参照渡しじゃなくて値渡しになってる
+                if (!regionRow || parseInt(row[4], 10) > parseInt(regionRow[4], 10))
+                    self.extractedIps[masterJson.json[row[1]]] = row;
             }
         });
         console.log(JSON.stringify(this.extractedIps));
     }
+}
+
+function getType (val) {
+    if (typeof val === 'undefined') return 'undefined';
+    if (typeof val === 'object' && !val) return 'null';
+    return ({}).toString.call(val).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 }
 
 class OpenVpn {
