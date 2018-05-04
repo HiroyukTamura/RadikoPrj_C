@@ -3,8 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="./dist/material.min.css">
+    <script src="./dist/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">5/8(水)</span>
+            <div class="mdl-layout-spacer"></div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+                <label class="mdl-button mdl-js-button mdl-button--icon" for="fixed-header-drawer-exp">
+                    <i class="material-icons">search</i>
+                </label>
+                <div class="mdl-textfield__expandable-holder">
+                    <input class="mdl-textfield__input" type="text" name="sample" id="fixed-header-drawer-exp">
+                </div>
+            </div>
+            <button id="demo-menu-lower-right" class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons">date_range</i>
+            </button>
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
+                <li class="mdl-menu__item">5/4(月)</li>
+                <li class="mdl-menu__item">5/5(火)</li>
+                <li class="mdl-menu__item">5/6(水)</li>
+                <li disabled class="mdl-menu__item">5/7(木)</li>
+                <li class="mdl-menu__item">5/8(金)</li>
+                <li class="mdl-menu__item">5/9(土)</li>
+                <li class="mdl-menu__item">5/10(日)</li>
+            </ul>
+            <button id="radio-menu" class="mdl-button mdl-js-button mdl-button--icon">
+                <i class="material-icons">radio</i>
+            </button>
+            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="radio-menu">
+                <li class="mdl-menu__item">TBSラジオ</li>
+                <li class="mdl-menu__item">文化放送</li>
+                <li class="mdl-menu__item">ニッポン放送</li>
+                <li class="mdl-menu__item">TOKYO FM</li>
+                <li class="mdl-menu__item">J-WAVE</li>
+                <li class="mdl-menu__item">NACK5</li>
+                <li class="mdl-menu__item">InterFM</li>
+            </ul>
+        </div>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
+            <a href="#scroll-tab-1" class="mdl-layout__tab is-active">TBSラジオ</a>
+            <a href="#scroll-tab-2" class="mdl-layout__tab">ラジオ第一</a>
+            <a href="#scroll-tab-3" class="mdl-layout__tab">Tab 3</a>
+            <a href="#scroll-tab-4" class="mdl-layout__tab">Tab 4</a>
+            <a href="#scroll-tab-5" class="mdl-layout__tab">Tab 5</a>
+            <a href="#scroll-tab-6" class="mdl-layout__tab">Tab 6</a>
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href="">タイムテーブル</a>
+            <a class="mdl-navigation__link" href="">番組検索</a>
+            <a class="mdl-navigation__link" href="">お気に入り</a>
+            <a class="mdl-navigation__link" href="">設定</a>
+            <a class="mdl-navigation__link" href="">アバウト</a>
+        </nav>
+    </div>
 
+    <main class="mdl-layout__content">
+        <section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
+            <div class="page-content">
+                <div class="column">
+
+                </div>
+                <div class="column">
+
+                </div>
+                <div class="column">
+
+                </div>
+                <div class="column">
+
+                </div>
+                <div class="column">
+
+                </div>
+            </div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="scroll-tab-2">
+            <div class="page-content"><!-- Your content goes here --></div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="scroll-tab-3">
+            <div class="page-content"><!-- Your content goes here --></div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="scroll-tab-4">
+            <div class="page-content"><!-- Your content goes here --></div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="scroll-tab-5">
+            <div class="page-content"><!-- Your content goes here --></div>
+        </section>
+        <section class="mdl-layout__tab-panel" id="scroll-tab-6">
+            <div class="page-content"><!-- Your content goes here --></div>
+        </section>
+    </main>
+</div>
 </body>
 </html>
