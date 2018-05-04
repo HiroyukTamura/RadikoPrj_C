@@ -44,6 +44,7 @@ $textGray:rgba(0,0,0,.54);
         position: fixed;
         background: white;
         z-index: 2;//MDLのCardはz-index=1
+        overflow-y: auto;
         .cell {
           width: $columnWidth/4;
           height: $oneHourHeight;
@@ -82,6 +83,7 @@ $textGray:rgba(0,0,0,.54);
               .prg-title {
                 color: $textBlack;
                 margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
+                line-height: 22px;
               }
               .prg-time {
                 font-size: 14px;

@@ -91,7 +91,7 @@ const exec = require('child_process').exec;
 const iconv = require('iconv-lite');
 const Sudoer = require('electron-sudo').default;
 const cheerio = require('cheerio');
-var parseString = require('xml2js').parseString;
+const parseString = require('xml2js').parseString;
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -106,10 +106,11 @@ console.log = function (...val) {
     });
 };
 
+let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
 function createWindow () {
     // Create the browser window.
     console.log('createWindow');
-    let win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({width: 800, height: 600});
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -117,6 +118,12 @@ function createWindow () {
         protocol: 'file:',
         slashes: true
     }));
+
+    win.on('closed', () => {
+        // ウィンドウオブジェクトを参照から外す。
+        // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
+        win = null;
+    });
 
     // new OpenVpn().init();
     // masterJson = new MasterJson();
@@ -151,7 +158,7 @@ class TimeTableScraper {
     // http://radiko.jp/v3/station/list/JP13.xml
     constructor(){
         // this.URL ='http://radiko.jp/v2/api/program/station/weekly?station_id=TBS';
-        this.URL ='http://radiko.jp/';
+        this.URL ='http://radiko.jp/#!/timeshift';
     }
     async getRegionWithPuptter(){
         // const FLASH_PATH = 'C:\\windows\\system32\\Macromed\\Flash\\pepflashplayer64_29_0_0_140.dll';
@@ -173,19 +180,26 @@ class TimeTableScraper {
         let isGotPage = false;
         page.on('response', response => {
             // console.log(path.dirname(response.url()));
-            if (!isGotPage && response.status() === 200 && path.dirname(response.url()) === 'http://radiko.jp/v3/station/list') {
+            // http://radiko.jp/v3/program/date/20180505/JP13.xml todo これ正規表現に直しておくべき↓
+            if (!isGotPage && response.status() === 200 && path.dirname(response.url()).indexOf('http://radiko.jp/v3/program/date/') !== -1) {
                 isGotPage = true;
                 response.text().then(function (status) {
-                    console.warn('こっち');
                     parseString(status, function (err, data) {
                         if (err) {
                             //todo エラー処理
                             console.warn(err);
                         } else {
-                            const jsonD = JSON.stringify(data);
-                            for (let i = 0; i < jsonD['stations']['station'].length; i++) {
-                                console.warn(jsonD['stations']['station'][i]);
-                            }
+                            console.log(status);
+                            // const stations = data['stations']['station'];
+                            // for (let i = 0; i < stations.length; i++) {
+                            //     console.warn(stations[i]);
+                            //     const name = stations[i]['name'][0];
+                            //     const id = stations[i]['id'];
+                            //     const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
+                            //     const $ = cheerio.load(fs.readFileSync('index.html'));
+                            //     const html = $('<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>');
+                            //     $('.mdl-layout__tab-bar').append(html);
+                            // }
                         }
                     });
                 });
