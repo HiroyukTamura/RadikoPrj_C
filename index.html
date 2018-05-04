@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header">
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">5/8(水)</span>
@@ -47,13 +47,13 @@
                 <li class="mdl-menu__item">InterFM</li>
             </ul>
         </div>
-        <div class="mdl-layout__tab-bar mdl-js-ripple-effect">
-            <a href="#scroll-tab-1" class="mdl-layout__tab is-active">5/4(月)</a>
-            <a href="#scroll-tab-2" class="mdl-layout__tab">5/5(火)</a>
-            <a href="#scroll-tab-3" class="mdl-layout__tab">5/6(水)</a>
-            <a href="#scroll-tab-4" class="mdl-layout__tab">5/7(木)</a>
-            <a href="#scroll-tab-5" class="mdl-layout__tab">5/7(木)</a>
-            <a href="#scroll-tab-6" class="mdl-layout__tab">5/7(木)</a>
+        <div class="mdl-layout__tab-bar mdl-js-ripple-effect" id="header-2nd-row">
+            <a href="#" class="mdl-layout__tab"><img src="https://radiko.jp/v2/static/station/logo/FMJ/lrtrim/258x60.png" alt="j-wave"></a>
+            <a href="#" class="mdl-layout__tab">5/5(火)</a>
+            <a href="#" class="mdl-layout__tab">5/6(水)</a>
+            <a href="#" class="mdl-layout__tab">5/7(木)</a>
+            <a href="#" class="mdl-layout__tab">5/7(木)</a>
+            <a href="#" class="mdl-layout__tab">5/7(木)</a>
         </div>
     </header>
     <div class="mdl-layout__drawer">
@@ -67,9 +67,9 @@
     </div>
 
     <main class="mdl-layout__content">
-        <section class="mdl-layout__tab-panel is-active" id="scroll-tab-1">
-            <div class="page-content">
-                <div class="column-head">
+        <section class="mdl-layout__tab-panel is-active">
+            <div>
+                <div class="column-head mdl-shadow--2dp">
                     <div class="cell"><span>5:00</span></div>
                     <div class="cell"><span>6:00</span></div>
                     <div class="cell"><span>7:00</span></div>
@@ -95,119 +95,118 @@
                     <div class="cell"><span>3:00</span></div>
                     <div class="cell"><span>4:00</span></div>
                 </div>
-                <div class="column">
-                    <div class="station-img">
-                        <img src="https://radiko.jp/v2/static/station/logo/FMJ/lrtrim/258x60.png" alt="fuga">
-                    </div>
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">ＤＪ壇蜜のＳＭ（セレクテッドミュージック）ＶＯＬ．３　～エキゾチック編～第２夜</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
-                            </div>
-                            <div class="mdl-card__actions mdl-card--border">
+                <div class="page-content">
+                    <div class="column">
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">ＤＪ壇蜜のＳＭ（セレクテッドミュージック）ＶＯＬ．３　～エキゾチック編～第２夜</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
 
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">favorite</i>
-                                </button>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">file_download</i>
-                                </button>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">favorite</i>
+                                    </button>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">file_download</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">アフター６ジャンクション</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">アフター６ジャンクション</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
                             </div>
                         </div>
                     </div>
-
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">アフター６ジャンクション</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                    <div class="column">
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">アフター６ジャンクション</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
+                                    <div class="mdl-layout-spacer"></div>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">favorite</i>
+                                    </button>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">file_download</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">アフター６ジャンクション</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
+                                    <div class="mdl-layout-spacer"></div>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">favorite</i>
+                                    </button>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">file_download</i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="prg-card-w">
+                            <div class="program-card mdl-card mdl-shadow--2dp">
+                                <h6 class="prg-title">アフター６ジャンクション</h6>
+                                <div class="prg-time">15:00-16:30</div>
+                                <div class="prg-cast">
+                                    ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
+                                </div>
+                                <div class="mdl-card__actions mdl-card--border">
+                                    <div class="mdl-layout-spacer"></div>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">favorite</i>
+                                    </button>
+                                    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
+                                        <i class="material-icons">file_download</i>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="column">
 
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">アフター６ジャンクション</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
-                            </div>
-                        </div>
                     </div>
-                </div>
-                <div class="column">
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">アフター６ジャンクション</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
-                            </div>
-                            <div class="mdl-card__actions mdl-card--border">
-                                <div class="mdl-layout-spacer"></div>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">favorite</i>
-                                </button>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">file_download</i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="column">
+
                     </div>
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">アフター６ジャンクション</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
-                            </div>
-                            <div class="mdl-card__actions mdl-card--border">
-                                <div class="mdl-layout-spacer"></div>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">favorite</i>
-                                </button>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">file_download</i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="column">
+
                     </div>
-                    <div class="prg-card-w">
-                        <div class="program-card mdl-card mdl-shadow--2dp">
-                            <h6 class="prg-title">アフター６ジャンクション</h6>
-                            <div class="prg-time">15:00-16:30</div>
-                            <div class="prg-cast">
-                                ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」
-                            </div>
-                            <div class="mdl-card__actions mdl-card--border">
-                                <div class="mdl-layout-spacer"></div>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">favorite</i>
-                                </button>
-                                <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-                                    <i class="material-icons">file_download</i>
-                                </button>
-                            </div>
-                        </div>
+                    <div class="column">
+
                     </div>
-                </div>
-                <div class="column">
+                    <div class="column">
 
-                </div>
-                <div class="column">
-
-                </div>
-                <div class="column">
-
-                </div>
-                <div class="column">
-
-                </div>
-                <div class="column">
-
+                    </div>
                 </div>
             </div>
         </section>
@@ -228,5 +227,7 @@
         </section>
     </main>
 </div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="app.js"></script>
 </body>
 </html>

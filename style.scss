@@ -14,14 +14,35 @@ $textGray:rgba(0,0,0,.54);
 #radio-menu {
   @include buttonInterval;
 }
+.mdl-layout__tab-bar-container {
+  overflow-y: hidden;
+  overflow-x: visible;
+  #header-2nd-row {
+    width: unset;
+    padding-left: $columnWidth/2;
+    .mdl-layout__tab {
+      width: $columnWidth - 28px*2;//28pxはMDL準拠
+      img {
+        height: 40px;
+        width: auto;
+      }
+    }
+  }
+  .mdl-layout__tab-bar-button {
+    display: none;
+  }
+}
 
 .mdl-layout__content {
+  //overflow: hidden;
   .mdl-layout__tab-panel {
-    .page-content {
+    > div {
       display: flex;
       .column-head {
+        width: $columnWidth/4;
+        margin-right: $columnWidth/4;
         .cell {
-          width: $columnWidth/2;
+          width: $columnWidth/4;
           height: $oneHourHeight;
           display: flex;
           justify-content: center;
@@ -31,60 +52,54 @@ $textGray:rgba(0,0,0,.54);
           }
         }
       }
-      .column {
-        flex-grow: 1;
-        min-width: $columnWidth;
-        height: 24 * $oneHourHeight;
+      .page-content {
+        overflow: auto;
         display: flex;
-        flex-direction: column;
-        .station-img {
-          width: 100%;
-          height: $oneHourHeight/2;
+        .column {
+          flex-grow: 1;
+          min-width: $columnWidth;
+          height: 24 * $oneHourHeight;
           display: flex;
-          justify-content: center;
-          align-items: center;
-          img {
-            width: 200px;
-            height: auto;
-          }
-        }
-        .prg-card-w {
-          $space:4px 8px;
-          padding: $space;
-          height: $oneHourHeight - 8px;
-          flex-grow: 0;
+          flex-direction: column;
+          padding-top: $oneHourHeight/2;
+          .prg-card-w {
+            $space:4px 8px;
+            padding: $space;
+            height: $oneHourHeight - 8px;
+            flex-grow: 0;
 
-          .program-card {
-            min-height: unset;
-            width: 100%;
-            height: 100%;
-            $spaceInnerCard:16px;
-            display: flex;
-            flex-direction: column;
-            .prg-title {
-              color: $textBlack;
-              margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-            }
-            .prg-time {
-              font-size: 14px;
-              color: $textBlack;
-              line-height: 18px;
-              margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-            }
-            .prg-cast {
-              margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-              font-size: 14px;
-              color: $textGray;
-              line-height: 18px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-              flex-shrink: 100;
-            }
-            .mdl-card__actions {
+            .program-card {
+              min-height: unset;
+              width: 100%;
+              height: 100%;
+              $spaceInnerCard:16px;
               display: flex;
-              justify-content: right;
-              .mdl-button {
-                @include buttonInterval;
+              flex-direction: column;
+              .prg-title {
+                color: $textBlack;
+                margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
+              }
+              .prg-time {
+                font-size: 14px;
+                color: $textBlack;
+                line-height: 18px;
+                margin: 0 $spaceInnerCard 8px $spaceInnerCard;
+              }
+              .prg-cast {
+                margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
+                font-size: 14px;
+                color: $textGray;
+                line-height: 18px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                flex-shrink: 100;
+              }
+              .mdl-card__actions {
+                display: flex;
+                justify-content: right;
+                .mdl-button {
+                  @include buttonInterval;
+                }
               }
             }
           }
