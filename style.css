@@ -19,12 +19,13 @@
     display: none; }
 
 .mdl-layout__content {
-  overflow: hidden; }
+  overflow: auto; }
   .mdl-layout__content .mdl-layout__tab-panel > div {
-    display: flex; }
+    position: relative; }
     .mdl-layout__content .mdl-layout__tab-panel > div .column-head {
       width: 64.5px;
-      margin-right: 64.5px; }
+      margin-right: 64.5px;
+      position: fixed; }
       .mdl-layout__content .mdl-layout__tab-panel > div .column-head .cell {
         width: 64.5px;
         height: 240px;
@@ -32,7 +33,8 @@
         justify-content: center;
         align-items: center; }
     .mdl-layout__content .mdl-layout__tab-panel > div .page-content {
-      overflow: auto;
+      position: absolute;
+      left: 129px;
       display: flex; }
       .mdl-layout__content .mdl-layout__tab-panel > div .page-content .column {
         flex-grow: 1;

@@ -34,13 +34,16 @@ $textGray:rgba(0,0,0,.54);
 }
 
 .mdl-layout__content {
-  //overflow: hidden;
+  overflow: auto;//これで、スクロールバーを消せばOKのはず
   .mdl-layout__tab-panel {
     > div {
-      display: flex;
+      position: relative;
       .column-head {
         width: $columnWidth/4;
         margin-right: $columnWidth/4;
+        position: fixed;
+        background: white;
+        z-index: 2;//MDLのCardはz-index=1
         .cell {
           width: $columnWidth/4;
           height: $oneHourHeight;
@@ -53,7 +56,8 @@ $textGray:rgba(0,0,0,.54);
         }
       }
       .page-content {
-        overflow: auto;
+        position: absolute;
+        left: $columnWidth/2;
         display: flex;
         .column {
           flex-grow: 1;
