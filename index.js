@@ -159,6 +159,8 @@ class TimeTableScraper {
     constructor(){
         // this.URL ='http://radiko.jp/v2/api/program/station/weekly?station_id=TBS';
         this.URL ='http://radiko.jp/#!/timeshift';
+        this.TOP_PAGE = 'http://radiko.jp/#!/top';
+        this.TOP_TARGET = 'http://radiko.jp/v3/program/date/';
     }
     async getRegionWithPuptter(){
         // const FLASH_PATH = 'C:\\windows\\system32\\Macromed\\Flash\\pepflashplayer64_29_0_0_140.dll';
@@ -189,7 +191,7 @@ class TimeTableScraper {
                             //todo エラー処理
                             console.warn(err);
                         } else {
-                            console.log(status);
+                            console.log(JSON.stringify(data));
                             // const stations = data['stations']['station'];
                             // for (let i = 0; i < stations.length; i++) {
                             //     console.warn(stations[i]);
@@ -206,8 +208,74 @@ class TimeTableScraper {
             }
         });
         await page.goto(this.URL);
+        const scraper = new StationListScraper(browser, this.TOP_PAGE, this.TOP_TARGET);
+        scraper.requestPage();
         await page.waitFor(20*1000);
         await browser.close();
+    }
+}
+
+class AbstractScraper {
+    constructor(browser, url, targetUrl){
+        this.browser = browser;
+        this.url = url;
+        this.targetUrl = targetUrl;
+        this.isGotPage = false;
+    }
+
+    async requestPage(){
+        const page = await browser.newPage();
+        await page.goto(this.url);
+        const self = this;
+        page.on('response', response => {
+            if (!this.isGotPage && response.status() === 200 && this.isTargetUrl()) {
+                response.text().then(function (status) {
+                    parseString(status, function (err, data) {
+                        self.onGetWebPage(data);
+                    });
+                });
+            }
+        });
+    }
+
+    isTargetUrl(url){
+        throw new Error('this method must override');
+    }
+
+    onGetWebPage(response){
+        throw new Error('this method must override');
+    }
+
+    onError(err){
+        throw new Error('this method must override');
+    }
+
+    getUrl(){
+        return this.url;
+    }
+}
+
+class StationListScraper extends AbstractScraper {
+    isTargetUrl(url){
+        return url.indexOf(super.getUrl() !== -1);
+    }
+
+    onGetWebPage(data){
+        const stations = data['stations']['station'];
+        for (let i = 0; i < stations.length; i++) {
+            console.warn(stations[i]);
+            const name = stations[i]['name'][0];
+            const id = stations[i]['id'];
+            const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
+            const $ = cheerio.load(fs.readFileSync('index.html'));
+            const html = $('<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>');
+            $('.mdl-layout__tab-bar').append(html);
+        }
+        //todo イベント発火
+    }
+
+    onError(err){
+        //todo エラー処理
     }
 }
 
