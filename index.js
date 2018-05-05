@@ -130,7 +130,7 @@ function createWindow () {
     // masterJson.requestJson();
     // vpnJson = new GateVpnCsv();
     // vpnJson.requestCsv();
-    new TimeTableScraper().getRegionWithPuptter();
+    new PuppeteerOperator().getRegionWithPuppeteer();
 }
 
 app.on('ready', createWindow);
@@ -154,15 +154,16 @@ app.on('activate', () => {
     }
 });
 
-class TimeTableScraper {
+class PuppeteerOperator {
     // http://radiko.jp/v3/station/list/JP13.xml
     constructor(){
         // this.URL ='http://radiko.jp/v2/api/program/station/weekly?station_id=TBS';
-        this.URL ='http://radiko.jp/#!/timeshift';
         this.TOP_PAGE = 'http://radiko.jp/#!/top';
-        this.TOP_TARGET = 'http://radiko.jp/v3/program/date/';
+        this.TOP_TARGET = 'http://radiko.jp/v3/station/list';
+        this.PRG_PAGE ='http://radiko.jp/#!/timeshift';
+        this.PRG_TARGET = 'http://radiko.jp/v3/program/date/';
     }
-    async getRegionWithPuptter(){
+    async getRegionWithPuppeteer(){
         // const FLASH_PATH = 'C:\\windows\\system32\\Macromed\\Flash\\pepflashplayer64_29_0_0_140.dll';
         const browser = await puppeteer.launch({
             // userDataDir: 'User Data',
@@ -178,40 +179,11 @@ class TimeTableScraper {
                 // "--allow-outdated-plugins",
             ]
         });
-        const page = await browser.newPage();
-        let isGotPage = false;
-        page.on('response', response => {
-            // console.log(path.dirname(response.url()));
-            // http://radiko.jp/v3/program/date/20180505/JP13.xml todo これ正規表現に直しておくべき↓
-            if (!isGotPage && response.status() === 200 && path.dirname(response.url()).indexOf('http://radiko.jp/v3/program/date/') !== -1) {
-                isGotPage = true;
-                response.text().then(function (status) {
-                    parseString(status, function (err, data) {
-                        if (err) {
-                            //todo エラー処理
-                            console.warn(err);
-                        } else {
-                            console.log(JSON.stringify(data));
-                            // const stations = data['stations']['station'];
-                            // for (let i = 0; i < stations.length; i++) {
-                            //     console.warn(stations[i]);
-                            //     const name = stations[i]['name'][0];
-                            //     const id = stations[i]['id'];
-                            //     const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
-                            //     const $ = cheerio.load(fs.readFileSync('index.html'));
-                            //     const html = $('<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>');
-                            //     $('.mdl-layout__tab-bar').append(html);
-                            // }
-                        }
-                    });
-                });
-            }
-        });
-        await page.goto(this.URL);
         const scraper = new StationListScraper(browser, this.TOP_PAGE, this.TOP_TARGET);
-        scraper.requestPage();
-        await page.waitFor(20*1000);
-        await browser.close();
+        await scraper.requestPage();
+        const scraper2 = new ProgramScraper(browser, this.PRG_PAGE, this.PRG_TARGET);
+        await scraper2.requestPage();
+        // await browser.close();
     }
 }
 
@@ -224,18 +196,24 @@ class AbstractScraper {
     }
 
     async requestPage(){
-        const page = await browser.newPage();
-        await page.goto(this.url);
+        const page = await this.browser.newPage();
         const self = this;
         page.on('response', response => {
-            if (!this.isGotPage && response.status() === 200 && this.isTargetUrl()) {
+            if (!this.isGotPage && response.status() === 200 && this.isTargetUrl(response.url())) {
                 response.text().then(function (status) {
+                    console.warn('こっち');
                     parseString(status, function (err, data) {
-                        self.onGetWebPage(data);
+                        if (err)
+                            self.onError(err);
+                        else {
+                            self.isGotPage = true;
+                            self.onGetWebPage(data);
+                        }
                     });
                 });
             }
         });
+        await page.goto(this.url);
     }
 
     isTargetUrl(url){
@@ -250,20 +228,19 @@ class AbstractScraper {
         throw new Error('this method must override');
     }
 
-    getUrl(){
-        return this.url;
+    getTargetUrl(){
+        return this.targetUrl;
     }
 }
 
 class StationListScraper extends AbstractScraper {
     isTargetUrl(url){
-        return url.indexOf(super.getUrl() !== -1);
+        return url.includes(super.getTargetUrl());
     }
 
     onGetWebPage(data){
         const stations = data['stations']['station'];
         for (let i = 0; i < stations.length; i++) {
-            console.warn(stations[i]);
             const name = stations[i]['name'][0];
             const id = stations[i]['id'];
             const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
@@ -275,6 +252,33 @@ class StationListScraper extends AbstractScraper {
     }
 
     onError(err){
+        console.warn(err);
+        //todo エラー処理
+    }
+}
+
+class ProgramScraper extends AbstractScraper{
+    isTargetUrl(url) {
+        return url.includes(super.getTargetUrl());
+    }
+
+    onGetWebPage(data) {
+        console.warn('ProgramScraper', 'onGetWebPage');
+        const arr =  data['radiko']['stations'][0]['station'];
+        for (let i = 0; i < arr.length; i++) {
+            const id = arr[i]['$']['id'];
+            const name = arr[i]['name'];
+            const ymd = arr[i]['progs'][0]['date'];
+            const prgArr = arr[i]['progs'][0]['prog'];
+            console.warn(id, name, ymd);
+            for (let j = 0; j < prgArr.length; j++) {
+                console.warn(prgArr[j]);
+            }
+        }
+    }
+
+    onError(err){
+        console.warn(err);
         //todo エラー処理
     }
 }
