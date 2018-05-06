@@ -1,19 +1,21 @@
-$oneHourHeight:240px;
-$columnWidth:258px;
+$oneHourHeight: 240px;
+$columnWidth: 258px;
 
-$textBlack:rgba(0,0,0,.87);
-$textGray:rgba(0,0,0,.54);
+$textBlack: rgba(0, 0, 0, .87);
+$textGray: rgba(0, 0, 0, .54);
 
-@mixin buttonInterval{
+@mixin buttonInterval {
   margin-left: 8px;
 }
 
 #btn-date {
   @include buttonInterval;
 }
+
 #radio-menu {
   @include buttonInterval;
 }
+
 .mdl-layout__tab-bar-container {
   overflow-y: hidden;
   overflow-x: visible;
@@ -21,7 +23,7 @@ $textGray:rgba(0,0,0,.54);
     width: unset;
     padding-left: $columnWidth/2;
     .mdl-layout__tab {
-      width: $columnWidth - 12px*2;//28pxはMDL準拠
+      width: $columnWidth - 12px*2; //28pxはMDL準拠
       img {
         height: 40px;
         width: auto;
@@ -34,83 +36,156 @@ $textGray:rgba(0,0,0,.54);
 }
 
 .mdl-layout__content {
-  overflow: auto;//これで、スクロールバーを消せばOKのはず
+  overflow: auto; //これで、スクロールバーを消せばOKのはず
   .mdl-layout__tab-panel {
     > div {
-      position: relative;
-      .column-head {
-        width: $columnWidth/4;
-        margin-right: $columnWidth/4;
-        position: fixed;
-        background: white;
-        z-index: 2;//MDLのCardはz-index=1
-        overflow-y: auto;
-        .cell {
-          width: $columnWidth/4;
-          height: $oneHourHeight;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          span {
-
+      table {
+        border: none;
+        border-spacing: 0;
+        border-collapse: collapse;
+        padding: 0;
+        thead {
+          .left-top {
+            height: 48px;//tab-rowの高さ準拠(MDL)
           }
         }
-      }
-      .page-content {
-        position: absolute;
-        left: $columnWidth/2;
-        display: flex;
-        .column {
-          flex-grow: 1;
-          min-width: $columnWidth;
-          height: 24 * $oneHourHeight;
-          display: flex;
-          flex-direction: column;
-          padding-top: $oneHourHeight/2;
-          .prg-card-w {
-            $space:4px 8px;
-            padding: $space;
-            //height: $oneHourHeight - 8px;
-            flex-grow: 0;
+        tr {
+          th {
+            padding: 0;
+            > div {
+              width: $columnWidth/4;
+              margin-right: $columnWidth/4;
+              text-align: center;
+              vertical-align: center;
+            }
+          }
 
-            .program-card {
-              min-height: unset;
+          td {
+            padding: 0;
+            width: $columnWidth;
+            >div {
               width: 100%;
-              height: 100%;
-              $spaceInnerCard:16px;
-              display: flex;
-              flex-direction: column;
-              .prg-title {
-                color: $textBlack;
-                margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-                line-height: 20px;
-              }
-              .prg-time {
-                font-size: 14px;
-                color: $textBlack;
-                line-height: 18px;
-                margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-              }
-              .prg-cast {
-                margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-                font-size: 14px;
-                color: $textGray;
-                line-height: 18px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                flex-shrink: 100;
-              }
-              .mdl-card__actions {
-                display: flex;
-                justify-content: right;
-                .mdl-button {
-                  @include buttonInterval;
+              .prg-card-w {
+                $space: 4px 8px;
+                padding: $space;
+                //height: $oneHourHeight - 8px;
+                flex-grow: 0;
+                .program-card {
+                  min-height: unset;
+                  width: 100%;
+                  height: 100%;
+                  $spaceInnerCard: 16px;
+                  display: flex;
+                  flex-direction: column;
+                  .prg-title {
+                    color: $textBlack;
+                    margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
+                    line-height: 20px;
+                  }
+                  .prg-time {
+                    font-size: 14px;
+                    color: $textBlack;
+                    line-height: 18px;
+                    margin: 0 $spaceInnerCard 8px $spaceInnerCard;
+                  }
+                  .prg-cast {
+                    margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
+                    font-size: 14px;
+                    color: $textGray;
+                    line-height: 18px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    flex-shrink: 100;
+                  }
+                  .mdl-card__actions {
+                    display: flex;
+                    justify-content: right;
+                    .mdl-button {
+                      @include buttonInterval;
+                    }
+                  }
                 }
               }
             }
           }
         }
       }
+      //> div {
+      //  position: relative;
+      //  .column-head {
+      //    width: $columnWidth/4;
+      //    margin-right: $columnWidth/4;
+      //    position: fixed;
+      //    background: white;
+      //    z-index: 2;//MDLのCardはz-index=1
+      //    overflow-y: auto;
+      //    .cell {
+      //      width: $columnWidth/4;
+      //      height: $oneHourHeight;
+      //      display: flex;
+      //      justify-content: center;
+      //      align-items: center;
+      //      span {
+      //
+      //      }
+      //    }
+      //  }
+      //  .page-content {
+      //    position: absolute;
+      //    left: $columnWidth/2;
+      //    display: flex;
+      //    .column {
+      //      flex-grow: 1;
+      //      min-width: $columnWidth;
+      //      height: 24 * $oneHourHeight;
+      //      display: flex;
+      //      flex-direction: column;
+      //      padding-top: $oneHourHeight/2;
+      //      .prg-card-w {
+      //        $space:4px 8px;
+      //        padding: $space;
+      //        //height: $oneHourHeight - 8px;
+      //        flex-grow: 0;
+      //
+      //        .program-card {
+      //          min-height: unset;
+      //          width: 100%;
+      //          height: 100%;
+      //          $spaceInnerCard:16px;
+      //          display: flex;
+      //          flex-direction: column;
+      //          .prg-title {
+      //            color: $textBlack;
+      //            margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
+      //            line-height: 20px;
+      //          }
+      //          .prg-time {
+      //            font-size: 14px;
+      //            color: $textBlack;
+      //            line-height: 18px;
+      //            margin: 0 $spaceInnerCard 8px $spaceInnerCard;
+      //          }
+      //          .prg-cast {
+      //            margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
+      //            font-size: 14px;
+      //            color: $textGray;
+      //            line-height: 18px;
+      //            overflow: hidden;
+      //            text-overflow: ellipsis;
+      //            flex-shrink: 100;
+      //          }
+      //          .mdl-card__actions {
+      //            display: flex;
+      //            justify-content: right;
+      //            .mdl-button {
+      //              @include buttonInterval;
+      //            }
+      //          }
+      //        }
+      //      }
+      //    }
+      //  }
+      //}
     }
   }
 }
