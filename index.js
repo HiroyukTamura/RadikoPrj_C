@@ -242,6 +242,8 @@ class StationListScraper extends AbstractScraper {
     onGetWebPage(data){
         const stations = data['stations']['station'];
         const $ = cheerio.load(fs.readFileSync('index.html'));
+
+        $('.head-td').attr('colspan', stations.length);
         const tabBar = $('.mdl-layout__tab-bar');
         tabBar.children().remove();
         for (let i = 0; i < stations.length; i++) {
@@ -286,18 +288,30 @@ class ProgramScraper extends AbstractScraper{
         console.warn('ProgramScraper', 'onGetWebPage');
         const arr =  data['radiko']['stations'][0]['station'];
         const $ = cheerio.load(fs.readFileSync('index.html'));
-        const columns = $('.column');
+        const tbody = $('tbody');
+        tbody.children().remove();
+        for (let i = 5; i < 24+5; i++) {
+            const hour = i < 24 ? i : i-24;
+            const html = '<tr hour="'+ hour +'"><th>'+ hour +':00</th></tr>';
+            tbody.append(html);
+        }
+        tbody.find('tr').each(function () {
+            for (let i = 0; i < arr.length; i++) {
+                const html = '<td><div class="cell-in"></div></td>';
+                $(this).append(html);
+            }
+        });
         for (let i = 0; i < arr.length; i++) {
-            const column = columns.eq(i);
-            column.children().remove();
+            // const column = tbody.fin(i);
+            // column.children().remove();
             const id = arr[i]['$']['id'];
             const name = arr[i]['name'];
             const ymd = arr[i]['progs'][0]['date'];
             const prgArr = arr[i]['progs'][0]['prog'];
             for (let j = 0; j < prgArr.length; j++) {
                 const prgId = prgArr[j]['$']['id'];
-                const ftl = prgArr[j]['$']['ftl'];
-                const tol = prgArr[j]['$']['tol'];
+                // const ftl = prgArr[j]['$']['ftl'];
+                // const tol = prgArr[j]['$']['tol'];
                 const ft = prgArr[j]['$']['ft'];
                 const to = prgArr[j]['$']['to'];
                 const title = prgArr[j]['title'];
@@ -311,18 +325,19 @@ class ProgramScraper extends AbstractScraper{
                 const endM = moment(to, 'YYYYMMDDHHmmss');
                 const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                 const durationMin = endM.diff(startM, 'minutes');
-                console.warn(startM, endM, durationMin);
                 const cardHtml =
-                    '<div class="prg-card-w">\n'+
+                    '<div class="prg-card-w" style="flex-grow: '+ durationMin +'">\n'+
                         '<div class="program-card mdl-card mdl-shadow--2dp">\n'+
                             '<h6 class="prg-title">'+ title +'</h6>\n'+
                             '<div class="prg-time">'+ timeStr +'</div>\n'+
                             // '<div class="prg-cast">'+ pfm +'</div>\n'+
                         '</div>\n'+
                     '</div>';
-                const $2 = cheerio.load(cardHtml);
-                $2('.prg-card-w').css('height', this.hourHeight * durationMin / 60 + 'px');
-                column.append($2.html());
+                // const $2 = cheerio.load(cardHtml);
+                // $2('.prg-card-w').css('height', this.hourHeight * durationMin / 60 + 'px');
+                // column.append($2.html());
+                const cell = tbody.find('tr[hour="'+ startM.hour() +'"] td').eq(i).find('.cell-in');
+                cell.append(cardHtml);
             }
         }
 
