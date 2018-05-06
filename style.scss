@@ -21,7 +21,7 @@ $textGray:rgba(0,0,0,.54);
     width: unset;
     padding-left: $columnWidth/2;
     .mdl-layout__tab {
-      width: $columnWidth - 28px*2;//28pxはMDL準拠
+      width: $columnWidth - 12px*2;//28pxはMDL準拠
       img {
         height: 40px;
         width: auto;
@@ -70,7 +70,7 @@ $textGray:rgba(0,0,0,.54);
           .prg-card-w {
             $space:4px 8px;
             padding: $space;
-            height: $oneHourHeight - 8px;
+            //height: $oneHourHeight - 8px;
             flex-grow: 0;
 
             .program-card {
@@ -83,7 +83,7 @@ $textGray:rgba(0,0,0,.54);
               .prg-title {
                 color: $textBlack;
                 margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-                line-height: 22px;
+                line-height: 20px;
               }
               .prg-time {
                 font-size: 14px;

@@ -92,6 +92,7 @@ const iconv = require('iconv-lite');
 const Sudoer = require('electron-sudo').default;
 const cheerio = require('cheerio');
 const parseString = require('xml2js').parseString;
+const moment = require('moment');
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -113,11 +114,11 @@ function createWindow () {
     win = new BrowserWindow({width: 800, height: 600});
 
     // and load the index.html of the app.
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
-        protocol: 'file:',
-        slashes: true
-    }));
+    // win.loadURL(url.format({
+    //     pathname: path.join(__dirname, 'index.html'),
+    //     protocol: 'file:',
+    //     slashes: true
+    // }));
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -240,15 +241,29 @@ class StationListScraper extends AbstractScraper {
 
     onGetWebPage(data){
         const stations = data['stations']['station'];
+        const $ = cheerio.load(fs.readFileSync('index.html'));
+        const tabBar = $('.mdl-layout__tab-bar');
+        tabBar.children().remove();
         for (let i = 0; i < stations.length; i++) {
             const name = stations[i]['name'][0];
-            const id = stations[i]['id'];
+            const id = stations[i]['id'][0];
             const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
-            const $ = cheerio.load(fs.readFileSync('index.html'));
-            const html = $('<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>');
-            $('.mdl-layout__tab-bar').append(html);
+            const html = '<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>';
+            tabBar.append(html);
+            fs.writeFile('index.html', $.html() , function (err) {
+                if (err) {
+                    //todo エラー処理
+                    console.log(err);
+                } else {
+                    //todo イベント発火
+                    // win.loadURL(url.format({
+                    //     pathname: path.join(__dirname, 'index.html'),
+                    //     protocol: 'file:',
+                    //     slashes: true
+                    // }));
+                }
+            });
         }
-        //todo イベント発火
     }
 
     onError(err){
@@ -258,6 +273,11 @@ class StationListScraper extends AbstractScraper {
 }
 
 class ProgramScraper extends AbstractScraper{
+
+    constructor(browser, url, targetUrl){
+        super(browser, url, targetUrl);
+        this.hourHeight = 232;//px
+    }
     isTargetUrl(url) {
         return url.includes(super.getTargetUrl());
     }
@@ -265,16 +285,60 @@ class ProgramScraper extends AbstractScraper{
     onGetWebPage(data) {
         console.warn('ProgramScraper', 'onGetWebPage');
         const arr =  data['radiko']['stations'][0]['station'];
+        const $ = cheerio.load(fs.readFileSync('index.html'));
+        const columns = $('.column');
         for (let i = 0; i < arr.length; i++) {
+            const column = columns.eq(i);
+            column.children().remove();
             const id = arr[i]['$']['id'];
             const name = arr[i]['name'];
             const ymd = arr[i]['progs'][0]['date'];
             const prgArr = arr[i]['progs'][0]['prog'];
-            console.warn(id, name, ymd);
             for (let j = 0; j < prgArr.length; j++) {
-                console.warn(prgArr[j]);
+                const prgId = prgArr[j]['$']['id'];
+                const ftl = prgArr[j]['$']['ftl'];
+                const tol = prgArr[j]['$']['tol'];
+                const ft = prgArr[j]['$']['ft'];
+                const to = prgArr[j]['$']['to'];
+                const title = prgArr[j]['title'];
+                const url = prgArr[j]['url'];
+                const desc = prgArr[j]['desc'];
+                const info = prgArr[j]['info'];
+                const pfm = prgArr[j]['pfm'];
+                const img = prgArr[j]['img'];
+
+                const startM = moment(ft, 'YYYYMMDDHHmmss');
+                const endM = moment(to, 'YYYYMMDDHHmmss');
+                const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
+                const durationMin = endM.diff(startM, 'minutes');
+                console.warn(startM, endM, durationMin);
+                const cardHtml =
+                    '<div class="prg-card-w">\n'+
+                        '<div class="program-card mdl-card mdl-shadow--2dp">\n'+
+                            '<h6 class="prg-title">'+ title +'</h6>\n'+
+                            '<div class="prg-time">'+ timeStr +'</div>\n'+
+                            // '<div class="prg-cast">'+ pfm +'</div>\n'+
+                        '</div>\n'+
+                    '</div>';
+                const $2 = cheerio.load(cardHtml);
+                $2('.prg-card-w').css('height', this.hourHeight * durationMin / 60 + 'px');
+                column.append($2.html());
             }
         }
+
+        fs.writeFile('index.html', $.html() , function (err) {
+            if (err) {
+                //todo エラー処理
+                console.log(err);
+            } else {
+                //todo イベント発火
+                win.loadURL(url.format({
+                    pathname: path.join(__dirname, 'index.html'),
+                    protocol: 'file:',
+                    slashes: true
+                }));
+            }
+        });
     }
 
     onError(err){
