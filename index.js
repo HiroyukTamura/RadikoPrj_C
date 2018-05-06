@@ -302,7 +302,15 @@ class ProgramScraper extends AbstractScraper{
         //セル作成
         for (let i = 1; i < 25; i++) {
             for (let j = 1; j < arr.length+2/*時間軸の分*/; j++) {
-                const cell = '<div class="cell" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;"></div>';
+                let cell;
+                if (j === 1) {
+                    let time = i+4;
+                    if (time < 10)
+                        time = 0 + time.toString();
+                    const val = '<div class="time">'+ time +'</div>';
+                    cell = '<div class="cell item--hour'+ time +'" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;">'+ val +'</div>';
+                } else
+                    cell = '<div class="cell" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;"></div>';
                 $grid.append(cell);
             }
         }
@@ -340,6 +348,7 @@ class ProgramScraper extends AbstractScraper{
                             // '<div class="mdl-card__actions">\n'+
                             //     '<button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">mood</i></button>\n'+
                             // '</div>\n'+
+                            '<div class="top"></div>\n'+
                             '<li class="mdl-list__item mdl-list__item--two-line">\n'+
                                 '<span class="mdl-list__item-primary-content">\n'+
                                     '<span class="prg-title">'+ title +'</span>\n'+

@@ -11,6 +11,13 @@ $secondaryBlue:#e2f4f9;
   margin-left: 8px;
 }
 
+@mixin centerAbs {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translateX(-50%) translateY(-50%);
+}
+
 .mdl-layout__header, .mdl-layout__tab-bar {
   background-color: $primaryBlue;
 }
@@ -30,7 +37,7 @@ $secondaryBlue:#e2f4f9;
     width: unset;
     padding-left: $columnWidth/2;
     .mdl-layout__tab {
-      width: $columnWidth - 12px*2; //28pxはMDL準拠
+      width: $columnWidth; //28pxはMDL準拠
       img {
         height: 40px;
         width: auto;
@@ -43,7 +50,7 @@ $secondaryBlue:#e2f4f9;
 }
 
 #mix-table {
-  background-color: $secondaryBlue;
+  width: fit-content;
 }
 
 .mdl-layout__content {
@@ -51,20 +58,52 @@ $secondaryBlue:#e2f4f9;
   .mdl-layout__tab-panel {
     #grid {
       display: grid;
-      grid-row-gap: 16px;
-      grid-column-gap: 16px;
       .cell {
         width: 100%;
         min-height: $columnWidth;
+        padding: 8px 16px;
         display: flex;
         flex-direction: column;
+        position: relative;
+
+        $alpha:0.1;
+        &[row="1"]{background-color:rgba(#03e1fc,$alpha);}
+        &[row="2"]{background-color:rgba(#1ae9e2,$alpha);}
+        &[row="3"]{background-color:rgba(#50eeb9,$alpha);}
+        &[row="4"]{background-color:rgba(#80f788,$alpha);}
+        &[row="5"]{background-color:rgba(#a7fa3c,$alpha);}
+        &[row="6"]{background-color:rgba(#cbf71a,$alpha);}
+        &[row="7"]{background-color:rgba(#e2f91c,$alpha);}
+        &[row="8"]{background-color:rgba(#ffe000,$alpha);}
+        &[row="9"]{background-color:rgba(#ffbf00,$alpha);}
+        &[row="10"]{background-color:rgba(#ff9d00,$alpha);}
+        &[row="11"]{background-color:rgba(#ff7000,$alpha);}
+        &[row="12"]{background-color:rgba(#fc4e1e,$alpha);}
+        &[row="13"]{background-color:rgba(#f23411,$alpha);}
+        &[row="14"]{background-color:rgba(#cd243c,$alpha);}
+        &[row="15"]{background-color:rgba(#9c0d7c,$alpha);}
+        &[row="16"]{background-color:rgba(#5e13b6,$alpha);}
+        &[row="17"]{background-color:rgba(#3366cc,$alpha);}
+        &[row="18"]{background-color:rgba(#0e00ff,$alpha);}
+        &[row="19"]{background-color:rgba(#000ad7,$alpha);}
+        &[row="20"]{background-color:rgba(#0b00b1,$alpha);}
+        &[row="21"]{background-color:rgba(#06008c,$alpha);}
+        &[row="22"]{background-color:rgba(#101975,$alpha);}
+        &[row="23"]{background-color:rgba(#131154,$alpha);}
+        &[row="24"]{background-color:rgba(#0f0d27,$alpha);}
+
+        .time {
+          @include centerAbs;
+          color: $textGray;
+          font-size: 48px;
+        }
         .prg-card-w {
           $space: 4px 8px;
           padding: $space;
           min-height: unset;
           $spaceInnerCard: 16px;
           flex-direction: column;
-          width: calc(100% - 4px*2);
+          width: 100%;
           margin: 4px 0;
           height: unset;
           text-transform: none;
@@ -82,10 +121,16 @@ $secondaryBlue:#e2f4f9;
           //  $spaceInnerCard: 16px;
           //  display: flex;
           //  flex-direction: column;
+            .top {
+              padding: 0 16px;
+              flex-grow: 100;
+              max-height: 48px;
+            }
             .mdl-list__item {
               height: unset;
               min-height: unset;
               padding: 16px 8px 12px 16px;
+              cursor: inherit;
               .mdl-list__item-primary-content {
                 height: unset;
                 .prg-title {
@@ -136,81 +181,81 @@ $secondaryBlue:#e2f4f9;
       }
     }
     > div {
-      table {
-        display: none;
-        border: none;
-        border-spacing: 0;
-        border-collapse: collapse;
-        padding: 0;
-        thead {
-          .left-top {
-            height: 48px;//tab-rowの高さ準拠(MDL)
-          }
-        }
-        tr {
-          th {
-            padding: 0;
-            > div {
-              width: $columnWidth/4;
-              margin-right: $columnWidth/4;
-              text-align: center;
-              vertical-align: center;
-            }
-          }
-          td {
-            padding: 0;
-            height: 100%;
-            >.cell-in {
-              width: $columnWidth;
-              min-height: $columnWidth;
-              height: 100%;
-              display: flex;
-              flex-direction: column;
-              .prg-card-w {
-                $space: 4px 8px;
-                padding: $space;
-                //height: $oneHourHeight - 8px;
-                flex-grow: 0;
-                .program-card {
-                  min-height: unset;
-                  width: 100%;
-                  height: 100%;
-                  $spaceInnerCard: 16px;
-                  display: flex;
-                  flex-direction: column;
-                  .prg-title {
-                    color: $textBlack;
-                    margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-                    line-height: 20px;
-                  }
-                  .prg-time {
-                    font-size: 14px;
-                    color: $textBlack;
-                    line-height: 18px;
-                    margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-                  }
-                  .prg-cast {
-                    margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-                    font-size: 14px;
-                    color: $textGray;
-                    line-height: 18px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    flex-shrink: 100;
-                  }
-                  .mdl-card__actions {
-                    display: flex;
-                    justify-content: right;
-                    .mdl-button {
-                      @include buttonInterval;
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
+      //table {
+      //  display: none;
+      //  border: none;
+      //  border-spacing: 0;
+      //  border-collapse: collapse;
+      //  padding: 0;
+      //  thead {
+      //    .left-top {
+      //      height: 48px;//tab-rowの高さ準拠(MDL)
+      //    }
+      //  }
+      //  tr {
+      //    th {
+      //      padding: 0;
+      //      > div {
+      //        width: $columnWidth/4;
+      //        margin-right: $columnWidth/4;
+      //        text-align: center;
+      //        vertical-align: center;
+      //      }
+      //    }
+      //    td {
+      //      padding: 0;
+      //      height: 100%;
+      //      >.cell-in {
+      //        width: $columnWidth;
+      //        min-height: $columnWidth;
+      //        height: 100%;
+      //        display: flex;
+      //        flex-direction: column;
+      //        .prg-card-w {
+      //          $space: 4px 8px;
+      //          padding: $space;
+      //          //height: $oneHourHeight - 8px;
+      //          flex-grow: 0;
+      //          .program-card {
+      //            min-height: unset;
+      //            width: 100%;
+      //            height: 100%;
+      //            $spaceInnerCard: 16px;
+      //            display: flex;
+      //            flex-direction: column;
+      //            .prg-title {
+      //              color: $textBlack;
+      //              margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
+      //              line-height: 20px;
+      //            }
+      //            .prg-time {
+      //              font-size: 14px;
+      //              color: $textBlack;
+      //              line-height: 18px;
+      //              margin: 0 $spaceInnerCard 8px $spaceInnerCard;
+      //            }
+      //            .prg-cast {
+      //              margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
+      //              font-size: 14px;
+      //              color: $textGray;
+      //              line-height: 18px;
+      //              overflow: hidden;
+      //              text-overflow: ellipsis;
+      //              flex-shrink: 100;
+      //            }
+      //            .mdl-card__actions {
+      //              display: flex;
+      //              justify-content: right;
+      //              .mdl-button {
+      //                @include buttonInterval;
+      //              }
+      //            }
+      //          }
+      //        }
+      //      }
+      //    }
+      //  }
+      //}
       //> div {
       //  position: relative;
       //  .column-head {
