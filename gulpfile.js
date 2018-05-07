@@ -14,17 +14,21 @@ const witchDir = ["timetable", "search"];
 let filePath = '';
 
 gulp.task('css', function () {
-    return gulp.src(['/'+ witchDir[1] +'/scss'])
+    return gulp.src(['./public/'+ witchDir[1] +'/style.scss'])
         .pipe(using())
         .pipe(plumber({
             errorHandler: notify.onError("Error: <%= error.message %>")
         }))
+        .pipe(getFileName(filePath))
         .pipe(sass())
         .pipe(rename(function(path) {
+            // let pathArr = filePath.substr(0, filePath.length-5).split('\\');
+            // path.dirname = pathArr[pathArr.length-1];
+            path.dirname = witchDir[1];
             path.extname = '.css';
             path.basename = 'style';
         }))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('./public/'));
 });
 
 gulp.task("ejs", function() {
