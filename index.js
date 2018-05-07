@@ -342,24 +342,12 @@ class ProgramScraper extends AbstractScraper{
                 const durationMin = endM.diff(startM, 'minutes');
                 const cardHtml =
                     '<div class="prg-card-w mdl-card shadow-sm rounded mdl-button mdl-js-button" style="flex-grow: '+ durationMin +'">\n'+
-                        // '<div class="program-card mdl-card mdl-shadow--2dp">\n'+
-                            // '<h6 class="prg-title">'+ title +'</h6>\n'+
-                            // '<div class="prg-time">'+ timeStr +'</div>\n'+
-                            // '<div class="prg-cast">'+ pfm +'</div>\n'+
-                            // '<div class="mdl-card__actions">\n'+
-                            //     '<button class="mdl-button mdl-js-button mdl-button--icon"><i class="material-icons">mood</i></button>\n'+
-                            // '</div>\n'+
                             '<div class="top"></div>\n'+
                             '<li class="mdl-list__item mdl-list__item--two-line">\n'+
                                 '<span class="mdl-list__item-primary-content">\n'+
                                     '<span class="prg-title">'+ title +'</span>\n'+
                                     '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
                                 '</span>\n'+
-                                // '<span class="mdl-list__item-secondary-action">\n'+
-                                //     '<button class="mdl-button mdl-js-button mdl-button--icon">\n'+
-                                //         '<i class="material-icons">mood</i>\n'+
-                                //     '</button>\n'+
-                                // '</span>\n'+
                             '</li>\n'+
                             '<div class="bottom"></div>\n'+
                         // '</div>\n'+
@@ -369,62 +357,12 @@ class ProgramScraper extends AbstractScraper{
                     rowIndex += 24;
                 const cell = $grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
                 cell.append(cardHtml);
+
+                for (let k = 0; k < endM.diff(startM, 'hours')+1; k++) {
+
+                }
             }
         }
-
-        // const tbody = $('tbody');
-        // tbody.children().remove();
-        // for (let i = 5; i < 24+5; i++) {
-        //     const hour = i < 24 ? i : i-24;
-        //     const html = '<tr hour="'+ hour +'"><th>'+ hour +':00</th></tr>';
-        //     tbody.append(html);
-        // }
-        // tbody.find('tr').each(function () {
-        //     for (let i = 0; i < arr.length; i++) {
-        //         const html = '<td><div class="cell-in"></div></td>';
-        //         $(this).append(html);
-        //     }
-        // });
-        // for (let i = 0; i < arr.length; i++) {
-        //     // const column = tbody.fin(i);
-        //     // column.children().remove();
-        //     const id = arr[i]['$']['id'];
-        //     const name = arr[i]['name'];
-        //     const ymd = arr[i]['progs'][0]['date'];
-        //     const prgArr = arr[i]['progs'][0]['prog'];
-        //     for (let j = 0; j < prgArr.length; j++) {
-        //         const prgId = prgArr[j]['$']['id'];
-        //         // const ftl = prgArr[j]['$']['ftl'];
-        //         // const tol = prgArr[j]['$']['tol'];
-        //         const ft = prgArr[j]['$']['ft'];
-        //         const to = prgArr[j]['$']['to'];
-        //         const title = prgArr[j]['title'];
-        //         const url = prgArr[j]['url'];
-        //         const desc = prgArr[j]['desc'];
-        //         const info = prgArr[j]['info'];
-        //         const pfm = prgArr[j]['pfm'];
-        //         const img = prgArr[j]['img'];
-        //
-        //         const startM = moment(ft, 'YYYYMMDDHHmmss');
-        //         const endM = moment(to, 'YYYYMMDDHHmmss');
-        //         const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
-        //         const durationMin = endM.diff(startM, 'minutes');
-        //         const cardHtml =
-        //             '<div class="prg-card-w" style="flex-grow: '+ durationMin +'">\n'+
-        //                 '<div class="program-card mdl-card mdl-shadow--2dp">\n'+
-        //                     '<h6 class="prg-title">'+ title +'</h6>\n'+
-        //                     '<div class="prg-time">'+ timeStr +'</div>\n'+
-        //                     // '<div class="prg-cast">'+ pfm +'</div>\n'+
-        //                 '</div>\n'+
-        //             '</div>';
-        //         // const $2 = cheerio.load(cardHtml);
-        //         // $2('.prg-card-w').css('height', this.hourHeight * durationMin / 60 + 'px');
-        //         // column.append($2.html());
-        //         const cell = tbody.find('tr[hour="'+ startM.hour() +'"] td').eq(i).find('.cell-in');
-        //         cell.append(cardHtml);
-        //     }
-        // }
-        //
 
         //cheerioでcss()すると、どうやってもquoteが実体参照に変換されてhtmlに出力されてしまう
         let cells = '';

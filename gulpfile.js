@@ -4,11 +4,17 @@ const plumber = require('gulp-plumber');
 const notify = require('gulp-notify');
 const using = require('gulp-using');
 const rename = require("gulp-rename");
+const ejs = require("gulp-ejs");
+const fs = require("fs");
+const Stream = require('stream');
 
 gulp.task('default', ['css']);
 
+const witchDir = ["timetable", "search"];
+let filePath;
+
 gulp.task('css', function () {
-    return gulp.src(['./style.scss'])
+    return gulp.src(['/'+ witchDir[1] +'/scss'])
         .pipe(using())
         .pipe(plumber({
             errorHandler: notify.onError("Error: <%= error.message %>")
@@ -20,3 +26,30 @@ gulp.task('css', function () {
         }))
         .pipe(gulp.dest('./'));
 });
+
+gulp.task("ejs", function() {
+    gulp.src(
+        ["gulp/ejs/*.ejs"] //参照するディレクトリ、出力を除外するファイル
+    )
+        .pipe(ejs())
+        .pipe(getFileName(filePath))
+        .pipe(rename(function(path) {
+            console.log(filePath);
+            let pathArr = filePath.substr(0, filePath.length-4).split('\\');
+            let lastDir = pathArr[pathArr.length-1];
+            console.log(lastDir);
+            path.dirname = lastDir;
+            path.extname = '.html';
+            path.basename = 'index';
+        }))
+        .pipe(gulp.dest("/"));
+});
+
+function getFileName() {
+    let stream = new Stream.Transform({ objectMode: true });
+    stream._transform = function(file, unused, callback) {
+        filePath = file.path;
+        callback(null, file);
+    };
+    return stream;
+}

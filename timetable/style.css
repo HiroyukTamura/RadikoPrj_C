@@ -18,7 +18,7 @@
 
 .mdl-layout__drawer {
   background: #00a7e9;
-  border-right: 1px solid #00a3e4; }
+  border-right: 1px solid #00a0df; }
   .mdl-layout__drawer header {
     height: 151px; }
   .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
@@ -156,7 +156,8 @@
               height: unset; }
               .mdl-layout__content #mix-table #grid .cell .prg-card-w .mdl-list__item .mdl-list__item-primary-content .prg-title {
                 padding-bottom: 4px;
-                font-size: 14px; }
+                font-size: 15px;
+                letter-spacing: 0; }
             .mdl-layout__content #mix-table #grid .cell .prg-card-w .mdl-list__item .mdl-list__item-secondary-action {
               height: unset; }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w .bottom {
