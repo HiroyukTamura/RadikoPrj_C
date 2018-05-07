@@ -46,7 +46,7 @@ gulp.task("ejs", function() {
             path.extname = '.html';
             path.basename = 'index';
         }))
-        .pipe(gulp.dest("../"));
+        .pipe(gulp.dest("./public/"));
 });
 
 function getFileName() {
