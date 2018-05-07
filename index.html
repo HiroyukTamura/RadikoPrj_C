@@ -13,7 +13,7 @@
         <div class="mdl-layout__header-row">
             <span class="mdl-layout-title">5/8(&#x6C34;)</span>
             <div class="mdl-layout-spacer"></div>
-            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label mdl-textfield--align-right optional-btn" id="search-btn">
                 <label class="mdl-button mdl-js-button mdl-button--icon" for="fixed-header-drawer-exp">
                     <i class="material-icons">search</i>
                 </label>
@@ -21,7 +21,7 @@
                     <input class="mdl-textfield__input" type="text" name="sample" id="fixed-header-drawer-exp">
                 </div>
             </div>
-            <button id="btn-date" class="mdl-button mdl-js-button mdl-button--icon">
+            <button id="btn-date" class="mdl-button mdl-js-button mdl-button--icon optional-btn">
                 <i class="material-icons">date_range</i>
             </button>
             <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="demo-menu-lower-right">
@@ -33,7 +33,7 @@
                 <li class="mdl-menu__item">5/9(&#x571F;)</li>
                 <li class="mdl-menu__item">5/10(&#x65E5;)</li>
             </ul>
-            <button id="radio-menu" class="mdl-button mdl-js-button mdl-button--icon">
+            <button id="radio-menu" class="mdl-button mdl-js-button mdl-button--icon optional-btn">
                 <i class="material-icons">radio</i>
             </button>
             <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="radio-menu">
@@ -61,7 +61,13 @@
 
     <main class="mdl-layout__content">
         <section class="mdl-layout__tab-panel is-active" id="mix-table">
-        <div style="grid-template-areas:'.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. '; grid-template-columns: 129px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px "; id="grid"><div class="cell item--hour05" row="1" column="1" style="grid-row:1 / span 1; grid-column:1/ span 1;"><div class="time">05</div></div><div class="cell" row="1" column="2" style="grid-row:1 / span 1; grid-column:2/ span 1;"><div class="prg-card-w mdl-card shadow-sm rounded mdl-button mdl-js-button" style="flex-grow: 90">
+            <div id="header-table-out">
+                <span>
+                    前日へ
+                </span>
+            </div>
+        <div style="grid-template-areas:'.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ''.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. '; grid-template-columns: 129px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px 258px "; id="grid">
+            <div class="cell item--hour05" row="1" column="1" style="grid-row:1 / span 1; grid-column:1/ span 1;"><div class="time">05</div></div><div class="cell" row="1" column="2" style="grid-row:1 / span 1; grid-column:2/ span 1;"><div class="prg-card-w mdl-card shadow-sm rounded mdl-button mdl-js-button" style="flex-grow: 90">
 <div class="top"></div>
 <li class="mdl-list__item mdl-list__item--two-line">
 <span class="mdl-list__item-primary-content">
@@ -4696,7 +4702,13 @@
 </span>
 </li>
 <div class="bottom"></div>
-</div></div><div class="cell item--hour28" row="24" column="1" style="grid-row:24 / span 1; grid-column:1/ span 1;"><div class="time">28</div></div><div class="cell" row="24" column="2" style="grid-row:24 / span 1; grid-column:2/ span 1;"></div><div class="cell" row="24" column="3" style="grid-row:24 / span 1; grid-column:3/ span 1;"></div><div class="cell" row="24" column="4" style="grid-row:24 / span 1; grid-column:4/ span 1;"></div><div class="cell" row="24" column="5" style="grid-row:24 / span 1; grid-column:5/ span 1;"></div><div class="cell" row="24" column="6" style="grid-row:24 / span 1; grid-column:6/ span 1;"></div><div class="cell" row="24" column="7" style="grid-row:24 / span 1; grid-column:7/ span 1;"></div><div class="cell" row="24" column="8" style="grid-row:24 / span 1; grid-column:8/ span 1;"></div><div class="cell" row="24" column="9" style="grid-row:24 / span 1; grid-column:9/ span 1;"></div><div class="cell" row="24" column="10" style="grid-row:24 / span 1; grid-column:10/ span 1;"></div><div class="cell" row="24" column="11" style="grid-row:24 / span 1; grid-column:11/ span 1;"></div><div class="cell" row="24" column="12" style="grid-row:24 / span 1; grid-column:12/ span 1;"></div><div class="cell" row="24" column="13" style="grid-row:24 / span 1; grid-column:13/ span 1;"></div><div class="cell" row="24" column="14" style="grid-row:24 / span 1; grid-column:14/ span 1;"></div><div class="cell" row="24" column="15" style="grid-row:24 / span 1; grid-column:15/ span 1;"></div><div class="cell" row="24" column="16" style="grid-row:24 / span 1; grid-column:16/ span 1;"></div><div class="cell" row="24" column="17" style="grid-row:24 / span 1; grid-column:17/ span 1;"></div></div></section>
+</div></div><div class="cell item--hour28" row="24" column="1" style="grid-row:24 / span 1; grid-column:1/ span 1;"><div class="time">28</div></div><div class="cell" row="24" column="2" style="grid-row:24 / span 1; grid-column:2/ span 1;"></div><div class="cell" row="24" column="3" style="grid-row:24 / span 1; grid-column:3/ span 1;"></div><div class="cell" row="24" column="4" style="grid-row:24 / span 1; grid-column:4/ span 1;"></div><div class="cell" row="24" column="5" style="grid-row:24 / span 1; grid-column:5/ span 1;"></div><div class="cell" row="24" column="6" style="grid-row:24 / span 1; grid-column:6/ span 1;"></div><div class="cell" row="24" column="7" style="grid-row:24 / span 1; grid-column:7/ span 1;"></div><div class="cell" row="24" column="8" style="grid-row:24 / span 1; grid-column:8/ span 1;"></div><div class="cell" row="24" column="9" style="grid-row:24 / span 1; grid-column:9/ span 1;"></div><div class="cell" row="24" column="10" style="grid-row:24 / span 1; grid-column:10/ span 1;"></div><div class="cell" row="24" column="11" style="grid-row:24 / span 1; grid-column:11/ span 1;"></div><div class="cell" row="24" column="12" style="grid-row:24 / span 1; grid-column:12/ span 1;"></div><div class="cell" row="24" column="13" style="grid-row:24 / span 1; grid-column:13/ span 1;"></div><div class="cell" row="24" column="14" style="grid-row:24 / span 1; grid-column:14/ span 1;"></div><div class="cell" row="24" column="15" style="grid-row:24 / span 1; grid-column:15/ span 1;"></div><div class="cell" row="24" column="16" style="grid-row:24 / span 1; grid-column:16/ span 1;"></div><div class="cell" row="24" column="17" style="grid-row:24 / span 1; grid-column:17/ span 1;"></div></div>
+            <div id="footer-table-out">
+                <span>
+                    翌日へ
+                </span>
+            </div>
+        </section>
         <section class="mdl-layout__tab-panel" id="scroll-tab-2">
             <div class="page-content"><!-- Your content goes here --></div>
         </section>

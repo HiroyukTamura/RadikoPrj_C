@@ -18,16 +18,31 @@ $secondaryBlue:#e2f4f9;
   transform: translateX(-50%) translateY(-50%);
 }
 
-.mdl-layout__header, .mdl-layout__tab-bar {
+@mixin whitenHover {
+  &:hover{
+    background-color: rgba(255,255,255,.2);
+  }
+  .material-icons :hover{
+    background: unset;
+  }
+}
+
+.mdl-layout__header{
   background-color: $primaryBlue;
+  #btn-date, #radio-menu{
+    @include buttonInterval;
+    @include whitenHover;
+  }
+  #search-btn {
+    padding: 16px 0;
+    .mdl-button {
+      @include whitenHover;
+    }
+  }
 }
 
-#btn-date {
-  @include buttonInterval;
-}
-
-#radio-menu {
-  @include buttonInterval;
+.mdl-layout__tab-bar {
+  background-color: $secondaryBlue;
 }
 
 .mdl-layout__tab-bar-container {
@@ -49,13 +64,21 @@ $secondaryBlue:#e2f4f9;
   }
 }
 
-#mix-table {
-  width: fit-content;
-}
-
 .mdl-layout__content {
   overflow: auto; //これで、スクロールバーを消せばOKのはず
-  .mdl-layout__tab-panel {
+  #mix-table {
+    width: fit-content;
+    #header-table-out, #footer-table-out{
+      height: 96px;
+      position: relative;
+      >span {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 24px;
+        //leftはJS側で動的にセットする
+      }
+    }
     #grid {
       display: grid;
       .cell {
@@ -66,31 +89,34 @@ $secondaryBlue:#e2f4f9;
         flex-direction: column;
         position: relative;
 
-        $alpha:0.1;
-        &[row="1"]{background-color:rgba(#03e1fc,$alpha);}
-        &[row="2"]{background-color:rgba(#1ae9e2,$alpha);}
-        &[row="3"]{background-color:rgba(#50eeb9,$alpha);}
-        &[row="4"]{background-color:rgba(#80f788,$alpha);}
-        &[row="5"]{background-color:rgba(#a7fa3c,$alpha);}
-        &[row="6"]{background-color:rgba(#cbf71a,$alpha);}
-        &[row="7"]{background-color:rgba(#e2f91c,$alpha);}
-        &[row="8"]{background-color:rgba(#ffe000,$alpha);}
-        &[row="9"]{background-color:rgba(#ffbf00,$alpha);}
-        &[row="10"]{background-color:rgba(#ff9d00,$alpha);}
-        &[row="11"]{background-color:rgba(#ff7000,$alpha);}
-        &[row="12"]{background-color:rgba(#fc4e1e,$alpha);}
-        &[row="13"]{background-color:rgba(#f23411,$alpha);}
-        &[row="14"]{background-color:rgba(#cd243c,$alpha);}
-        &[row="15"]{background-color:rgba(#9c0d7c,$alpha);}
-        &[row="16"]{background-color:rgba(#5e13b6,$alpha);}
-        &[row="17"]{background-color:rgba(#3366cc,$alpha);}
-        &[row="18"]{background-color:rgba(#0e00ff,$alpha);}
-        &[row="19"]{background-color:rgba(#000ad7,$alpha);}
-        &[row="20"]{background-color:rgba(#0b00b1,$alpha);}
-        &[row="21"]{background-color:rgba(#06008c,$alpha);}
-        &[row="22"]{background-color:rgba(#101975,$alpha);}
-        &[row="23"]{background-color:rgba(#131154,$alpha);}
-        &[row="24"]{background-color:rgba(#0f0d27,$alpha);}
+        $alpha:0.27;
+        $dest:40%;
+
+        &[row="1"]{background-color:desaturate(rgba(#03e1fc,$alpha), $dest);}
+        &[row="2"]{background-color:desaturate(rgba(#1ae9e2,$alpha), $dest);}
+        &[row="3"]{background-color:desaturate(rgba(#50eeb9,$alpha), $dest);}
+        &[row="4"]{background-color:desaturate(rgba(#80f788,$alpha), $dest);}
+        &[row="5"]{background-color:desaturate(rgba(#a7fa3c,$alpha), $dest);}
+        &[row="6"]{background-color:desaturate(rgba(#cbf71a,$alpha), $dest);}
+        &[row="7"]{background-color:desaturate(rgba(#e2f91c,$alpha), $dest);}
+        &[row="8"]{background-color:desaturate(rgba(#ffe000,$alpha), $dest);}
+        &[row="9"]{background-color:desaturate(rgba(#ffbf00,$alpha), $dest);}
+        &[row="10"]{background-color:desaturate(rgba(#ff9d00,$alpha), $dest);}
+        &[row="11"]{background-color:desaturate(rgba(#ff7000,$alpha), $dest);}
+        &[row="12"]{background-color:desaturate(rgba(#fc4e1e,$alpha), $dest);}
+        &[row="13"]{background-color:desaturate(rgba(#f23411,$alpha), $dest);}
+        &[row="14"]{background-color:desaturate(rgba(#cd243c,$alpha), $dest);}
+        &[row="15"]{background-color:desaturate(rgba(#9c0d7c,$alpha), $dest);}
+        &[row="16"]{background-color:desaturate(rgba(#5e13b6,$alpha), $dest);}
+        &[row="17"]{background-color:desaturate(rgba(#3366cc,$alpha), $dest);}
+        &[row="18"]{background-color:desaturate(rgba(#0e00ff,$alpha), $dest);}
+        &[row="19"]{background-color:desaturate(rgba(#000ad7,$alpha), $dest);}
+        &[row="20"]{background-color:desaturate(rgba(#0b00b1,$alpha), $dest);}
+        &[row="21"]{background-color:desaturate(rgba(#06008c,$alpha), $dest);}
+        &[row="22"]{background-color:desaturate(rgba(#101975,$alpha), $dest);}
+        &[row="23"]{background-color:desaturate(rgba(#131154,$alpha), $dest);}
+        &[row="24"]{background-color:desaturate(rgba(#0f0d27,$alpha), $dest);}
+
 
         .time {
           @include centerAbs;
@@ -112,6 +138,11 @@ $secondaryBlue:#e2f4f9;
           letter-spacing: unset;
           transition: unset;
           line-height: unset;
+
+          &.mdl-button:hover {
+            background-color: rgb(253,253,253);
+          }
+
           //height: $oneHourHeight - 8px;
 
           //.program-card {
