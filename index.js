@@ -288,6 +288,7 @@ class ProgramScraper extends AbstractScraper{
     onGetWebPage(data) {
         console.warn('ProgramScraper', 'onGetWebPage');
         const arr =  data['radiko']['stations'][0]['station'];
+        // console.log(JSON.stringify(arr));
         const $ = cheerio.load(fs.readFileSync('index.html'));
         const $parent = $('#mix-table');
 
@@ -427,15 +428,15 @@ class ProgramScraper extends AbstractScraper{
 
         //cheerioでcss()すると、どうやってもquoteが実体参照に変換されてhtmlに出力されてしまう
         let cells = '';
-        for (let i = 0; i < 25; i++)
+        for (let i = 0; i < arr.length; i++)
             cells += '.. ';
         const rowArea = "'"+ cells +"'";
         let str = '';
-        for (let i = 0; i < arr.length; i++)
+        for (let i = 0; i < 24; i++)
             str += rowArea;
 
         let columnsStr = this.columnWidth/2 + "px ";//時間軸
-        for (let i = 0; i < 24; i++)
+        for (let i = 0; i < arr.length; i++)
             columnsStr += (this.columnWidth + "px ");
 
         let html = $.html();
