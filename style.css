@@ -16,6 +16,28 @@
 .mdl-layout__tab-bar {
   background-color: #e2f4f9; }
 
+.mdl-layout__drawer {
+  background: #00a7e9;
+  border-right: 1px solid #00a3e4; }
+  .mdl-layout__drawer header {
+    height: 151px; }
+  .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0;
+    opacity: .87;
+    padding: 16px 40px;
+    vertical-align: middle; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link i {
+      font-size: 16px;
+      margin-right: 24px; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
+      background: white;
+      color: #00a7e9; }
+
 .mdl-layout__tab-bar-container {
   overflow-y: hidden;
   overflow-x: visible; }
@@ -40,7 +62,8 @@
       .mdl-layout__content #mix-table #header-table-out > span, .mdl-layout__content #mix-table #footer-table-out > span {
         position: absolute;
         top: 50%;
-        transform: translateY(-50%); }
+        transform: translateY(-50%);
+        font-size: 24px; }
     .mdl-layout__content #mix-table #grid {
       display: grid; }
       .mdl-layout__content #mix-table #grid .cell {
