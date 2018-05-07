@@ -11,7 +11,7 @@ const Stream = require('stream');
 gulp.task('default', ['css']);
 
 const witchDir = ["timetable", "search"];
-let filePath;
+let filePath = '';
 
 gulp.task('css', function () {
     return gulp.src(['/'+ witchDir[1] +'/scss'])
@@ -28,10 +28,14 @@ gulp.task('css', function () {
 });
 
 gulp.task("ejs", function() {
-    gulp.src(
-        ["gulp/ejs/*.ejs"] //参照するディレクトリ、出力を除外するファイル
+    return gulp.src(
+        ["ejs/origin/*.ejs"] //参照するディレクトリ、出力を除外するファイル
     )
-        .pipe(ejs())
+        .pipe(using())
+        .pipe(plumber({
+            errorHandler: notify.onError("Error: <%= error.message %>")
+        }))
+        .pipe(ejs({}))
         .pipe(getFileName(filePath))
         .pipe(rename(function(path) {
             console.log(filePath);
@@ -42,7 +46,7 @@ gulp.task("ejs", function() {
             path.extname = '.html';
             path.basename = 'index';
         }))
-        .pipe(gulp.dest("/"));
+        .pipe(gulp.dest("../"));
 });
 
 function getFileName() {
