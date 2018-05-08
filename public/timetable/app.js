@@ -182,9 +182,11 @@ class TimeTableDom {
 
                 const startM = moment(ft, 'YYYYMMDDHHmmss');
                 const endM = moment(to, 'YYYYMMDDHHmmss');
+                const startHour = startM.hour();
+                const endHour = endM.hour();
                 const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                 const durMin = Math.round(parseInt(durSec)/60);
-                const cardHtml = $(
+                const $cardOrgin = $(
                     '<div class="prg-card-w mdl-card shadow-sm rounded mdl-button mdl-js-button" style="flex-grow: '+ durMin +'">\n'+
                         '<div class="top"></div>\n'+
                         '<li class="mdl-list__item mdl-list__item--two-line">\n'+
@@ -196,15 +198,78 @@ class TimeTableDom {
                         '<div class="bottom"></div>\n'+
                     '</div>'
                 );
-                let rowIndex = startM.hour()-5+1;//1始まり
-                if (rowIndex<0)
-                    rowIndex += 24;
-                const cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
-                cell.append(cardHtml);
+                // let rowIndex = startHour-5+1;//1始まり
+                // if (rowIndex<0)
+                //     rowIndex += 24;
+                // const cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
+                // cell.append(cardHtml);
 
-                // for (let k = 0; k < endM.diff(startM, 'hours')+1; k++) {
-                //
+                // if (endHour !== startHour) {
+                //     cell.css('padding-bottom', 0);
                 // }
+                // let limit = (endHour<5 ? endHour : endHour+24) - startHour;
+                // for (let k = 1; k < limit; k++) {
+                //     const cellExtra = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ (rowIndex+k) +'"]');
+                //     cell.css('padding-top', 0);
+                // }
+
+                let startOpe = startM.clone();
+                let count = 0;
+                while (true) {
+                    let cell;
+                    let $card = $cardOrgin.clone();
+                    const rowIndex = (startHour>=5 ? startHour-4 : startHour+24-4) + count;
+                    cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
+
+                    if(title === '伊集院光とらじおと（１）') {
+                        console.log(title, endM.hour() - startOpe.hour(), startOpe.minute(), endM.minute());
+                    }
+
+                    if (startM.hour() === endM.hour()) {
+                        //ex. 12:00 ⇒ 12:40
+                        $card.css('flex-grow', durMin%60);
+                        cell.append($card);
+                        break;
+                    } else if(startOpe.hour() === endM.hour()) {
+                        //ex. 12:00(StartOpe)⇒ 12:40
+                        $card.css('flex-grow', endM.diff(startOpe, 'minutes'));
+                        cell.append($card);
+                        break;
+                    } else if ((endM.hour() - startOpe.hour() === 1 && startOpe.minute() === 0 && endM.minute() === 0)
+                        || (endM.day() - startOpe.day() === 1 && endM.hour()+24 - startOpe.hour() === 1 && startOpe.minute() === 0 && endM.minute() === 0)) {
+                            //ex. 10:00(StartOpe) ⇒ 11:00 || 23:00 ⇒ 24:00
+                            $card.css('flex-grow', 1);
+                            cell.append($card);
+                        break;
+                    } else if (startOpe.minute() === 0 && endM.diff(startOpe, 'minutes') > 60) {
+                        //ex. 10:00(StartOpe) ⇒ 12:30
+                        $card.css('flex-grow', 1);
+                        cell.append($card);
+                        console.log('じゃあこっち');
+                    } else if ((endM.hour() - startOpe.hour() === 1 && endM.minute() === 0)
+                        || (endM.day() - startOpe.day() === 1 && endM.hour()+24 - startOpe.hour() === 1 && endM.minute() === 0)){
+                            //ex. 11:20(StartOpe) ⇒ 12:00 || 23:55 ⇒ 0:00
+                            $card.css('flex-grow', endM.diff(startOpe, 'minutes'));
+                            cell.append($card);
+                        break;
+                    } else {
+                        //ex. 10:30(StartOpe)⇒ 12:30
+                        let restMin = 60 - startOpe.minute();
+                        $card.css('flex-grow', restMin);
+                        cell.append($card);
+                        console.log('ここ');
+                    }
+
+                    startOpe.minute(0);
+                    startOpe.add(1, 'hour');
+
+                    count++;
+
+                    if (count > 5) {
+                        console.log('count > 5');//todo エラー処理
+                        break;
+                    }
+                }
             });
         });
     }

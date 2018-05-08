@@ -154,7 +154,7 @@
           .mdl-layout__content #mix-table #grid .cell .prg-card-w .mdl-list__item {
             height: unset;
             min-height: unset;
-            padding: 12px 8px 8px 16px;
+            padding: 4px 8px 0 16px;
             cursor: inherit; }
             .mdl-layout__content #mix-table #grid .cell .prg-card-w .mdl-list__item .mdl-list__item-primary-content {
               height: unset; }
