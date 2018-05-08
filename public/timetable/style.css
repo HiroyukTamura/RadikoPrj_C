@@ -170,11 +170,14 @@
           .mdl-layout__content #mix-table #grid .cell .prg-card-w .bottom {
             padding: 0 16px;
             flex-grow: 100; }
+          .mdl-layout__content #mix-table #grid .cell .prg-card-w .info {
+            display: none; }
 
 .mdl-dialog {
   width: unset;
   max-width: 80%;
-  padding: 36px; }
+  padding: 36px;
+  position: relative; }
   .mdl-dialog > div .header {
     display: flex; }
     .mdl-dialog > div .header .title {
@@ -206,14 +209,30 @@
         line-height: 22px; }
   .mdl-dialog > div .cont-middle {
     padding: 0 16px; }
-  .mdl-dialog .mdl-dialog__actions button {
-    width: 80%;
-    margin: 0 auto;
+  .mdl-dialog .mdl-dialog__actions {
+    display: flex;
+    justify-content: center; }
+    .mdl-dialog .mdl-dialog__actions button {
+      width: 80%;
+      margin: 24px 0;
+      color: white;
+      height: 52px;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 20px;
+      background-color: #00a7e9; }
+      .mdl-dialog .mdl-dialog__actions button i {
+        margin-right: 1em; }
+  .mdl-dialog .cancel-btn {
+    position: absolute;
+    height: 40px;
+    width: 40px;
+    top: -19px;
+    right: -19px;
+    background-color: #00a7e9;
     color: white;
-    height: 36px;
-    vertical-align: middle;
-    text-align: center;
-    font-size: 20px;
-    background-color: #00a7e9; }
-    .mdl-dialog .mdl-dialog__actions button i {
-      margin-right: 1em; }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer; }

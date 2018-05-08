@@ -181,6 +181,9 @@
             padding: 0 16px;
             flex-grow: 100;
           }
+          .info {
+            display: none;
+          }
         }
       }
     }
@@ -192,6 +195,7 @@
   max-width: 80%;
   $horizontalPad: 36px;
   padding: 36px;
+  position: relative;
   >div {
     .header {
       display: flex;
@@ -220,6 +224,12 @@
         height: 200px;
         margin: 0 24px;
       }
+      a{
+        text-decoration: none;
+        &:hover {
+          color: $secondaryBlue;
+        }
+      }
       >div {
         color: $textBlack;
         padding-top: 1rem;
@@ -235,9 +245,11 @@
   }
 
   .mdl-dialog__actions {
+    display: flex;
+    justify-content: center;
     button {
       width: 80%;
-      margin: 24px 0 auto;
+      margin: 24px 0;
       color: white;
       height: 52px;
       vertical-align: middle;
@@ -248,5 +260,21 @@
         margin-right: 1em;
       }
     }
+  }
+
+  .cancel-btn {
+    $cancelSize:40px;
+    position: absolute;
+    height: $cancelSize;
+    width: $cancelSize;
+    top: -$cancelSize/2 +1;
+    right: -$cancelSize/2 +1;
+    background-color: $primaryBlue;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
   }
 }

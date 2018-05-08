@@ -5,17 +5,16 @@ window.onload = function() {
     const domFrame = new DomFrame();
     domFrame.init();
 
-    // const ereaChecker = new EreaChecker();
-    // ereaChecker.check().then((ereaId => {
-    //     return new ProgramListGetter(ereaId).request();
-    // })).then((data) => {
-    //     new TimeTableDom(data).init();
-    //     domFrame.scrollTopOffset();
-    // }).catch(err => {
-    //     //todo エラー処理
-    //     console.log(err);
-    // });
-    $('dialog')[0].show();
+    const ereaChecker = new EreaChecker();
+    ereaChecker.check().then((ereaId => {
+        return new ProgramListGetter(ereaId).request();
+    })).then((data) => {
+        new TimeTableDom(data).init();
+        domFrame.scrollTopOffset();
+    }).catch(err => {
+        //todo エラー処理
+        console.log(err);
+    });
 };
 
 class DomFrame {
@@ -106,12 +105,17 @@ class TimeTableDom {
         this.columnWidth = 258;//px scssより引用
         this.$stations = $(data).find('stations station');
         this.$grid = $('#grid');
+        this.$dialog = $('.mdl-dialog');
+        if (!this.$dialog[0].showModal) {
+            dialogPolyfill.registerDialog(this.$dialog[0]);
+        }
     }
 
     init(){
         this.setGridCss();
         this.setGridCells();
         this.inputCards();
+        this.setListener();
     }
 
     setGridCss(){
@@ -183,7 +187,7 @@ class TimeTableDom {
                 const startM = moment(ft, 'YYYYMMDDHHmmss');
                 const endM = moment(to, 'YYYYMMDDHHmmss');
                 const startHour = startM.hour();
-                const endHour = endM.hour();
+                // const endHour = endM.hour();
                 const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                 const durMin = Math.round(parseInt(durSec)/60);
                 const $cardOrgin = $(
@@ -191,11 +195,18 @@ class TimeTableDom {
                         '<div class="top"></div>\n'+
                         '<li class="mdl-list__item mdl-list__item--two-line">\n'+
                             '<span class="mdl-list__item-primary-content">\n'+
-                            '<span class="prg-title">'+ title +'</span>\n'+
-                            '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
+                                '<span class="prg-title">'+ title +'</span>\n'+
+                                '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
                             '</span>\n'+
                         '</li>\n'+
                         '<div class="bottom"></div>\n'+
+                        '<div class="info">\n'+
+                            '<span class="url">'+ url +'</span>\n'+
+                            '<span class="info">'+ info +'</span>\n'+
+                            '<span class="desc">'+ desc +'</span>\n'+
+                            '<span class="pfm">'+ pfm +'</span>\n'+
+                            '<span class="img">'+ img +'</span>\n'+
+                        '</div>\n'+
                     '</div>'
                 );
 
@@ -281,5 +292,28 @@ class TimeTableDom {
         card.css('margin-top', 0)
             .css('border-top-left-radius', 0)
             .css('border-top-right-radius', 0);
+    }
+
+    setListener(){
+        const self = this;
+        $('.prg-card-w').on('click', function (e) {
+           e.preventDefault();
+           console.log('click');
+           if (!$(this).prop('open'))
+               self.$dialog[0].showModal();
+           return false;
+        });
+        this.$dialog[0].addEventListener('close', function(e) {
+            if (this.returnValue === 'download') {
+                console.log('download');
+            }
+            return false;
+        });
+        $('#dl-btm').on('click', function () {
+            self.$dialog[0].close();
+        });
+        $('.cancel-btn').on('click', function () {
+            self.$dialog[0].close();
+        });
     }
 }
