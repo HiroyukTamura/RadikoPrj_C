@@ -200,12 +200,14 @@ class TimeTableDom {
                             '</span>\n'+
                         '</li>\n'+
                         '<div class="bottom"></div>\n'+
-                        '<div class="info">\n'+
+                        '<div class="info_group">\n'+
                             '<span class="url">'+ url +'</span>\n'+
                             '<span class="info">'+ info +'</span>\n'+
                             '<span class="desc">'+ desc +'</span>\n'+
                             '<span class="pfm">'+ pfm +'</span>\n'+
                             '<span class="img">'+ img +'</span>\n'+
+                            '<span class="ft">'+ ft +'</span>\n'+
+                            '<span class="to">'+ to +'</span>\n'+
                         '</div>\n'+
                     '</div>'
                 );
@@ -299,7 +301,28 @@ class TimeTableDom {
         $('.prg-card-w').on('click', function (e) {
            e.preventDefault();
            console.log('click');
-           if (!$(this).prop('open'))
+
+            // '<span class="desc">'+ desc +'</span>\n'+
+            // '<span class="pfm">'+ pfm +'</span>\n'+
+            // '<span class="img">'+ img +'</span>\n'+
+           const html = $(this).find('.prg-title').html();
+           const ft = $(this).find('.info_group .ft').html();
+           const to = $(this).find('.info_group .to').html();
+           const info = $(this).find('.info_group .info').html();
+           const desc = $(this).find('.info_group .desc').html();
+           const pfm = $(this).find('.info_group .pfm').html();
+           const img = $(this).find('.info_group .img').html();
+           const hp = $(this).find('.info_group .url').html();
+           const prgId = $(this).attr('prgid');
+
+           self.$dialog.find('.title').html(html);
+           self.$dialog.find('.performer').html(pfm);
+           self.$dialog.find('.hp a').html(hp);
+           self.$dialog.find('.prg-logo').attr('src', img);
+           self.$dialog.find('.desc').append(desc);
+           self.$dialog.find('.info').append(info);
+
+           if (!self.$dialog.prop('open'))
                self.$dialog[0].showModal();
            return false;
         });
