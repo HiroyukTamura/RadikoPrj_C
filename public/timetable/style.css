@@ -144,8 +144,11 @@
           min-width: unset;
           letter-spacing: unset;
           transition: unset;
-          line-height: unset; }
+          line-height: unset;
+          border-radius: .25rem; }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w.mdl-button:hover {
+            background-color: #fdfdfd; }
+          .mdl-layout__content #mix-table #grid .cell .prg-card-w.mouseover {
             background-color: #fdfdfd; }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w .top {
             padding: 0 16px;

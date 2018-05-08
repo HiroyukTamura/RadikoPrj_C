@@ -187,7 +187,7 @@ class TimeTableDom {
                 const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                 const durMin = Math.round(parseInt(durSec)/60);
                 const $cardOrgin = $(
-                    '<div class="prg-card-w mdl-card shadow-sm rounded mdl-button mdl-js-button" style="flex-grow: '+ durMin +'">\n'+
+                    '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button" style="flex-grow: '+ durMin +'" prgid="'+ id +'">\n'+
                         '<div class="top"></div>\n'+
                         '<li class="mdl-list__item mdl-list__item--two-line">\n'+
                             '<span class="mdl-list__item-primary-content">\n'+
@@ -216,14 +216,28 @@ class TimeTableDom {
                 let startOpe = startM.clone();
                 let count = 0;
                 while (true) {
+
+                    if (count > 5) {
+                        console.log('count > 5');//todo エラー処理
+                        break;
+                    }
+
                     let cell;
                     let $card = $cardOrgin.clone();
                     const rowIndex = (startHour>=5 ? startHour-4 : startHour+24-4) + count;
                     cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
 
-                    if(title === '伊集院光とらじおと（１）') {
-                        console.log(title, endM.hour() - startOpe.hour(), startOpe.minute(), endM.minute());
+                    if (count > 0) {
+                        TimeTableDom.fillInTopSpace(cell, $card);
+                        $card.find('.prg-title').hide();
+                        $card.find('.mdl-list__item-sub-title').hide();
                     }
+
+                    $card.hover(function () {
+                        $('.prg-card-w[prgid="'+ id +'"]').addClass("mouseover");
+                    }, function () {
+                        $('.prg-card-w[prgid="'+ id +'"]').removeClass("mouseover");
+                    });
 
                     if (startM.hour() === endM.hour()) {
                         //ex. 12:00 ⇒ 12:40
@@ -245,7 +259,6 @@ class TimeTableDom {
                         //ex. 10:00(StartOpe) ⇒ 12:30
                         $card.css('flex-grow', 1);
                         cell.append($card);
-                        console.log('じゃあこっち');
                     } else if ((endM.hour() - startOpe.hour() === 1 && endM.minute() === 0)
                         || (endM.day() - startOpe.day() === 1 && endM.hour()+24 - startOpe.hour() === 1 && endM.minute() === 0)){
                             //ex. 11:20(StartOpe) ⇒ 12:00 || 23:55 ⇒ 0:00
@@ -257,7 +270,6 @@ class TimeTableDom {
                         let restMin = 60 - startOpe.minute();
                         $card.css('flex-grow', restMin);
                         cell.append($card);
-                        console.log('ここ');
                     }
 
                     startOpe.minute(0);
@@ -265,12 +277,23 @@ class TimeTableDom {
 
                     count++;
 
-                    if (count > 5) {
-                        console.log('count > 5');//todo エラー処理
-                        break;
-                    }
+                    TimeTableDom.fillInBottomSpace(cell, $card);
                 }
             });
         });
+    }
+
+    static fillInBottomSpace(cell, card){
+        cell.css('padding-bottom', 0);
+        card.css('margin-bottom', 0)
+            .css('border-bottom-left-radius', 0)
+            .css('border-bottom-right-radius', 0);
+    }
+
+    static fillInTopSpace(cell, card) {
+        cell.css('padding-top', 0);
+        card.css('margin-top', 0)
+            .css('border-top-left-radius', 0)
+            .css('border-top-right-radius', 0);
     }
 }
