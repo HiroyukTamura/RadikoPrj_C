@@ -155,228 +155,98 @@
             background-color: rgb(253,253,253);
           }
 
-          //height: $oneHourHeight - 8px;
-
-          //.program-card {
-          //  min-height: unset;
-          //  width: 100%;
-          //  height: 100%;
-          //  $spaceInnerCard: 16px;
-          //  display: flex;
-          //  flex-direction: column;
-            .top {
-              padding: 0 16px;
-              flex-grow: 100;
-              max-height: 48px;
-            }
-            .mdl-list__item {
+          .top {
+            padding: 0 16px;
+            flex-grow: 100;
+            max-height: 48px;
+          }
+          .mdl-list__item {
+            height: unset;
+            min-height: unset;
+            padding: 4px 8px 0 16px;
+            cursor: inherit;
+            .mdl-list__item-primary-content {
               height: unset;
-              min-height: unset;
-              padding: 4px 8px 0 16px;
-              cursor: inherit;
-              .mdl-list__item-primary-content {
-                height: unset;
-                .prg-title {
-                  padding-bottom: 4px;
-                  font-size: 15px;
-                  letter-spacing: 0;
-                }
-              }
-              .mdl-list__item-secondary-action {
-                height: unset;
-                //.prg-title {
-                //  color: $textBlack;
-                //  line-height: 20px;
-                //}
-                //.mdl-list__item-sub-title {
-                //  font-size: 14px;
-                //  color: $textBlack;
-                //  line-height: 18px;
-                //  margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-                //}
-                //.prg-cast {
-                //  margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-                //  font-size: 14px;
-                //  color: $textGray;
-                //  line-height: 18px;
-                //  overflow: hidden;
-                //  text-overflow: ellipsis;
-                //  flex-shrink: 100;
-                //}
+              .prg-title {
+                padding-bottom: 4px;
+                font-size: 15px;
+                letter-spacing: 0;
               }
             }
-            .bottom {
-              padding: 0 16px;
-              flex-grow: 100;
+            .mdl-list__item-secondary-action {
+              height: unset;
             }
-            //.mdl-card__actions {
-            //  display: flex;
-            //  justify-content: right;
-            //  padding: 2px;
-            //  .mdl-button {
-            //    $btnSize: 24px;
-            //    height: $btnSize;
-            //    width: $btnSize;
-            //    min-width: $btnSize;
-            //    @include buttonInterval;
-            //  }
-            //}
-          //}
+          }
+          .bottom {
+            padding: 0 16px;
+            flex-grow: 100;
+          }
         }
       }
     }
-    > div {
-      //table {
-      //  display: none;
-      //  border: none;
-      //  border-spacing: 0;
-      //  border-collapse: collapse;
-      //  padding: 0;
-      //  thead {
-      //    .left-top {
-      //      height: 48px;//tab-rowの高さ準拠(MDL)
-      //    }
-      //  }
-      //  tr {
-      //    th {
-      //      padding: 0;
-      //      > div {
-      //        width: $columnWidth/4;
-      //        margin-right: $columnWidth/4;
-      //        text-align: center;
-      //        vertical-align: center;
-      //      }
-      //    }
-      //    td {
-      //      padding: 0;
-      //      height: 100%;
-      //      >.cell-in {
-      //        width: $columnWidth;
-      //        min-height: $columnWidth;
-      //        height: 100%;
-      //        display: flex;
-      //        flex-direction: column;
-      //        .prg-card-w {
-      //          $space: 4px 8px;
-      //          padding: $space;
-      //          //height: $oneHourHeight - 8px;
-      //          flex-grow: 0;
-      //          .program-card {
-      //            min-height: unset;
-      //            width: 100%;
-      //            height: 100%;
-      //            $spaceInnerCard: 16px;
-      //            display: flex;
-      //            flex-direction: column;
-      //            .prg-title {
-      //              color: $textBlack;
-      //              margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-      //              line-height: 20px;
-      //            }
-      //            .prg-time {
-      //              font-size: 14px;
-      //              color: $textBlack;
-      //              line-height: 18px;
-      //              margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-      //            }
-      //            .prg-cast {
-      //              margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-      //              font-size: 14px;
-      //              color: $textGray;
-      //              line-height: 18px;
-      //              overflow: hidden;
-      //              text-overflow: ellipsis;
-      //              flex-shrink: 100;
-      //            }
-      //            .mdl-card__actions {
-      //              display: flex;
-      //              justify-content: right;
-      //              .mdl-button {
-      //                @include buttonInterval;
-      //              }
-      //            }
-      //          }
-      //        }
-      //      }
-      //    }
-      //  }
-      //}
-      //> div {
-      //  position: relative;
-      //  .column-head {
-      //    width: $columnWidth/4;
-      //    margin-right: $columnWidth/4;
-      //    position: fixed;
-      //    background: white;
-      //    z-index: 2;//MDLのCardはz-index=1
-      //    overflow-y: auto;
-      //    .cell {
-      //      width: $columnWidth/4;
-      //      height: $oneHourHeight;
-      //      display: flex;
-      //      justify-content: center;
-      //      align-items: center;
-      //      span {
-      //
-      //      }
-      //    }
-      //  }
-      //  .page-content {
-      //    position: absolute;
-      //    left: $columnWidth/2;
-      //    display: flex;
-      //    .column {
-      //      flex-grow: 1;
-      //      min-width: $columnWidth;
-      //      height: 24 * $oneHourHeight;
-      //      display: flex;
-      //      flex-direction: column;
-      //      padding-top: $oneHourHeight/2;
-      //      .prg-card-w {
-      //        $space:4px 8px;
-      //        padding: $space;
-      //        //height: $oneHourHeight - 8px;
-      //        flex-grow: 0;
-      //
-      //        .program-card {
-      //          min-height: unset;
-      //          width: 100%;
-      //          height: 100%;
-      //          $spaceInnerCard:16px;
-      //          display: flex;
-      //          flex-direction: column;
-      //          .prg-title {
-      //            color: $textBlack;
-      //            margin: $spaceInnerCard $spaceInnerCard 4px $spaceInnerCard;
-      //            line-height: 20px;
-      //          }
-      //          .prg-time {
-      //            font-size: 14px;
-      //            color: $textBlack;
-      //            line-height: 18px;
-      //            margin: 0 $spaceInnerCard 8px $spaceInnerCard;
-      //          }
-      //          .prg-cast {
-      //            margin: 0 $spaceInnerCard $spaceInnerCard $spaceInnerCard;
-      //            font-size: 14px;
-      //            color: $textGray;
-      //            line-height: 18px;
-      //            overflow: hidden;
-      //            text-overflow: ellipsis;
-      //            flex-shrink: 100;
-      //          }
-      //          .mdl-card__actions {
-      //            display: flex;
-      //            justify-content: right;
-      //            .mdl-button {
-      //              @include buttonInterval;
-      //            }
-      //          }
-      //        }
-      //      }
-      //    }
-      //  }
-      //}
+  }
+}
+
+.mdl-dialog {
+  width: unset;
+  max-width: 80%;
+  $horizontalPad: 36px;
+  padding: 36px;
+  >div {
+    .header {
+      display: flex;
+      .title {
+        font-size: 2.2em;
+        flex-grow: 100;
+        height: 48px;
+        vertical-align: middle;
+        margin: 0;
+      }
+      .station-logo {
+        height: 48px;
+        width: auto;
+        display: block;
+        margin-left: 24px;
+      }
+    }
+    .cont-top {
+      margin: 24px 0;
+      padding-top: 24px;
+      display: flex;
+      justify-content: left;
+      width: fit-content;
+      .prg-logo {
+        display: block;
+        height: 200px;
+        margin: 0 24px;
+      }
+      >div {
+        color: $textBlack;
+        padding-top: 1rem;
+        >p {
+          font-size: 16px;
+          line-height: 22px;
+        }
+      }
+    }
+    .cont-middle {
+      padding: 0 16px;
+    }
+  }
+
+  .mdl-dialog__actions {
+    button {
+      width: 80%;
+      margin: 24px 0 auto;
+      color: white;
+      height: 52px;
+      vertical-align: middle;
+      text-align: center;
+      font-size: 20px;
+      background-color: $primaryBlue;
+      i {
+        margin-right: 1em;
+      }
     }
   }
 }

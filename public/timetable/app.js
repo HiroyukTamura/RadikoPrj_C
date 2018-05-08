@@ -4,18 +4,18 @@ window.onload = function() {
     console.log('onload');
     const domFrame = new DomFrame();
     domFrame.init();
-    const self = this;
 
-    const ereaChecker = new EreaChecker();
-    ereaChecker.check().then((ereaId => {
-        return new ProgramListGetter(ereaId).request();
-    })).then((data) => {
-        new TimeTableDom(data).init();
-        domFrame.scrollTopOffset();
-    }).catch(err => {
-        //todo エラー処理
-        console.log(err);
-    });
+    // const ereaChecker = new EreaChecker();
+    // ereaChecker.check().then((ereaId => {
+    //     return new ProgramListGetter(ereaId).request();
+    // })).then((data) => {
+    //     new TimeTableDom(data).init();
+    //     domFrame.scrollTopOffset();
+    // }).catch(err => {
+    //     //todo エラー処理
+    //     console.log(err);
+    // });
+    $('dialog')[0].show();
 };
 
 class DomFrame {
@@ -198,20 +198,6 @@ class TimeTableDom {
                         '<div class="bottom"></div>\n'+
                     '</div>'
                 );
-                // let rowIndex = startHour-5+1;//1始まり
-                // if (rowIndex<0)
-                //     rowIndex += 24;
-                // const cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
-                // cell.append(cardHtml);
-
-                // if (endHour !== startHour) {
-                //     cell.css('padding-bottom', 0);
-                // }
-                // let limit = (endHour<5 ? endHour : endHour+24) - startHour;
-                // for (let k = 1; k < limit; k++) {
-                //     const cellExtra = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ (rowIndex+k) +'"]');
-                //     cell.css('padding-top', 0);
-                // }
 
                 let startOpe = startM.clone();
                 let count = 0;
