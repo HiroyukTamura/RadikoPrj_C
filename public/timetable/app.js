@@ -2,24 +2,55 @@ console.log('js読み込み');
 
 window.onload = function() {
     console.log('onload');
-    const tabBar = $('.mdl-layout__tab-bar');
-    $('.mdl-layout__content').scroll(function () {
-        console.log('スクロール発火');
-        const left = $(this).scrollLeft();
-        tabBar.scrollLeft(left);
-        //x軸方向にスクロール
-    });
+    const domFrame = new DomFrame();
+    domFrame.init();
+    const self = this;
 
     const ereaChecker = new EreaChecker();
     ereaChecker.check().then((ereaId => {
         return new ProgramListGetter(ereaId).request();
     })).then((data) => {
         new TimeTableDom(data).init();
+        domFrame.scrollTopOffset();
     }).catch(err => {
         //todo エラー処理
         console.log(err);
-    })
+    });
 };
+
+class DomFrame {
+    constructor(){
+        this.tabBar = $('.mdl-layout__tab-bar');
+        this.$root =  $('.mdl-layout__content');
+        this.$header = $('#header-table-out > span');
+        this.headerWid = this.$header.width()/2;
+        this.$footer = $('#footer-table-out > span');
+        this.footerWid = this.$footer.width()/2;
+    }
+
+    init() {
+        const self = this;
+        this.$root.scroll(function () {
+            self.centerHeadAndFoot(this.$root);
+        });
+        $(window).resize(function() {
+            self.centerHeadAndFoot(this.$root);
+        });
+    }
+
+    centerHeadAndFoot() {
+        console.log('スクロール発火');
+        const left = this.$root.scrollLeft();
+        this.tabBar.scrollLeft(left);
+        const offset = $(window).width()/2 + left;
+        this.$header.css('left', offset - this.headerWid);
+        this.$footer.css('left', offset - this.footerWid);
+    }
+
+    scrollTopOffset(){
+        this.$root.scrollTop(72);
+    }
+}
 
 class ProgramListGetter {
     constructor(ereaId){
@@ -119,14 +150,24 @@ class TimeTableDom {
 
     inputCards() {
         console.log(this.$stations);
+        const tabBar = $('.mdl-layout__tab-bar');
+
         this.$stations.each((i, ele) => {
             const id = $(ele).attr('id');
             const name = $(ele).find('name').html();
             const progs = $(ele).find('progs');
             const ymd = progs.find('date').html();
-            const canRec = $(ele).find('failed_record');
+            const canRec = $(ele).find('failed_record').html();
             if (canRec != 0)
                 console.log(canRec);
+
+            const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
+            const html = $(
+                '<a href="#" class="mdl-layout__tab" id="'+ id +'">\n' +
+                    '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
+                '</a>');
+            tabBar.append(html);
+
             progs.find('prog').each((j, ele)=> {
                 const id = $(ele).attr('id');
                 const ft = $(ele).attr('ft');

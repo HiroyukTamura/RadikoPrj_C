@@ -71,14 +71,19 @@
   #mix-table {
     width: fit-content;
     #header-table-out, #footer-table-out{
-      height: 96px;
+      height: 72px;
+      background-color: $secondaryBlue;
       position: relative;
       >span {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
         font-size: 24px;
+        color: $primaryBlue;
         //leftはJS側で動的にセットする
+        > i {
+          margin: 0 1em;
+        }
       }
     }
     #grid {

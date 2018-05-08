@@ -57,13 +57,17 @@
   .mdl-layout__content #mix-table {
     width: fit-content; }
     .mdl-layout__content #mix-table #header-table-out, .mdl-layout__content #mix-table #footer-table-out {
-      height: 96px;
+      height: 72px;
+      background-color: #e2f4f9;
       position: relative; }
       .mdl-layout__content #mix-table #header-table-out > span, .mdl-layout__content #mix-table #footer-table-out > span {
         position: absolute;
         top: 50%;
         transform: translateY(-50%);
-        font-size: 24px; }
+        font-size: 24px;
+        color: #00a7e9; }
+        .mdl-layout__content #mix-table #header-table-out > span > i, .mdl-layout__content #mix-table #footer-table-out > span > i {
+          margin: 0 1em; }
     .mdl-layout__content #mix-table #grid {
       display: grid; }
       .mdl-layout__content #mix-table #grid .cell {
