@@ -98,6 +98,7 @@ let vpnJson;
 let postGotJsons;
 
 const RADIKO_URL = 'http://radiko.jp/#!/ts/TBS/20180427180000';
+const HTML_PATH = 'public/timetable/index.html';
 
 console.log = function (...val) {
     const vals = val.join(' ') + '\n';
@@ -111,14 +112,23 @@ let win;//グローバルにしないとGCに回収されてウィンドウが�
 function createWindow () {
     // Create the browser window.
     console.log('createWindow');
-    win = new BrowserWindow({width: 800, height: 600});
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            nodeIntegration: false,
+            webSecurity: false
+        }
+    });
 
     // and load the index.html of the app.
-    // win.loadURL(url.format({
-    //     pathname: path.join(__dirname, 'index.html'),
-    //     protocol: 'file:',
-    //     slashes: true
-    // }));
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, HTML_PATH),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -131,7 +141,7 @@ function createWindow () {
     // masterJson.requestJson();
     // vpnJson = new GateVpnCsv();
     // vpnJson.requestCsv();
-    new PuppeteerOperator().getRegionWithPuppeteer();
+    // new PuppeteerOperator().getRegionWithPuppeteer();
 }
 
 app.on('ready', createWindow);
@@ -241,7 +251,7 @@ class StationListScraper extends AbstractScraper {
 
     onGetWebPage(data){
         const stations = data['stations']['station'];
-        const $ = cheerio.load(fs.readFileSync('index.html'));
+        const $ = cheerio.load(fs.readFileSync(HTML_PATH));
 
         $('.head-td').attr('colspan', stations.length);
         const tabBar = $('.mdl-layout__tab-bar');
@@ -252,7 +262,7 @@ class StationListScraper extends AbstractScraper {
             const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
             const html = '<a href="#" class="mdl-layout__tab" id="'+ id +'"><img src="'+ logoUrl +'" alt="'+ name +'"></a>';
             tabBar.append(html);
-            fs.writeFile('index.html', $.html() , function (err) {
+            fs.writeFile(HTML_PATH, $.html() , function (err) {
                 if (err) {
                     //todo エラー処理
                     console.log(err);
@@ -289,7 +299,7 @@ class ProgramScraper extends AbstractScraper{
         console.warn('ProgramScraper', 'onGetWebPage');
         const arr =  data['radiko']['stations'][0]['station'];
         // console.log(JSON.stringify(arr));
-        const $ = cheerio.load(fs.readFileSync('index.html'));
+        const $ = cheerio.load(fs.readFileSync(HTML_PATH));
         const $parent = $('#mix-table');
 
         //#gridを初期化
@@ -379,14 +389,15 @@ class ProgramScraper extends AbstractScraper{
 
         let html = $.html();
         html = html.splice(html.indexOf('id="grid"'), 0, 'style="grid-template-areas:'+ str +'; grid-template-columns: '+ columnsStr +'"; ');
-        fs.writeFile('index.html', html , function (err) {
+        fs.writeFile(HTML_PATH, html , function (err) {
             if (err) {
                 //todo エラー処理
                 console.log(err);
             } else {
                 //todo イベント発火
+                console.warn('！！イベント発火！！');
                 win.loadURL(url.format({
-                    pathname: path.join(__dirname, 'index.html'),
+                    pathname: path.join(__dirname, HTML_PATH),
                     protocol: 'file:',
                     slashes: true
                 }));
