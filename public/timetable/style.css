@@ -45,7 +45,8 @@
     width: unset;
     padding-left: 129px; }
     .mdl-layout__tab-bar-container #header-2nd-row .mdl-layout__tab {
-      width: 258px; }
+      width: 258px;
+      display: none; }
       .mdl-layout__tab-bar-container #header-2nd-row .mdl-layout__tab img {
         height: 48px;
         width: auto; }
@@ -53,7 +54,8 @@
     display: none; }
 
 .mdl-layout__content {
-  overflow: auto; }
+  overflow: auto;
+  position: relative; }
   .mdl-layout__content::-webkit-scrollbar {
     width: 8px;
     height: 8px; }
@@ -63,7 +65,14 @@
   .mdl-layout__content::-webkit-scrollbar-thumb {
     background-color: #00a7e9;
     border-radius: 8px; }
+  .mdl-layout__content .mdl-spinner {
+    position: absolute;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%); }
   .mdl-layout__content #mix-table {
+    display: none;
     width: fit-content; }
     .mdl-layout__content #mix-table #header-table-out, .mdl-layout__content #mix-table #footer-table-out {
       height: 72px;
@@ -217,7 +226,9 @@
         .mdl-dialog > div .cont-top > div.right-box {
           margin-left: 56px; }
         .mdl-dialog > div .cont-top > div .prg-logo {
-          height: 200px; }
+          height: 200px;
+          width: 320px;
+          background-color: #e2f4f9; }
         .mdl-dialog > div .cont-top > div button {
           width: 300px;
           margin: 24px 0;

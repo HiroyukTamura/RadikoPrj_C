@@ -11,6 +11,7 @@ window.onload = function() {
     })).then((data) => {
         new TimeTableDom(data).init();
         domFrame.scrollTopOffset();
+        domFrame.show();
     }).catch(err => {
         //todo エラー処理
         console.log(err);
@@ -25,6 +26,9 @@ class DomFrame {
         this.headerWid = this.$header.width()/2;
         this.$footer = $('#footer-table-out > span');
         this.footerWid = this.$footer.width()/2;
+        this.$timeTable =$('#mix-table');
+        this.$spinner = $('.mdl-spinner');
+        this.$mdlTabs =$('.mdl-layout__tab');
     }
 
     init() {
@@ -48,6 +52,18 @@ class DomFrame {
 
     scrollTopOffset(){
         this.$root.scrollTop(72);
+    }
+
+    show(){
+        this.$spinner.removeClass('is-active');
+        this.$timeTable.show();
+        this.$mdlTabs.show();
+    }
+
+    removeAllDoms(){
+        this.$timeTable.hide();
+        this.$spinner.addClass('is-active');
+        this.$mdlTabs.remove();
     }
 }
 
@@ -325,10 +341,10 @@ class TimeTableDom {
            const hp = $(this).find('.info_group .url').html();
            const prgId = $(this).attr('prgid');
 
+           self.$dialog.find('.prg-logo').removeAttr('src').attr('src', img);
            self.$dialog.find('.title').html(html);
            self.$dialog.find('.performer').html(pfm);
            self.$dialog.find('.hp a').html(hp);
-           self.$dialog.find('.prg-logo').attr('src', img);
            if (desc)
                self.$dialog.find('.desc').append(TimeTableDom.wrapHtml(desc));
            self.$dialog.find('.info').html(TimeTableDom.wrapHtml(info));

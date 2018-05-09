@@ -55,6 +55,7 @@
     padding-left: $columnWidth/2;
     .mdl-layout__tab {
       width: $columnWidth; //28pxはMDL準拠
+      display: none;
       img {
         height: 48px;
         width: auto;
@@ -68,8 +69,14 @@
 
 .mdl-layout__content {
   @include scrollbarStyle(8px);
-  overflow: auto; //これで、スクロールバーを消せばOKのはず
+  overflow: auto;
+  position: relative;
+  .mdl-spinner {
+    position: absolute;
+    @include centerAbs;
+  }
   #mix-table {
+    display: none;
     width: fit-content;
     #header-table-out, #footer-table-out{
       height: 72px;
@@ -246,6 +253,8 @@
         }
         .prg-logo {
           height: 200px;
+          width: 320px;
+          background-color: $secondaryBlue;
         }
 
         button {
