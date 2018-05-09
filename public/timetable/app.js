@@ -101,11 +101,14 @@ class EreaChecker {
 
 class TimeTableDom {
     constructor(data){
+        this.WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'];
         this.data = data;
         this.columnWidth = 258;//px scssより引用
         this.$stations = $(data).find('stations station');
         this.$grid = $('#grid');
         this.$dialog = $('.mdl-dialog');
+        this.$calendarMenu = $('#calendar-menu');
+        this.currentM = moment();
         if (!this.$dialog[0].showModal) {
             dialogPolyfill.registerDialog(this.$dialog[0]);
         }
@@ -115,7 +118,9 @@ class TimeTableDom {
         this.setGridCss();
         this.setGridCells();
         this.inputCards();
+        this.initDateMenu();
         this.setListener();
+        Util.setElementAsMdl($(document));
     }
 
     setGridCss(){
@@ -155,21 +160,27 @@ class TimeTableDom {
     inputCards() {
         console.log(this.$stations);
         const tabBar = $('.mdl-layout__tab-bar');
+        const stationMenu = $('#station-menu');
+        const self = this;
 
         this.$stations.each((i, ele) => {
             const id = $(ele).attr('id');
             const name = $(ele).find('name').html();
             const progs = $(ele).find('progs');
             const ymd = progs.find('date').html();
+            this.currentM = moment(ymd, 'YYYYMMDD');
             // const canRec = $(ele).find('failed_record').html();
 
             //Tabbarの画像をセット
             const logoUrl = 'http://radiko.jp/station/logo/'+ id +'/logo_medium.png';
             const html = $(
-                '<a href="#" class="mdl-layout__tab" id="'+ id +'">\n' +
+                '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ id +'">\n' +
                     '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
                 '</a>');
             tabBar.append(html);
+
+            const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ id +'">'+ name +'</li>');
+            stationMenu.append(menuLi);
 
             progs.find('prog').each((j, ele)=> {
                 const id = $(ele).attr('id');
@@ -190,10 +201,10 @@ class TimeTableDom {
                 const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                 const durMin = Math.round(parseInt(durSec)/60);
                 const $cardOrgin = $(
-                    '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button" style="flex-grow: '+ durMin +'" prgid="'+ id +'">\n'+
+                    '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button mdl-pre-upgrade" style="flex-grow: '+ durMin +'" prgid="'+ id +'">\n'+
                         '<div class="top"></div>\n'+
-                        '<li class="mdl-list__item mdl-list__item--two-line">\n'+
-                            '<span class="mdl-list__item-primary-content">\n'+
+                        '<li class="mdl-list__item mdl-list__item--two-line mdl-pre-upgrade">\n'+
+                            '<span class="mdl-list__item-primary-content mdl-pre-upgrade">\n'+
                                 '<span class="prg-title">'+ title +'</span>\n'+
                                 '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
                             '</span>\n'+
@@ -338,6 +349,24 @@ class TimeTableDom {
         $('.cancel-btn').on('click', function () {
             self.$dialog[0].close();
         });
+        $('#header-table-out').on('click', function () {
+
+        });
+        $('#footer-table-out').on('click', function () {
+
+        });
+        $('#calendar-menu .mdl-menu__item').on('click', function () {
+            console.log($(this).attr('id'));
+            if ($(this).prop('disabled'))
+                return false;
+            $(this).parents('.mdl-menu__container').removeClass('is-visible');
+        });
+        $('#station-menu .mdl-menu__item').on('click', function () {
+            console.log($(this).attr('station'));
+            if ($(this).prop('disabled'))
+                return false;
+            $(this).parents('.mdl-menu__container').removeClass('is-visible');
+        });
     }
 
     static unescapeHTML(str) {
@@ -369,4 +398,31 @@ class TimeTableDom {
         } while (str !== result);
         return result;
     };
+
+    initDateMenu(){
+        const momentOpe = this.currentM.clone();
+
+        for (let i = 0; i < 7; i++) {
+            let val = momentOpe.format('M/D') +'('+ this.WEEK_DAYS[momentOpe.day()] +')';
+            const disabled = i === 0 ? 'disabled' : '';
+            const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" '+ disabled +' date="'+ momentOpe.format('YYYYMMDD') +'">'+ val +'</li>');
+            this.$calendarMenu.prepend(menuLi);
+            momentOpe.add(-1, 'd');
+        }
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

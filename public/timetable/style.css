@@ -68,7 +68,8 @@
     .mdl-layout__content #mix-table #header-table-out, .mdl-layout__content #mix-table #footer-table-out {
       height: 72px;
       background-color: #e2f4f9;
-      position: relative; }
+      position: relative;
+      cursor: pointer; }
       .mdl-layout__content #mix-table #header-table-out > span, .mdl-layout__content #mix-table #footer-table-out > span {
         position: absolute;
         top: 50%;
