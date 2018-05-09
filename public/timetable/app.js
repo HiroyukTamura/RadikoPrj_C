@@ -319,8 +319,9 @@ class TimeTableDom {
            self.$dialog.find('.performer').html(pfm);
            self.$dialog.find('.hp a').html(hp);
            self.$dialog.find('.prg-logo').attr('src', img);
-           self.$dialog.find('.desc').html(TimeTableDom.unescapeHTML(desc));
-           self.$dialog.find('.info').html(TimeTableDom.unescapeHTML(info));
+           if (desc)
+               self.$dialog.find('.desc').append(TimeTableDom.wrapHtml(desc));
+           self.$dialog.find('.info').html(TimeTableDom.wrapHtml(info));
 
            if (!self.$dialog.prop('open'))
                self.$dialog[0].showModal();
@@ -341,12 +342,32 @@ class TimeTableDom {
     }
 
     static unescapeHTML(str) {
-        let div = document.createElement("div");
-        div.innerHTML = str.replace(/</g,"&lt;")
-            .replace(/>/g,"&gt;")
-            .replace(/ /g, "&nbsp;")
-            .replace(/\r/g, "&#13;")
-            .replace(/\n/g, "&#10;");
-        return div.textContent || div.innerText;
+        // let div = document.createElement("div");
+        // return str.replace(/</g,"&lt;")
+        //     .replace(/>/g,"&gt;")
+        //     .replace(/ /g, "&nbsp;")
+        //     .replace(/\r/g, "&#13;")
+        //     .replace(/\n/g, "&#10;");
+        let s = this.replaceAll(str, "&gt;", '>');
+        s = this.replaceAll(s, "&lt;", '<');
+        s = this.replaceAll(s, '&nbsp;', ' ');
+        s = this.replaceAll(s, "&#13;", '\r');
+        s = this.replaceAll(s, "&#10;", '\n');
+
+        return s;
+        // return div.textContent || div.innerText;
     }
+
+    static wrapHtml(str){
+        return $('<span>').html(this.unescapeHTML(str));
+    }
+
+    static replaceAll(str, before, after) {
+        let result = str;
+        do {
+            str = result;
+            result = str.replace(before, after);
+        } while (str !== result);
+        return result;
+    };
 }
