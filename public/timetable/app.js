@@ -202,21 +202,17 @@
                 self.$dialog.find('.title').html(html);
                 self.$dialog.find('.performer').html(pfm);
                 self.$dialog.find('.hp a').html(hp);
-                if (desc)
-                    self.$dialog.find('.desc').append(TimeTableDom.wrapHtml(desc));
-                self.$dialog.find('.info').html(TimeTableDom.wrapHtml(info));
+                self.$dialog.find('.desc')
+                    .empty()
+                    .append(TimeTableDom.wrapHtml(desc));
+                self.$dialog.find('.info')
+                    .empty()
+                    .html(TimeTableDom.wrapHtml(info));
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
                 return false;
             });
-        }
-
-        onSwapDate(){
-            this.setGridCss();
-            this.setGridCells();
-            this.inputCards();
-            Util.setElementAsMdl($(document));
         }
     }
 
@@ -363,23 +359,23 @@
                     const durMin = Math.round(parseInt(durSec)/60);
                     const $cardOrgin = $(
                         '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button mdl-pre-upgrade" style="flex-grow: '+ durMin +'" prgid="'+ id +'">\n'+
-                        '<div class="top"></div>\n'+
-                        '<li class="mdl-list__item mdl-list__item--two-line mdl-pre-upgrade">\n'+
-                        '<span class="mdl-list__item-primary-content mdl-pre-upgrade">\n'+
-                        '<span class="prg-title">'+ title +'</span>\n'+
-                        '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
-                        '</span>\n'+
-                        '</li>\n'+
-                        '<div class="bottom"></div>\n'+
-                        '<div class="info_group">\n'+
-                        '<span class="url">'+ url +'</span>\n'+
-                        '<span class="info">'+ info +'</span>\n'+
-                        '<span class="desc">'+ desc +'</span>\n'+
-                        '<span class="pfm">'+ pfm +'</span>\n'+
-                        '<span class="img">'+ img +'</span>\n'+
-                        '<span class="ft">'+ ft +'</span>\n'+
-                        '<span class="to">'+ to +'</span>\n'+
-                        '</div>\n'+
+                            '<div class="top"></div>\n'+
+                            '<li class="mdl-list__item mdl-list__item--two-line mdl-pre-upgrade">\n'+
+                                '<span class="mdl-list__item-primary-content mdl-pre-upgrade">\n'+
+                                '<span class="prg-title">'+ title +'</span>\n'+
+                                '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
+                                '</span>\n'+
+                            '</li>\n'+
+                            '<div class="bottom"></div>\n'+
+                            '<div class="info_group">\n'+
+                                '<span class="url">'+ url +'</span>\n'+
+                                '<span class="info">'+ info +'</span>\n'+
+                                '<span class="desc">'+ desc +'</span>\n'+
+                                '<span class="pfm">'+ pfm +'</span>\n'+
+                                '<span class="img">'+ img +'</span>\n'+
+                                '<span class="ft">'+ ft +'</span>\n'+
+                                '<span class="to">'+ to +'</span>\n'+
+                            '</div>\n'+
                         '</div>'
                     );
 
@@ -388,7 +384,7 @@
                     while (true) {
 
                         if (count > 5) {
-                            console.log('count > 5');//todo エラー処理
+                            console.log('count > 10');//todo エラー処理
                             break;
                         }
 
