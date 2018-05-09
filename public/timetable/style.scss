@@ -56,7 +56,7 @@
     .mdl-layout__tab {
       width: $columnWidth; //28pxはMDL準拠
       img {
-        height: 40px;
+        height: 48px;
         width: auto;
       }
     }
@@ -67,6 +67,7 @@
 }
 
 .mdl-layout__content {
+  @include scrollbarStyle(8px);
   overflow: auto; //これで、スクロールバーを消せばOKのはず
   #mix-table {
     width: fit-content;

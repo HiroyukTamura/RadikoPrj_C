@@ -161,11 +161,10 @@ class TimeTableDom {
             const name = $(ele).find('name').html();
             const progs = $(ele).find('progs');
             const ymd = progs.find('date').html();
-            const canRec = $(ele).find('failed_record').html();
-            if (canRec != 0)
-                console.log(canRec);
+            // const canRec = $(ele).find('failed_record').html();
 
-            const logoUrl = 'https://radiko.jp/v2/static/station/logo/'+ id +'/lrtrim/224x100.png';/*todo urlを決め打ちしているので、url変更時にロゴ取得失敗の可能性*/
+            //Tabbarの画像をセット
+            const logoUrl = 'http://radiko.jp/station/logo/'+ id +'/logo_medium.png';
             const html = $(
                 '<a href="#" class="mdl-layout__tab" id="'+ id +'">\n' +
                     '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
