@@ -191,12 +191,16 @@
 }
 
 .mdl-dialog {
-  width: unset;
-  max-width: 80%;
+  width: 744px;
+  height: 80%;
+  padding: 0;
   $horizontalPad: 36px;
-  padding: 36px;
   position: relative;
   >div {
+    padding: 36px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
     .header {
       display: flex;
       margin-left: 16px;
@@ -215,47 +219,57 @@
       }
     }
     .cont-top {
-      margin: 24px 0 24px 24px;
+      margin: 24px;
       display: flex;
-      justify-content: center;
-      .prg-logo {
-        display: block;
-        height: 200px;
-        margin: 0 48px 0 24px;
-      }
-      a{
-        text-decoration: none;
-        color: $textBlack;
-        &:hover {
-          color: $primaryBlue;
-        }
-      }
-
-      button {
-        margin: 24px 0;
-        color: white;
-        height: 52px;
-        padding: 0 36px;
-        vertical-align: middle;
-        text-align: center;
-        font-size: 20px;
-        background-color: $primaryBlue;
-        i {
-          margin-right: 1em;
-        }
-      }
-
       >div {
-        color: $textBlack;
-        padding-top: 1rem;
-        >p {
-          font-size: 16px;
-          line-height: 22px;
+        width: 320px;
+        &.right-box {
+          margin-left: 56px;
+        }
+        &.left-box {
+
+        }
+        .prg-logo {
+          height: 200px;
+        }
+        a{
+          text-decoration: none;
+          color: $textBlack;
+          &:hover {
+            color: $primaryBlue;
+          }
+        }
+
+        button {
+          width: 300px;
+          margin: 24px 0;
+          color: white;
+          height: 52px;
+          padding: 0 36px;
+          vertical-align: middle;
+          text-align: center;
+          font-size: 20px;
+          background-color: $primaryBlue;
+          i {
+            margin-right: 1em;
+          }
+        }
+
+        >div {
+          color: $textBlack;
+          padding-top: 1rem;
+          >p {
+            font-size: 16px;
+            line-height: 22px;
+          }
         }
       }
     }
     .cont-middle {
-      padding: 0 16px;
+      padding: 32px 16px 0 16px;
+      >div {
+        padding-bottom: 24px;
+      }
     }
   }
 
@@ -286,11 +300,12 @@
     right: -$cancelSize/2 +1;
     background-color: $primaryBlue;
     color: white;
-    display: flex;
+    //display: flex;
     justify-content: center;
     align-items: center;
     border: none;
     cursor: pointer;
+    display: none;
   }
 
   .ui-helper-hidden-accessible {

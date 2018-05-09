@@ -319,8 +319,8 @@ class TimeTableDom {
            self.$dialog.find('.performer').html(pfm);
            self.$dialog.find('.hp a').html(hp);
            self.$dialog.find('.prg-logo').attr('src', img);
-           self.$dialog.find('.desc').append(desc);
-           self.$dialog.find('.info').append(info);
+           self.$dialog.find('.desc').html(TimeTableDom.unescapeHTML(desc));
+           self.$dialog.find('.info').html(TimeTableDom.unescapeHTML(info));
 
            if (!self.$dialog.prop('open'))
                self.$dialog[0].showModal();
@@ -338,5 +338,15 @@ class TimeTableDom {
         $('.cancel-btn').on('click', function () {
             self.$dialog[0].close();
         });
+    }
+
+    static unescapeHTML(str) {
+        let div = document.createElement("div");
+        div.innerHTML = str.replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;")
+            .replace(/ /g, "&nbsp;")
+            .replace(/\r/g, "&#13;")
+            .replace(/\n/g, "&#10;");
+        return div.textContent || div.innerText;
     }
 }
