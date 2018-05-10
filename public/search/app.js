@@ -3,6 +3,8 @@
 !function () {
     let conductor;
     let searchDom;
+    let startDropDown;
+    let endDropDown;
     window.onload = function () {
         conductor = new Conductor();
         conductor.init();
@@ -24,8 +26,13 @@
 
         initializeSearchBar(){
             this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
-            this.momentOpe.add(-1, 'd');
-            this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
+            startDropDown = new StartDropDown('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn', this.momentOpe)
+                .init()
+                .setOnDateSelected();
+            endDropDown = new EndDropDown('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn', this.momentOpe)
+                .init()
+                .setOnDateSelected();
+            // this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
             this.initKeyInput();
             this.setOnClickBtnListener();
         }
@@ -46,15 +53,6 @@
                 this.momentOpe.add(1, 'd');
             }//この時点でmomentOpeは初期状態+1日となる
 
-            $dateMenuItem.on('click', function () {
-                $menuContainer.removeClass('is-visible')
-                    .find('.is-selected')
-                    .removeAttr('disabled')
-                    .removeClass('is-selected');
-                $(this).attr('disabled', true)
-                    .addClass('is-selected');
-                $dateInput.val($(this).html());
-            });
             $dateInput.on('click', function () {
                 $dpBtn.click();
                 return false;
@@ -80,8 +78,86 @@
                 const val = this.$keyInput.val();
                 if (!val.length)
                     return false;
-
             });
+            return this;
+        }
+    }
+
+    class DropDown {
+        constructor(menuItemSel, menuContSel, inputSel, btnSel, moment){
+            this.$dateMenuItem =$(menuItemSel);
+            this.$menuContainer = $(menuContSel);
+            this.$dateInput =$(inputSel);
+            this.$dpBtn = $(btnSel);
+            this.momentOpe = moment.clone()
+        }
+        init(){
+            const self = this;
+            this.momentOpe.add(-6, 'd');
+            for (let i = 0; i < 7; i++) {
+                const val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
+                if (i === 6)
+                    this.$dateInput.val(val);
+                const ymd = this.momentOpe.format('YYYYMMDD');
+                this.$dateMenuItem.eq(i/*「全て」の分*/).attr('date', ymd).html(val);
+                this.momentOpe.add(1, 'd');
+            }//この時点でmomentOpeは初期状態+1日となる
+
+            this.$dateInput.on('click', function () {
+                self.$dpBtn.click();
+                return false;
+            });
+            return this;
+        }
+
+        setOnDateSelected(){
+            throw ('this method must override');
+        }
+
+        onDateSelectedAsDefault($selected){
+            this.$menuContainer.removeClass('is-visible')
+                .find('.is-selected')
+                .removeAttr('disabled')
+                .removeClass('is-selected');
+            $selected.attr('disabled', true)
+                .addClass('is-selected');
+            this.$dateInput.val($selected.html());
+        }
+
+        getDateMenuItem(){
+            return this.$dateMenuItem;
+        }
+    }
+
+    class StartDropDown extends DropDown {
+        setOnDateSelected(){
+            const self = this;
+            this.getDateMenuItem().on('click', function () {
+                self.onDateSelectedAsDefault($(this));
+                const index = $(this).index();
+                const selectedEnd = endDropDown.getDateMenuItem().parent().find('.is-selected');
+                if (index > selectedEnd.index()) {
+                    endDropDown.getDateMenuItem().eq(index).click();
+                }
+                for (let i = 0; i < 7; i++) {
+                    if (i < index) {
+                        endDropDown.getDateMenuItem().eq(i).hide();
+                    } else {
+                        endDropDown.getDateMenuItem().eq(i).show();
+                    }
+                }
+            });
+            return this;
+        }
+    }
+
+    class EndDropDown extends DropDown {
+        setOnDateSelected(){
+            const self = this;
+            this.getDateMenuItem().on('click', function () {
+                self.onDateSelectedAsDefault($(this));
+            });
+            return this;
         }
     }
 
