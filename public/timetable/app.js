@@ -4,13 +4,21 @@
     let ereaChecker;
     let domFrame;
     let conductor;
+    let searcher;
 
     window.onload = function() {
         console.log('onload');
         ereaChecker = new EreaChecker();
         domFrame = new DomFrame();
         conductor = new OperationConductor();
+        searcher = new ProgramSearcher();
+
         conductor.initialOperate();
+        window.onclick = function (event) {
+            console.log('Im clicked' , event.clientX, event.clientY);
+            searcher.onClickWindow(event);
+            return true;
+        };
     };
 
     class OperationConductor{
@@ -30,7 +38,7 @@
             domFrame.initDateMenu();
             domFrame.setOnClickListenersForFrame();
             Util.setElementAsMdl($(document));
-            new ProgramSearcher().init();
+            searcher.init();
         }
 
         changeDate(){
@@ -500,6 +508,7 @@
             this.$dropDown = $('#suggest-drop-down');
             this.input = $('#prg-search');
         }
+
         init(){
             const self = this;
             this.input.keyup(function () {
@@ -528,9 +537,10 @@
                     self.$dropDown.append($('<div index="'+ val['action_rank'] +'">'+ val.key +'</div>'));
                 });
                 self.$dropDown.addClass('has-val');
-                self.$dropDown.find('div').on('click', function () {
-                    console.log('clicked');
-                    self.input.val($(this).html());
+                self.$dropDown.find('div').hover(function () {
+                    $(this).addClass('mouseover');
+                }, function () {
+                    $(this).removeClass('mouseover');
                 });
             })
             .fail((jqXHR, textStatus, errorThrown) =>{
@@ -546,6 +556,31 @@
                 text += possible.charAt(Math.floor(Math.random() * possible.length));
 
             return text;
+        }
+
+        onClickWindow(event){
+            if (this.$dropDown.find('.mouseover').length) {
+                console.log('!mouseover!');
+            }
+
+            // if (!this.$dropDown.hasClass('has-val'))
+            //     return true;
+            // console.log(event.pageX, event.pageY);
+            // this.$dropDown.find('div').each(i => {
+            //     const rect = this.getBoundingClientRect();
+            //     if (event.pageY <= rect.top
+            //         && event.pageY >= rect.bottom
+            //         && event.pageX <= rect.right
+            //         && event.pageX >= rect.left) {
+            //         console.log($(this).html());
+            //     }
+            // });
+            // const divs = this.$dropDown.find('div');
+            // for (let i = 0; i <divs.length; i++) {
+            //     const rect = divs.eq(i)[0].getBoundingClientRect();
+            //     console.log(rect);
+            // }
+            // return false;
         }
     }
 }();
