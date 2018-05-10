@@ -38,17 +38,27 @@
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" id="keyword">
                         <label class="mdl-textfield__label" for="keyword">キーワード</label>
-                        <span class="mdl-textfield__error">必須項目です</span>
+                        <span class="mdl-textfield__error">キーワードを入力してください</span>
                     </div>
                 </form>
 
-                <form action="#" id="date-form">
+                <form action="#" id="date-form" novalidate="novalidate">
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" id="date-input" value="5/4(水)">
+                        <input class="mdl-textfield__input" type="text" id="date-input" value="全て">
                         <label class="mdl-textfield__label" for="date-input"></label>
-                        <button class="mdl-button mdl-js-button mdl-button--icon">
+                        <button class="mdl-button mdl-js-button mdl-button--icon" id="dp-btn">
                             <i class="fas fa-caret-down"></i>
                         </button>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="dp-btn" id="dp-ul">
+                            <li disabled class="mdl-menu__item">全て</li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                        </ul>
                     </div>
                 </form>
 
@@ -126,5 +136,7 @@
 <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+<script src="../../dist/common.js"></script>
 <script src="app.js"></script>
 </body></html>

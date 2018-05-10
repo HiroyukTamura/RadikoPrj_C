@@ -74,7 +74,7 @@
             this.$grid =$('#grid');
             this.currentM = moment();
             this.$dialog = $('.mdl-dialog');
-            this.WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'];
+            // this.WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'];
             if (!this.$dialog[0].showModal) {
                 dialogPolyfill.registerDialog(this.$dialog[0]);
             }
@@ -161,7 +161,7 @@
             const momentOpe = domFrame.currentM.clone();
 
             for (let i = 0; i < 7; i++) {
-                let val = momentOpe.format('M/D') +'('+ this.WEEK_DAYS[momentOpe.day()] +')';
+                let val = momentOpe.format('M/D') +'('+ Util.getWeekDays()[momentOpe.day()] +')';
                 const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" date="'+ momentOpe.format('YYYYMMDD') +'">'+ val +'</li>');
                 if (i === 0)
                     menuLi.addClass('current')

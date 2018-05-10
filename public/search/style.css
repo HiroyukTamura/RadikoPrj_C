@@ -39,7 +39,8 @@
       align-items: center;
       padding: 24px 48px;
       height: fit-content;
-      min-height: unset; }
+      min-height: unset;
+      overflow: visible; }
       .mdl-layout__content #first-row .mdl-card > form {
         margin-right: 48px;
         width: 8em; }
@@ -53,6 +54,8 @@
             width: 100%; }
         .mdl-layout__content #first-row .mdl-card > form#date-form .mdl-textfield {
           position: relative; }
+          .mdl-layout__content #first-row .mdl-card > form#date-form .mdl-textfield .mdl-textfield__input {
+            cursor: pointer; }
           .mdl-layout__content #first-row .mdl-card > form#date-form .mdl-textfield .mdl-button {
             position: absolute;
             top: 50%;
@@ -60,7 +63,10 @@
             right: 4px;
             height: 28px;
             width: 28px;
-            min-width: 28px; }
+            min-width: 28px;
+            color: #00a7e9; }
+        .mdl-layout__content #first-row .mdl-card > form#date-form #dp-ul {
+          z-index: 10000; }
       .mdl-layout__content #first-row .mdl-card .btn {
         background: #00a7e9;
         color: white;
@@ -92,12 +98,13 @@
       flex-wrap: wrap;
       padding: 0 24px 72px 24px;
       width: 100%;
-      justify-content: center; }
+      align-items: center; }
       .mdl-layout__content #second-row #card-group .item {
         flex-direction: column;
         align-items: center;
         width: 300px;
-        margin: 16px; }
+        margin: 16px;
+        z-index: 0; }
         .mdl-layout__content #second-row #card-group .item .station-logo {
           height: 52px;
           width: 100%;

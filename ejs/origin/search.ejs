@@ -26,17 +26,27 @@
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" id="keyword">
                         <label class="mdl-textfield__label" for="keyword">キーワード</label>
-                        <span class="mdl-textfield__error">必須項目です</span>
+                        <span class="mdl-textfield__error">キーワードを入力してください</span>
                     </div>
                 </form>
 
-                <form action="#" id="date-form">
+                <form action="#" id="date-form" novalidate="novalidate">
                     <div class="mdl-textfield mdl-js-textfield">
-                        <input class="mdl-textfield__input" type="text" id="date-input" value="5/4(水)">
+                        <input class="mdl-textfield__input" type="text" id="date-input" value="全て">
                         <label class="mdl-textfield__label" for="date-input"></label>
-                        <button class="mdl-button mdl-js-button mdl-button--icon">
+                        <button class="mdl-button mdl-js-button mdl-button--icon" id="dp-btn">
                             <i class="fas fa-caret-down"></i>
                         </button>
+                        <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="dp-btn" id="dp-ul">
+                            <li disabled class="mdl-menu__item">全て</li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                            <li class="mdl-menu__item"></li>
+                        </ul>
                     </div>
                 </form>
 
