@@ -1,3 +1,6 @@
+.mdl-layout__header {
+  background-color: #00a7e9; }
+
 .mdl-layout__drawer {
   background: #00a7e9;
   border-right: 1px solid #00a0df; }
@@ -19,3 +22,52 @@
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
       background: white;
       color: #00a7e9; }
+
+.mdl-layout__content {
+  width: 100%;
+  height: 100%;
+  background-color: #e2f4f9; }
+  .mdl-layout__content #first-row {
+    display: flex;
+    width: 100%;
+    margin-top: 72px;
+    justify-content: center; }
+    .mdl-layout__content #first-row .mdl-card {
+      width: 80%;
+      max-width: 1000px;
+      flex-direction: row;
+      align-items: center;
+      padding: 24px 48px;
+      height: fit-content;
+      min-height: unset; }
+      .mdl-layout__content #first-row .mdl-card > form {
+        margin-right: 48px;
+        width: 8em; }
+        .mdl-layout__content #first-row .mdl-card > form .mdl-textfield__input {
+          padding: 4px 0 0 0; }
+        .mdl-layout__content #first-row .mdl-card > form .mdl-textfield__label:after {
+          bottom: 12px; }
+        .mdl-layout__content #first-row .mdl-card > form#text-form {
+          flex-grow: 5; }
+          .mdl-layout__content #first-row .mdl-card > form#text-form .mdl-textfield {
+            width: 100%; }
+        .mdl-layout__content #first-row .mdl-card > form#date-form .mdl-textfield {
+          position: relative; }
+          .mdl-layout__content #first-row .mdl-card > form#date-form .mdl-textfield .mdl-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            right: 4px;
+            height: 28px;
+            width: 28px;
+            min-width: 28px; }
+      .mdl-layout__content #first-row .mdl-card .btn {
+        background: #00a7e9;
+        color: white;
+        font-size: 18px;
+        width: unset;
+        border-radius: 2px; }
+        .mdl-layout__content #first-row .mdl-card .btn span {
+          padding: 0 36px; }
+          .mdl-layout__content #first-row .mdl-card .btn span i {
+            margin-right: .5em; }
