@@ -506,18 +506,55 @@
     class ProgramSearcher {
         constructor(){
             this.$dropDown = $('#suggest-drop-down');
-            this.input = $('#prg-search');
+            this.$input = $('#prg-search');
         }
 
         init(){
             const self = this;
-            this.input.keyup(function () {
-                console.log("keyup");
-                const key = $(this).val();
-                if (key.length)
-                    self.requestSuggestion(key);
-                else
-                    self.$dropDown.removeClass('has-val');
+            this.$input.on('keyup', function (e) {
+                console.log(e.type, e.which);
+                if (e.which === 38) {
+                    //↑キー
+                    const $keyFocused = self.$dropDown.find('.key-focused');
+                    if (!$keyFocused.length) {
+                        self.$dropDown.find('div').last().addClass('key-focused');
+                    } else if ($keyFocused.is(':first-child')) {
+                        $keyFocused.removeClass('key-focused');
+                        self.$dropDown.find('div').last().addClass('key-focused');
+                    } else {
+                        $keyFocused.removeClass('key-focused');
+                        $keyFocused.prev().addClass('key-focused');
+                    }
+                } else if (e.which === 40) {
+                    //↓キー
+                    const $keyFocused = self.$dropDown.find('.key-focused');
+                    if (!$keyFocused.length) {
+                        self.$dropDown.find('div').eq(0).addClass('key-focused');
+                    } else if ($keyFocused.is(':last-child')) {
+                        $keyFocused.removeClass('key-focused');
+                        self.$dropDown.find('div').eq(0).addClass('key-focused');
+                    } else {
+                        $keyFocused.removeClass('key-focused');
+                        $keyFocused.next().addClass('key-focused');
+                    }
+                } else if (e.which === 13) {
+                    //エンターキー
+                    const $keyFocused = self.$dropDown.find('.key-focused');
+                    if ($keyFocused.length) {
+                        self.$input.val($keyFocused.html());
+                        self.$dropDown.hide();
+                    } else {
+                        //todo APIたたく
+                    }
+                } else {
+                    const key = $(this).val();
+                    if (key.length)
+                        self.requestSuggestion(key);
+                    else {
+                        self.$dropDown.removeClass('has-val')
+                            .hide();
+                    }
+                }
             });
         }
 
@@ -536,7 +573,9 @@
                 data['data'].forEach(val => {
                     self.$dropDown.append($('<div index="'+ val['action_rank'] +'">'+ val.key +'</div>'));
                 });
-                self.$dropDown.addClass('has-val');
+                self.$dropDown
+                    .addClass('has-val')
+                    .show();
                 self.$dropDown.find('div').hover(function () {
                     $(this).addClass('mouseover');
                 }, function () {
@@ -545,6 +584,7 @@
             })
             .fail((jqXHR, textStatus, errorThrown) =>{
                 console.log(textStatus, errorThrown, jqXHR);
+                self.$dropDown.hide();
             });
         }
 
@@ -558,29 +598,13 @@
             return text;
         }
 
-        onClickWindow(event){
-            if (this.$dropDown.find('.mouseover').length) {
+        onClickWindow(){
+            const $clickedEle = this.$dropDown.find('.mouseover');
+            if ($clickedEle.length) {
                 console.log('!mouseover!');
+                this.$input.val($clickedEle.html());
+                this.$dropDown.hide();
             }
-
-            // if (!this.$dropDown.hasClass('has-val'))
-            //     return true;
-            // console.log(event.pageX, event.pageY);
-            // this.$dropDown.find('div').each(i => {
-            //     const rect = this.getBoundingClientRect();
-            //     if (event.pageY <= rect.top
-            //         && event.pageY >= rect.bottom
-            //         && event.pageX <= rect.right
-            //         && event.pageX >= rect.left) {
-            //         console.log($(this).html());
-            //     }
-            // });
-            // const divs = this.$dropDown.find('div');
-            // for (let i = 0; i <divs.length; i++) {
-            //     const rect = divs.eq(i)[0].getBoundingClientRect();
-            //     console.log(rect);
-            // }
-            // return false;
         }
     }
 }();

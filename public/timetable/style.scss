@@ -36,14 +36,14 @@
         &:hover {
           background: white;
         }
+        &.key-focused {
+          background: white;
+        }
       }
     }
-    &.is-focused #suggest-drop-down.has-val {
-      display: block;
-    }
-    #suggest-dummy {
-
-    }
+    //&.is-focused #suggest-drop-down.has-val {
+    //  display: block;
+    //}
   }
 }
 

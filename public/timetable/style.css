@@ -34,8 +34,8 @@
         cursor: pointer; }
         .mdl-layout__header #search-btn #suggest-drop-down > div:hover {
           background: white; }
-    .mdl-layout__header #search-btn.is-focused #suggest-drop-down.has-val {
-      display: block; }
+        .mdl-layout__header #search-btn #suggest-drop-down > div.key-focused {
+          background: white; }
 
 .mdl-layout__tab-bar {
   background-color: #e2f4f9; }
