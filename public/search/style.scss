@@ -15,6 +15,7 @@
   #first-row {
     @include center72;
     .mdl-card {
+      $horizontalSmlMargin:24px;
       width: 80%;
       max-width: 1000px;
       flex-direction: row;
@@ -25,7 +26,7 @@
       overflow: visible;
       >form {
         margin-right: 48px;
-        width: 8em;
+        width: 7em;
         .mdl-textfield__input {
           padding: 4px 0 0 0;
         }
@@ -39,6 +40,9 @@
           }
         }
         &#date-form {
+          margin-right: $horizontalSmlMargin;
+        }
+        &#date-form, &#end-form {
           .mdl-textfield {
             position: relative;
             .mdl-textfield__input {
@@ -60,6 +64,11 @@
             z-index: 10000;//999以上必要
           }
         }
+      }
+      .text {
+        margin-right: $horizontalSmlMargin;
+        vertical-align: middle;
+        align-items: center;
       }
       .btn {
         background: $primaryBlue;

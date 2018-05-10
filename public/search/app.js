@@ -18,39 +18,45 @@
 
     class SearchDom {
         constructor(){
-            this.$dateMenuItem =$('#dp-ul .mdl-menu__item');
-            this.$menuContainer = $('#date-form .mdl-menu__container');
-            this.$dateInput =$('#date-input');
             this.$keyInput =$('#keyword');
-            this.$dpBtn = $('#dp-btn');
             this.momentOpe = conductor.currentM.clone();
         }
 
         initializeSearchBar(){
-            this.initDateMenu();
+            this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
+            this.momentOpe.add(-1, 'd');
+            this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
             this.initKeyInput();
             this.setOnClickBtnListener();
         }
 
-        initDateMenu(){
-            const self = this;
+        initDateMenu(menuItemSel, menuContSel, inputSel, btnSel){
+            const $dateMenuItem =$(menuItemSel);
+            const $menuContainer = $(menuContSel);
+            const $dateInput =$(inputSel);
+            const $dpBtn = $(btnSel);
+
             this.momentOpe.add(-6, 'd');
             for (let i = 0; i < 7; i++) {
-                let val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
+                const val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
+                if (i === 0)
+                    $dateInput.val(val);
                 const ymd = this.momentOpe.format('YYYYMMDD');
-                this.$dateMenuItem.eq(i+1/*「全て」の分*/).attr('date', ymd).html(val);
+                $dateMenuItem.eq(i/*「全て」の分*/).attr('date', ymd).html(val);
                 this.momentOpe.add(1, 'd');
-            }
-            this.$dateMenuItem.on('click', function () {
-                self.$menuContainer.removeClass('is-visible');
-                self.$menuContainer.find('.is-selected')
+            }//この時点でmomentOpeは初期状態+1日となる
+
+            $dateMenuItem.on('click', function () {
+                $menuContainer.removeClass('is-visible')
+                    .find('.is-selected')
                     .removeAttr('disabled')
                     .removeClass('is-selected');
-                $(this).attr('disabled', true).addClass('is-selected');
-                self.$dateInput.val($(this).html());
+                $(this).attr('disabled', true)
+                    .addClass('is-selected');
+                $dateInput.val($(this).html());
             });
-            this.$dateInput.on('click', function () {
-                self.$dpBtn.click();
+            $dateInput.on('click', function () {
+                $dpBtn.click();
                 return false;
             });
         }
