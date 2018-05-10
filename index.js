@@ -98,7 +98,7 @@ let vpnJson;
 let postGotJsons;
 
 const RADIKO_URL = 'http://radiko.jp/#!/ts/TBS/20180427180000';
-const HTML_PATH = 'public/search/index.html';
+const HTML_PATH = 'public/timetable/index.html';
 
 console.log = function (...val) {
     const vals = val.join(' ') + '\n';

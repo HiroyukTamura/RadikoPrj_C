@@ -45,6 +45,7 @@
             domFrame.removeAllDoms();
             domFrame.updateDateMenu();
             ereaChecker.check().then((ereaId => {
+                Storage.setItem('ereaId', ereaId);
                 return new ProgramListGetter(ereaId, domFrame.currentM).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
@@ -563,7 +564,7 @@
             const url = 'http://radiko.jp/v3/api/program/search/suggest?' +
                 'key=' + encodeURIComponent(key) +
                 '&filter=&start_day=&end_day=&area_id=&cul_area_id=' +
-                '&uid=' + ProgramSearcher.makeUid() +
+                '&uid=' + Util.makeUid() +
                 '&row_limit=8&page_idx=0&app_id=pc';
 
             console.log(url);
@@ -586,16 +587,6 @@
                 console.log(textStatus, errorThrown, jqXHR);
                 self.$dropDown.hide();
             });
-        }
-
-        static makeUid() {
-            let text = "";
-            const possible = "abcdef0123456789";
-
-            for (let i = 0; i < 32; i++)//radikoのUidは必ず32桁
-                text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-            return text;
         }
 
         onClickWindow(){

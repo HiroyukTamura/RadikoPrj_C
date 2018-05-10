@@ -5,10 +5,13 @@
     let searchDom;
     let startDropDown;
     let endDropDown;
+    let requestOperator;
+    localStorage.setItem('ereaId', 'JP13');//todo これ後で消すこと
     window.onload = function () {
         conductor = new Conductor();
         conductor.init();
         searchDom = new SearchDom();
+        requestOperator = new RequestOperator();
         searchDom.initializeSearchBar();
     };
 
@@ -22,6 +25,7 @@
         constructor(){
             this.$keyInput =$('#keyword');
             this.momentOpe = conductor.currentM.clone();
+            this.noInput = true;
         }
 
         initializeSearchBar(){
@@ -39,7 +43,6 @@
 
         initDateMenu(menuItemSel, menuContSel, inputSel, btnSel){
             const $dateMenuItem =$(menuItemSel);
-            const $menuContainer = $(menuContSel);
             const $dateInput =$(inputSel);
             const $dpBtn = $(btnSel);
 
@@ -60,11 +63,11 @@
         }
 
         initKeyInput(){
-            let isFirst = false;
+            const self = this;
             this.$keyInput.on('keyup', function(){
-                if (!isFirst) {
+                if (self.noInput) {
                     $(this).attr('required', 'required');
-                    isFirst = true;
+                    self.noInput = false;
                 }
                 if (!$(this).val().length) {
                     console.log('こっち');
@@ -74,10 +77,18 @@
         }
 
         setOnClickBtnListener(){
-            $('#first-row .btn').on('click', _=>{
-                const val = this.$keyInput.val();
-                if (!val.length)
+            const self = this;
+            $('#first-row .btn').on('click', function() {
+                const keyInput = self.$keyInput;
+                if (!keyInput.val().length) {
+                    if (self.noInput) {
+                        self.$keyInput.attr('required', 'required');
+                        self.noInput = false;
+                        keyInput.parents('.mdl-textfield').addClass('is-invalid');
+                    }
                     return false;
+                }
+                requestOperator.onPreRequest().requestJson(keyInput.val(), startDropDown.getSelectedYmd(), endDropDown.getSelectedYmd());
             });
             return this;
         }
@@ -127,6 +138,10 @@
         getDateMenuItem(){
             return this.$dateMenuItem;
         }
+
+        getSelectedYmd(){
+            return this.$menuContainer.find('.is-selected').attr('date');
+        }
     }
 
     class StartDropDown extends DropDown {
@@ -161,15 +176,65 @@
         }
     }
 
-    class requestSearch{
+    class RequestOperator{
         constructor(){
-
+            this.$spinner = $('.mdl-spinner');
+            this.$resultGroup = $('.result');
+            this.$cardGroup =$('.card-group');
+            this.$errResult =$('#err-result');
+            this.$nonResult =$('#non-result');
         }
 
-        request(key, startDay){
+        onPreRequest(){
+            this.$resultGroup.hide();
+            this.$spinner.addClass('is-active');
+            this.$cardGroup.empty();
+            return this;
+        }
+
+        /**
+         * StorageにereaIdが保存されていることを前提とする。
+         */
+        requestJson(key, startYmd, endYmd){
+            const ereaId = localStorage.getItem('ereaId');
             const url = 'http://radiko.jp/v3/api/program/search?' +
                 'key=' + encodeURIComponent(key) +
-                '&filter=&start_day=&end_day=&area_id=JP13&region_id=&cul_area_id=JP13&page_idx=&uid=7a29be9fb88934c2e749de20750b1de3&row_limit=12&app_id=pc&action_id=1&action_rank=1'
+                '&filter=' + 'past'+
+                '&start_day=' + moment(startYmd, 'YYYYMMDD').format('YYYY-MM-DD') +
+                '&end_day=' + moment(endYmd, 'YYYYMMDD').format('YYYY-MM-DD') +
+                '&area_id=' + ereaId +
+                '&region_id=&' +
+                'cul_area_id=' + ereaId +
+                '&page_idx=' +
+                '&uid=' + '11419c2c84c881fcfd8e337ae568dc4e' +
+                'row_limit=12' +
+                '&app_id=pc' +
+                '&action_id=1' +
+                '&action_rank=1';
+            $.getJSON(url)
+                .done(data =>{
+                    this.onGetJson(data);
+                })
+                .fail((jqXHR, textStatus, errorThrown) =>{
+                    console.log(textStatus, errorThrown, jqXHR);
+                    this.noticeFailure();
+                });
+        }
+
+        onGetJson(data){
+            if (!data['result_count']) {
+                this.$cardGroup.hide();
+                this.$nonResult.show();
+                if (data['suisengo'].length) {
+                    console.log('もしかして', data['suisengo']);
+                }
+            }
+        }
+
+        noticeFailure(){
+            this.$spinner.removeClass('is-active');
+            this.$cardGroup.hide();
+            this.$errResult.show();
         }
     }
 }();
