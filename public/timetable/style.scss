@@ -8,8 +8,41 @@
   }
   #search-btn {
     padding: 16px 0;
+    position: relative;
     .mdl-button {
       @include whitenHover;
+    }
+    #suggest-drop-down {
+      position: absolute;
+      z-index: 100;
+      left: 32px;
+      display: none;
+      width: 178px;
+      min-height: unset;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      background-color: $backGray;
+      >div {
+        $height:28px;
+        color: $textBlack;
+        font-size: 14px;
+        width: 100%;
+        //height: $height;
+        vertical-align: middle;
+        text-align: left;
+        line-height: $height;
+        padding: 0 $height/2;
+        cursor: pointer;
+        &:hover {
+          background: white;
+        }
+      }
+    }
+    &.is-focused #suggest-drop-down.has-val {
+      display: block;
+    }
+    #suggest-dummy {
+
     }
   }
 }

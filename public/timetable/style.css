@@ -7,11 +7,35 @@
     .mdl-layout__header #btn-date .material-icons :hover, .mdl-layout__header #radio-menu .material-icons :hover {
       background: unset; }
   .mdl-layout__header #search-btn {
-    padding: 16px 0; }
+    padding: 16px 0;
+    position: relative; }
     .mdl-layout__header #search-btn .mdl-button:hover {
       background-color: rgba(255, 255, 255, 0.2); }
     .mdl-layout__header #search-btn .mdl-button .material-icons :hover {
       background: unset; }
+    .mdl-layout__header #search-btn #suggest-drop-down {
+      position: absolute;
+      z-index: 100;
+      left: 32px;
+      display: none;
+      width: 178px;
+      min-height: unset;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      background-color: #f2f2f2; }
+      .mdl-layout__header #search-btn #suggest-drop-down > div {
+        color: rgba(0, 0, 0, 0.87);
+        font-size: 14px;
+        width: 100%;
+        vertical-align: middle;
+        text-align: left;
+        line-height: 28px;
+        padding: 0 14px;
+        cursor: pointer; }
+        .mdl-layout__header #search-btn #suggest-drop-down > div:hover {
+          background: white; }
+    .mdl-layout__header #search-btn.is-focused #suggest-drop-down.has-val {
+      display: block; }
 
 .mdl-layout__tab-bar {
   background-color: #e2f4f9; }
@@ -87,6 +111,8 @@
         color: #00a7e9; }
         .mdl-layout__content #mix-table #header-table-out > span > i, .mdl-layout__content #mix-table #footer-table-out > span > i {
           margin: 0 1em; }
+    .mdl-layout__content #mix-table #footer-table-out {
+      display: none; }
     .mdl-layout__content #mix-table #grid {
       display: grid; }
       .mdl-layout__content #mix-table #grid .cell {

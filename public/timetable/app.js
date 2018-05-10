@@ -30,6 +30,7 @@
             domFrame.initDateMenu();
             domFrame.setOnClickListenersForFrame();
             Util.setElementAsMdl($(document));
+            new ProgramSearcher().init();
         }
 
         changeDate(){
@@ -59,7 +60,7 @@
             this.footerWid = this.$footer.find('span').width()/2;
             this.$timeTable =$('#mix-table');
             this.$spinner = $('.mdl-spinner');
-            this.$mdlTabs =$('.mdl-layout__tab');
+            // this.$mdlTabs =$('.mdl-layout__tab');
             this.$calendarMenu = $('#calendar-menu');
             this.$stationMenu =$('#station-menu');
             this.$grid =$('#grid');
@@ -97,14 +98,14 @@
         show(){
             this.$spinner.removeClass('is-active');
             this.$timeTable.show();
-            this.$mdlTabs.show();
+            $('.mdl-layout__tab').show();
         }
 
         removeAllDoms(){
             this.$timeTable.hide();
             this.$grid.empty();
             this.$spinner.addClass('is-active');
-            this.$mdlTabs.remove();
+            $('.mdl-layout__tab').remove();
             this.$stationMenu.empty()
         }
 
@@ -492,6 +493,60 @@
             } while (str !== result);
             return result;
         };
+    }
+
+    class ProgramSearcher {
+        constructor(){
+            this.$dropDown = $('#suggest-drop-down');
+            this.input = $('#prg-search');
+        }
+        init(){
+            const self = this;
+            this.input.keyup(function () {
+                console.log("keyup");
+                const key = $(this).val();
+                if (key.length)
+                    self.requestSuggestion(key);
+                else
+                    self.$dropDown.removeClass('has-val');
+            });
+        }
+
+        requestSuggestion(key){
+            const self = this;
+            const url = 'http://radiko.jp/v3/api/program/search/suggest?' +
+                'key=' + encodeURIComponent(key) +
+                '&filter=&start_day=&end_day=&area_id=&cul_area_id=' +
+                '&uid=' + ProgramSearcher.makeUid() +
+                '&row_limit=8&page_idx=0&app_id=pc';
+
+            console.log(url);
+            $.getJSON(url)
+            .done(data =>{
+                self.$dropDown.empty();
+                data['data'].forEach(val => {
+                    self.$dropDown.append($('<div index="'+ val['action_rank'] +'">'+ val.key +'</div>'));
+                });
+                self.$dropDown.addClass('has-val');
+                self.$dropDown.find('div').on('click', function () {
+                    console.log('clicked');
+                    self.input.val($(this).html());
+                });
+            })
+            .fail((jqXHR, textStatus, errorThrown) =>{
+                console.log(textStatus, errorThrown, jqXHR);
+            });
+        }
+
+        static makeUid() {
+            let text = "";
+            const possible = "abcdef0123456789";
+
+            for (let i = 0; i < 32; i++)//radikoのUidは必ず32桁
+                text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+            return text;
+        }
     }
 }();
 

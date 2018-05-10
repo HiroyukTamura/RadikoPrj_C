@@ -1,0 +1,54 @@
+{
+  "meta": {
+    "start_day": "2018-05-03",
+    "searched_url": "https://radiko.jp/v3/api/program/search/suggest?key=f&filter=&start_day=&end_day=&area_id=&cul_area_id=&uid=7e657a12f44268ffe2aca6a39c205c70&row_limit=8&page_idx=0&app_id=pc",
+    "result_count": 8,
+    "row_limit": 8,
+    "filter": "",
+    "end_day": "2018-05-16",
+    "station_id": [],
+    "cur_area_id": null,
+    "region_id": null,
+    "key": [
+      "f"
+    ],
+    "area_id": [
+      ""
+    ],
+    "page_idx": 0
+  },
+  "data": [
+    {
+      "action_rank": 1,
+      "key": "福山雅治 福のラジオ"
+    },
+    {
+      "key": "fm802",
+      "action_rank": 2
+    },
+    {
+      "action_rank": 3,
+      "key": "文化放送"
+    },
+    {
+      "key": "fm横浜",
+      "action_rank": 4
+    },
+    {
+      "key": "福のラジオ",
+      "action_rank": 5
+    },
+    {
+      "key": "福山雅治",
+      "action_rank": 6
+    },
+    {
+      "key": "フレデリック",
+      "action_rank": 7
+    },
+    {
+      "key": "不毛な議論",
+      "action_rank": 8
+    }
+  ]
+}
