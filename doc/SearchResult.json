@@ -1,0 +1,185 @@
+{
+  "meta": {
+    "searched_url": "https://radiko.jp/v3/api/program/search?key=宇多丸&filter=past&start_day=&end_day=&area_id=JP13&region_id=&cul_area_id=JP13&page_idx=0&uid=6fabe96bccc97992732f9f75ce62263c&row_limit=12&app_id=pc&action_id=0",
+    "area_id": [
+      "JP13"
+    ],
+    "key": [
+      "宇多丸"
+    ],
+    "page_idx": 0,
+    "cur_area_id": null,
+    "start_day": "2018-05-03",
+    "kakuchou": [],
+    "end_day": "2018-05-16",
+    "region_id": "",
+    "filter": "past",
+    "result_count": 7,
+    "station_id": [],
+    "suisengo": "",
+    "row_limit": 12
+  },
+  "data": [
+    {
+      "title": "アフター６ジャンクション",
+      "end_time": "2018-05-10 21:00:00",
+      "station_id": "TBS",
+      "program_date": "20180510",
+      "metas": [
+        {
+          "value": "#radiko",
+          "name": "twitter"
+        }
+      ],
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "start_time": "2018-05-10 18:00:00",
+      "status": "now",
+      "performer": "ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台柳下毅一郎（映画評論家）/19時台 PUNPEE/20時台 「デジタル・アートバトルLIMITSとは何か？」 ",
+      "end_time_s": "2100",
+      "description": "",
+      "ts_out_ng": 0,
+      "start_time_s": "1800",
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "ts_in_ng": 0,
+      "info": "◆メインパーソナリティはラッパーのライムスター宇多丸<br/> ◆木曜パートナーはTBS宇内梨沙アナウンサー<br/> ◆18時台はウェブ漫画の最新事情<br/> ◆19時台スタジオライブはPUNPEE<br/> ◆20時台特集は「デジタル・アートバトルLIMITSとは何か」<br/> ◆映画や音楽、本など注目すべきカルチャーを紹介し日常の「おもしろ」を掘り起こすキュレーション番組<br/><br/> Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>"
+    },
+    {
+      "info": "◆メインパーソナリティはラッパーのライムスター宇多丸<br/> ◆木曜パートナーはTBS宇内梨沙アナ<br/> ◆東京国立博物館のキュレーターによる最新展示の解説<br/> ◆TBSラジオが野球中継に幕を下ろし、新時代を告げる番組はカルチャーを紹介する大型企画。趣味やエンタメ情報で余暇の過ごし方を提案し、同じ趣向を持つ聴取者がつながる場に。<br/><br/> Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>",
+      "ts_in_ng": 0,
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "performer": "ライムスター宇多丸/宇内梨沙（TBSアナウンサー） 　　ゲスト：18時台 カルチャートーク：東京国立博物館・学芸員/19時台 LIVE ＆ DIRECT：SOLEIL（バンド）/20時台 ビヨンド・ザ・カルチャー：「詩吟の革命」 ",
+      "start_time_s": "1800",
+      "description": "",
+      "end_time_s": "2100",
+      "ts_out_ng": 0,
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "start_time": "2018-05-03 18:00:00",
+      "status": "past",
+      "metas": [
+        {
+          "name": "twitter",
+          "value": "#radiko"
+        }
+      ],
+      "station_id": "TBS",
+      "program_date": "20180503",
+      "title": "アフター６ジャンクション",
+      "end_time": "2018-05-03 21:00:00"
+    },
+    {
+      "metas": [
+        {
+          "name": "twitter",
+          "value": "#radiko"
+        }
+      ],
+      "start_time": "2018-05-03 21:00:00",
+      "status": "past",
+      "program_url": "http://www.tbsradio.jp/mygame/",
+      "end_time": "2018-05-03 21:30:00",
+      "title": "プレイステーション presents ライムスター宇多丸とマイゲーム・マイライフ",
+      "station_id": "TBS",
+      "program_date": "20180503",
+      "ts_in_ng": 0,
+      "info": "メール：<a href=\"mailto:mygame@tbs.co.jp\">mygame@tbs.co.jp</a><br/>",
+      "performer": "宇多丸",
+      "start_time_s": "2100",
+      "ts_out_ng": 0,
+      "end_time_s": "2130",
+      "description": "",
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20170404144354_3698755.jpg"
+    },
+    {
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "start_time": "2018-05-04 18:00:00",
+      "status": "past",
+      "metas": [
+        {
+          "value": "#radiko",
+          "name": "twitter"
+        }
+      ],
+      "program_date": "20180504",
+      "station_id": "TBS",
+      "title": "アフター６ジャンクション",
+      "end_time": "2018-05-04 21:00:00",
+      "info": "◆メインパーソナリティはラッパーのライムスター宇多丸<br/> ◆金曜パートナーはTBS山本匠晃アナ。ゴールデンウイークの渋滞情報も<br/> TBSラジオが野球中継に幕を下ろし、新時代を告げる番組はカルチャーを紹介する大型企画。趣味やエンタメ情報で余暇の過ごし方を提案し、同じ趣向を持つ聴取者がつながる場に。<br/><br/> Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>",
+      "ts_in_ng": 0,
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "performer": "ライムスター宇多丸（山本匠晃TBSアナウンサー）　　ゲスト：18時台 宇多丸の週刊映画時評ムービーウォッチメン/19時台 LIVE ＆ DIRECT：MAGiC BOYZ/20時台 ビヨンド・ザ・カルチャー：興味R的話題 ",
+      "description": "",
+      "end_time_s": "2100",
+      "ts_out_ng": 0,
+      "start_time_s": "1800"
+    },
+    {
+      "start_time": "2018-05-07 18:00:00",
+      "status": "past",
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "metas": [
+        {
+          "name": "twitter",
+          "value": "#radiko"
+        }
+      ],
+      "program_date": "20180507",
+      "station_id": "TBS",
+      "end_time": "2018-05-07 21:00:00",
+      "title": "アフター６ジャンクション",
+      "info": " Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>",
+      "ts_in_ng": 0,
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "end_time_s": "2100",
+      "ts_out_ng": 0,
+      "description": "",
+      "start_time_s": "1800",
+      "performer": "ライムスター宇多丸/熊崎風斗（TBSアナウンサー）"
+    },
+    {
+      "ts_in_ng": 0,
+      "info": " Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>",
+      "end_time_s": "2100",
+      "description": "",
+      "start_time_s": "1800",
+      "ts_out_ng": 0,
+      "performer": "ライムスター宇多丸/宇垣美里（TBSアナウンサー）",
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "metas": [
+        {
+          "value": "#radiko",
+          "name": "twitter"
+        }
+      ],
+      "status": "past",
+      "start_time": "2018-05-08 18:00:00",
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "end_time": "2018-05-08 21:00:00",
+      "title": "アフター６ジャンクション",
+      "program_date": "20180508",
+      "station_id": "TBS"
+    },
+    {
+      "program_url": "https://www.tbsradio.jp/a6j/",
+      "status": "past",
+      "start_time": "2018-05-09 18:00:00",
+      "metas": [
+        {
+          "value": "#radiko",
+          "name": "twitter"
+        }
+      ],
+      "program_date": "20180509",
+      "station_id": "TBS",
+      "title": "アフター６ジャンクション",
+      "end_time": "2018-05-09 21:00:00",
+      "info": "◆メインパーソナリティはラッパーのライムスター宇多丸<br/> ◆水曜パートナーはTBS日比麻音子アナウンサー<br/> ◆18時台 ゲストは映画評論家の柳下毅一郎さん<br/> ◆19時台 スタジオライブはスクービー・ドゥ<br/> ◆20時台 特集「ボードゲーム最新事情」<br/> ◆映画や音楽、本など注目すべきカルチャーを紹介し日常の「おもしろ」を掘り起こすキュレーション番組。<br/><br/> Twitter：<a href=\"@after6junction\">@after6junction</a><br/> メール：<a href=\"utamaru@tbs.co.jp\">utamaru@tbs.co.jp</a><br/>",
+      "ts_in_ng": 0,
+      "img": "https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg",
+      "end_time_s": "2100",
+      "start_time_s": "1800",
+      "description": "",
+      "ts_out_ng": 0,
+      "performer": "ライムスター宇多丸/日比麻音子（TBSアナウンサー）　　ゲスト：18時台カメントツ（ウェブ漫画事情）/19時台SCOOBIE DO/20時台ライブハウス・下北沢garageが注目バンドのサロン化している説 "
+    }
+  ]
+}
