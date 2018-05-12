@@ -20,6 +20,7 @@ require('bootstrap');
         searchDom = new SearchDom();
         requestOperator = new RequestOperator();
         searchDom.initializeSearchBar();
+        conductor.setOnClickForWindow();
         Conductor.checkUrlParam();
     };
 
@@ -28,10 +29,12 @@ require('bootstrap');
             this.currentM = moment();
             this.$dialog = $('.mdl-dialog');
         }
+
         init(){
             Util.setUpDialog(this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
         }
+
         static checkUrlParam(){
             const key = SearchDom.getUrlParam('key');
             if(key){
@@ -40,6 +43,25 @@ require('bootstrap');
                     .addClass('is-dirty');
                 $('#date-form .mdl-menu__item').eq(0).click();
                 searchDom.$searchBtn.click();
+            }
+        }
+
+        setOnClickForWindow(){
+            const self = this;
+            window.onclick = function (e) {
+                //サジェスト以外をクリックしたらサジェストを非表示に
+                if (suggester.$dropDown.is(':visible')) {
+                    const rect = suggester.$dropDown[0].getBoundingClientRect();
+                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {
+                        suggester.$dropDown.hide();
+                        return false;
+                    }
+                } else if (self.$dialog.prop('open')) {
+                    console.log('こっち');
+                    self.$dialog[0].close();
+                    return false;
+                }
+                return true;
             }
         }
     }
@@ -82,17 +104,17 @@ require('bootstrap');
                 self.$suggestDiv.width(self.$keyInput.width());
             };
 
-            //サジェスト以外をクリックしたらサジェストを非表示に
-            window.onclick = function (e) {
-                if (suggester.$dropDown.is(':visible')) {
-                    const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {
-                        suggester.$dropDown.hide();
-                        return false;
-                    }
-                }
-                return true;
-            };
+            // //サジェスト以外をクリックしたらサジェストを非表示に
+            // window.onclick = function (e) {
+            //     if (suggester.$dropDown.is(':visible')) {
+            //         const rect = suggester.$dropDown[0].getBoundingClientRect();
+            //         if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {
+            //             suggester.$dropDown.hide();
+            //             return false;
+            //         }
+            //     }
+            //     return true;
+            // };
         }
 
         initDateMenu(menuItemSel, menuContSel, inputSel, btnSel){
@@ -154,6 +176,7 @@ require('bootstrap');
                 requestOperator
                     .onPreRequest()
                     .requestJson();
+                return false;
             });
             return this;
         }
@@ -226,6 +249,7 @@ require('bootstrap');
                         endDropDown.getDateMenuItem().eq(i).show();
                     }
                 }
+                return false;
             });
             return this;
         }
@@ -236,6 +260,7 @@ require('bootstrap');
             const self = this;
             this.getDateMenuItem().on('click', function () {
                 self.onDateSelectedAsDefault($(this));
+                return false;
             });
             return this;
         }
@@ -451,6 +476,7 @@ require('bootstrap');
                     if (!conductor.$dialog.prop('open'))
                         conductor.$dialog[0].showModal();
 
+                    return false;
                 }).hover(function () {
                     $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
                 }, function () {

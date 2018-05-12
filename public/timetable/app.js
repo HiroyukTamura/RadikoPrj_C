@@ -19,7 +19,16 @@ require('bootstrap');
         conductor.initialOperate();
         window.onclick = function (event) {
             console.log('Im clicked' , event.clientX, event.clientY);
-            searcher.onClickWindow(event);
+            // searcher.onClickWindow(event);
+            if (domFrame.$dialog.prop('open')) {
+                domFrame.$dialog[0].close();
+                return false;
+            }
+            const $clickedEle = searcher.$dropDown.find('.mouseover');
+            if ($clickedEle.length) {
+                searcher.resetSuggestion($clickedEle.html());
+                return false;
+            }
             return true;
         };
     };
@@ -124,10 +133,12 @@ require('bootstrap');
             $('#header-table-out').on('click', function () {
                 self.currentM.add(-1, 'd');
                 conductor.changeDate();
+                return false;
             });
             $('#footer-table-out').on('click', function () {
                 self.currentM.add(1, 'd');
                 conductor.changeDate();
+                return false;
             });
             $('#calendar-menu .mdl-menu__item').on('click', function () {
                 console.log($(this).attr('id'));
@@ -138,12 +149,13 @@ require('bootstrap');
                 const ymd = $(this).attr('date');
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
+                return false;
             });
             $('#station-menu .mdl-menu__item').on('click', function () {
                 console.log($(this).attr('station'));
-                if ($(this).prop('disabled'))
-                    return false;
-                $(this).parents('.mdl-menu__container').removeClass('is-visible');
+                if (!$(this).prop('disabled'))
+                    $(this).parents('.mdl-menu__container').removeClass('is-visible');
+                return false;
             });
             Util.setDialogListeners(this.$dialog[0]);
             // this.$dialog[0].addEventListener('close', function(e) {
