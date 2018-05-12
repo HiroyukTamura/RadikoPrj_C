@@ -42,3 +42,33 @@ $columnWidth: 258px;
     border-radius: $size;
   }
 }
+
+@mixin forSearchDropDown{
+  position: absolute;
+  z-index: 100;
+  left: 32px;
+  display: none;
+  width: 178px;
+  min-height: unset;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  background-color: $backGray;
+  >div {
+    $height:28px;
+    color: $textBlack;
+    font-size: 14px;
+    width: 100%;
+    //height: $height;
+    vertical-align: middle;
+    text-align: left;
+    line-height: $height;
+    padding: 0 $height/2;
+    cursor: pointer;
+    &:hover {
+      background: white;
+    }
+    &.key-focused {
+      background: white;
+    }
+  }
+}

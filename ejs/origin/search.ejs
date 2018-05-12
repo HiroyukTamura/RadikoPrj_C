@@ -24,9 +24,12 @@
             <div class="mdl-card mdl-shadow--2dp" id="search-card">
                 <form action="#" id="text-form">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input class="mdl-textfield__input" type="text" id="keyword">
-                        <label class="mdl-textfield__label" for="keyword">キーワード</label>
+                        <input class="mdl-textfield__input" type="text" id="prg-search">
+                        <label class="mdl-textfield__label" for="prg-search">キーワード</label>
                         <span class="mdl-textfield__error">キーワードを入力してください</span>
+                        <div id="suggest-drop-down" class="mdl-card">
+
+                        </div>
                     </div>
                 </form>
 
@@ -155,6 +158,5 @@
     </main>
 </div>
 <% include ../common/_foot_template.ejs %>
-<script src="../../dist/jquery.waypoints.min.js"></script>
 <script src="app.js"></script>
 </body></html>

@@ -69,6 +69,31 @@
             color: #00a7e9; }
         .mdl-layout__content #first-row .mdl-card > form#date-form #dp-ul, .mdl-layout__content #first-row .mdl-card > form#end-form #dp-ul {
           z-index: 10000; }
+        .mdl-layout__content #first-row .mdl-card > form #suggest-drop-down {
+          position: absolute;
+          z-index: 100;
+          left: 32px;
+          display: none;
+          width: 178px;
+          min-height: unset;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          background-color: #f2f2f2;
+          left: 0;
+          padding: 0; }
+          .mdl-layout__content #first-row .mdl-card > form #suggest-drop-down > div {
+            color: rgba(0, 0, 0, 0.87);
+            font-size: 14px;
+            width: 100%;
+            vertical-align: middle;
+            text-align: left;
+            line-height: 28px;
+            padding: 0 14px;
+            cursor: pointer; }
+            .mdl-layout__content #first-row .mdl-card > form #suggest-drop-down > div:hover {
+              background: white; }
+            .mdl-layout__content #first-row .mdl-card > form #suggest-drop-down > div.key-focused {
+              background: white; }
       .mdl-layout__content #first-row .mdl-card .text {
         margin-right: 24px;
         vertical-align: middle;

@@ -6,6 +6,7 @@
     let startDropDown;
     let endDropDown;
     let requestOperator;
+    let suggester;
     localStorage.setItem('ereaId', 'JP13');//todo これ後で消すこと
     window.onload = function () {
         conductor = new Conductor();
@@ -23,7 +24,7 @@
 
     class SearchDom {
         constructor(){
-            this.$keyInput =$('#keyword');
+            this.$keyInput =$('#prg-search');
             this.momentOpe = conductor.currentM.clone();
             this.noInput = true;
         }
@@ -39,6 +40,13 @@
             // this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
             this.initKeyInput();
             this.setOnClickBtnListener();
+
+            suggester = new ProgramSearcher().init();
+            const self = this;
+            $('#suggest-drop-down').on('click', function () {
+                self.$keyInput.val($(this).html());
+                $(this).hide();
+            });
         }
 
         initDateMenu(menuItemSel, menuContSel, inputSel, btnSel){
