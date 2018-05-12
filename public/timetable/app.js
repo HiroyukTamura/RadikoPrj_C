@@ -133,12 +133,10 @@ require('bootstrap');
             $('#header-table-out').on('click', function () {
                 self.currentM.add(-1, 'd');
                 conductor.changeDate();
-                return false;
             });
             $('#footer-table-out').on('click', function () {
                 self.currentM.add(1, 'd');
                 conductor.changeDate();
-                return false;
             });
             $('#calendar-menu .mdl-menu__item').on('click', function () {
                 console.log($(this).attr('id'));
@@ -149,15 +147,18 @@ require('bootstrap');
                 const ymd = $(this).attr('date');
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
-                return false;
             });
             $('#station-menu .mdl-menu__item').on('click', function () {
                 console.log($(this).attr('station'));
                 if (!$(this).prop('disabled'))
                     $(this).parents('.mdl-menu__container').removeClass('is-visible');
-                return false;
             });
             Util.setDialogListeners(this.$dialog[0]);
+            $('#dl-btm').on('click', function () {
+                this.$dialog[0].close();
+                //todo ダウンロード！！
+                new ProcessCommunicator();
+            });
             // this.$dialog[0].addEventListener('close', function(e) {
             //     if (this.returnValue === 'download') {
             //         console.log('download');
@@ -226,17 +227,26 @@ require('bootstrap');
                 self.$dialog.find('.title').html(html);
                 self.$dialog.find('.performer').html(pfm);
                 self.$dialog.find('.hp a').html(hp);
+                self.$dialog.find('.date').html(DomFrame.getDialogDate(ft, to));
                 self.$dialog.find('.desc')
                     .empty()
                     .append(Util.wrapHtml(desc));
                 self.$dialog.find('.info')
                     .empty()
                     .html(Util.wrapHtml(info));
+                self.$dialog.attr('ft', ft);
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
-                return false;
             });
+        }
+
+        static getDialogDate(ft, to){
+            const startM = moment(ft, 'YYYYMMDDhhmmss');
+            const endM = moment(to, 'YYYYMMDDhhmmss');
+            const date = startM.format('M/D') +'('+ Util.getWeekDays()[startM.day()] +')';
+            const time = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
+            return date + ' ' + time;
         }
     }
 
@@ -492,6 +502,12 @@ require('bootstrap');
         goSubmit(key){
             console.log('goSubmit');
             window.location.href = '../search/index.html?key='+key;
+        }
+    }
+
+    class ProcessCommunicator{
+        constructor(){
+            domFrame.$dialog
         }
     }
 }();
