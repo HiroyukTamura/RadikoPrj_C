@@ -206,8 +206,8 @@
                 '&region_id=&' +
                 'cul_area_id=' + ereaId +
                 '&page_idx=' +
-                '&uid=' + '11419c2c84c881fcfd8e337ae568dc4e' +
-                'row_limit=12' +
+                '&uid=' + RequestOperator.generateUid() +
+                '&row_limit=12' +
                 '&app_id=pc' +
                 '&action_id=1' +
                 '&action_rank=1';
@@ -222,10 +222,11 @@
         }
 
         onGetJson(data){
+            console.log(JSON.stringify(data));
             if (!data['result_count']) {
                 this.$cardGroup.hide();
                 this.$nonResult.show();
-                if (data['suisengo'].length) {
+                if (data['suisengo']) {
                     console.log('もしかして', data['suisengo']);
                 }
             }
@@ -235,6 +236,11 @@
             this.$spinner.removeClass('is-active');
             this.$cardGroup.hide();
             this.$errResult.show();
+        }
+
+        static generateUid(){
+            let rnd = Math.floor(Math.random() * 1000000000) + "" + (new Date()).getTime();
+            return MD5_hexhash(rnd);
         }
     }
 }();
