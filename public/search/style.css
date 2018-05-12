@@ -335,3 +335,6 @@
         justify-content: center;
         height: 72px;
         display: none; }
+
+.mdl-dialog .hp {
+  display: none; }

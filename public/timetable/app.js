@@ -1,6 +1,9 @@
 'use strict';
+window.jQuery = window.$= require("jquery");
+require('bootstrap');
 
 !function(){
+    const moment = require('moment');/*グローバルに定義してはいけない??*/
     let ereaChecker;
     let domFrame;
     let conductor;
@@ -11,7 +14,7 @@
         ereaChecker = new EreaChecker();
         domFrame = new DomFrame();
         conductor = new OperationConductor();
-        searcher = new ProgramSearcher();
+        searcher = new ProgramSearcherCustom();
 
         conductor.initialOperate();
         window.onclick = function (event) {
@@ -45,7 +48,7 @@
             domFrame.removeAllDoms();
             domFrame.updateDateMenu();
             ereaChecker.check().then((ereaId => {
-                Storage.setItem('ereaId', ereaId);
+                localStorage.setItem('ereaId', ereaId);
                 return new ProgramListGetter(ereaId, domFrame.currentM).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
@@ -470,6 +473,13 @@
             card.css('margin-top', 0)
                 .css('border-top-left-radius', 0)
                 .css('border-top-right-radius', 0);
+        }
+    }
+
+    class ProgramSearcherCustom extends ProgramSearcher {
+        goSubmit(key){
+            console.log('goSubmit');
+            window.location.href = '../search/index.html?key='+key;
         }
     }
 }();

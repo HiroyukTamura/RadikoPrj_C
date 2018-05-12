@@ -1,6 +1,9 @@
 'use strict';
+window.jQuery = window.$= require("jquery");
+require('bootstrap');
 
 !function () {
+    const moment = require('moment');
     let conductor;
     let searchDom;
     let startDropDown;
@@ -17,8 +20,7 @@
         searchDom = new SearchDom();
         requestOperator = new RequestOperator();
         searchDom.initializeSearchBar();
-
-
+        Conductor.checkUrlParam();
     };
 
     class Conductor {
@@ -30,12 +32,23 @@
             Util.setUpDialog(this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
         }
+        static checkUrlParam(){
+            const key = SearchDom.getUrlParam('key');
+            if(key){
+                searchDom.$keyInput.val(SearchDom.getUrlParam('key'))
+                    .parents('.mdl-textfield')
+                    .addClass('is-dirty');
+                $('#date-form .mdl-menu__item').eq(0).click();
+                searchDom.$searchBtn.click();
+            }
+        }
     }
 
     class SearchDom {
         constructor(){
             this.$keyInput =$('#prg-search');
             this.$suggestDiv = $('#suggest-drop-down');
+            this.$searchBtn = $('#first-row .btn');
             this.momentOpe = conductor.currentM.clone();
             this.noInput = true;
         }
@@ -59,8 +72,10 @@
             suggester = new Suggester();
             suggester.init();
             const self = this;
-            this.$suggestDiv.on('click', function () {
-                suggester.onClickWindow();
+            this.$suggestDiv.on('click', function (e) {
+                e.preventDefault();
+                suggester.onClickWindow();//todo ここでinputにフォーカスを当てたいが当たらない
+                return false;
             });
 
             window.onresize = function () {
@@ -104,20 +119,25 @@
         initKeyInput(){
             const self = this;
             this.$keyInput.on('keyup', function(){
-                if (self.noInput) {
-                    $(this).attr('required', 'required');
-                    self.noInput = false;
-                }
-                if (!$(this).val().length) {
-                    console.log('こっち');
-                    return false;
-                }
-            });
+                    if (self.noInput) {
+                        $(this).attr('required', 'required');
+                        self.noInput = false;
+                    }
+                    if (!$(this).val().length) {
+                        console.log('こっち');
+                        return false;
+                    }
+                });
+        }
+
+        static getUrlParam(key){
+            const url = new URL(window.location.href);
+            return url.searchParams.get(key);
         }
 
         setOnClickBtnListener(){
             const self = this;
-            $('#first-row .btn').on('click', function() {
+            this.$searchBtn.on('click', function() {
                 const keyInput = self.$keyInput;
                 if (!keyInput.val().length) {
                     if (self.noInput) {
@@ -377,12 +397,8 @@
     }
 
     class Suggester extends ProgramSearcher {
-        constructor(){
-            super();
-            this.button = $('#first-row .btn');
-        }
         goSubmit(){
-            this.button.click();
+            searchDom.$searchBtn.click();
         }
     }
 
