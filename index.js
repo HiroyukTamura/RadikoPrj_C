@@ -178,7 +178,7 @@ class PuppeteerKicker {
         this.ft = arg.ft;
         this.stationId = arg.stationId;
         this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
-        this.USER_DATA_PATH = '';
+        this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
         this.chunkListDir = 'chunklist';
     }
@@ -186,12 +186,13 @@ class PuppeteerKicker {
     async launchPuppeteer() {
         const self = this;
         const browser = await puppeteer.launch({
-            // executablePath: 'C:\\Program Files (x86)\\Google\\Chrome Dev\\Application\\chrome.exe',
+            // userDataDir: 'UserData',
+            executablePath: 'C:\\Program Files (x86)\\Google\\Chrome Dev\\Application\\chrome.exe',
             args: [
                 // '--auto-open-devtools-for-tabs',
                 // '--auto-select-desktop-capture-source=pickme',
-                '--ppapi-flash-path= '+ self.FLASH_PATH,
-                'userDataDir= '+ self.USER_DATA_PATH,
+                // '--ppapi-flash-path= '+ self.FLASH_PATH,
+                // 'userDataDir= '+ self.USER_DATA_PATH,
                 // '--disable-infobars',
                 '--load-extension=' + __dirname,  // eslint-disable-line no-path-concat
                 '--no-sandbox',
