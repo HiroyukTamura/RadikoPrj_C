@@ -180,9 +180,21 @@
         constructor(){
             this.$spinner = $('.mdl-spinner');
             this.$resultGroup = $('.result');
-            this.$cardGroup =$('.card-group');
+            this.$cardGroup =$('#card-group');
             this.$errResult =$('#err-result');
             this.$nonResult =$('#non-result');
+            this.$suggestResult =$('#suggest-word');
+            this.$suggestA = this.$suggestResult.find('a');
+
+            this.init();
+        }
+
+        init (){
+            this.$suggestA.on('click', function () {
+                const value = $(this).html();
+                searchDom.$keyInput.val(value);
+                return false;
+            });
         }
 
         onPreRequest(){
@@ -206,7 +218,7 @@
                 '&region_id=&' +
                 'cul_area_id=' + ereaId +
                 '&page_idx=' +
-                '&uid=' + RequestOperator.generateUid() +
+                '&uid=' + Util.generateUid() +
                 '&row_limit=12' +
                 '&app_id=pc' +
                 '&action_id=1' +
@@ -223,24 +235,81 @@
 
         onGetJson(data){
             console.log(JSON.stringify(data));
-            if (!data['result_count']) {
-                this.$cardGroup.hide();
-                this.$nonResult.show();
-                if (data['suisengo']) {
-                    console.log('もしかして', data['suisengo']);
+            const self = this;
+            if (!data['meta']['result_count']) {
+                if (data['meta']['suisengo']) {
+                    this.noticeSuggest(data['meta']['suisengo'])
+                } else {
+                    this.noticeNonResult();
                 }
+            } else {
+                $.each(data.data, function(i, ele) {
+                    const timeVal = ele['start_time_s'].splice(2, 0, ':') +' - '+  ele['end_time_s'].splice(2, 0, ':');
+                    const dateVal = RequestOperator.generateTimeVal(ele['program_date']);
+                    const $card = $('<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
+                        '<div class="station-logo">\n' +
+                            '<img src="http://radiko.jp/station/logo/'+ ele['station_id'] +'/logo_medium.png" alt="'+ ele['station_id'] +'">\n' +
+                        '</div>\n' +
+                        '<img src="'+ ele['img'] +'" class="prg-logo" alt="番組ロゴ">\n' +
+                        '<div class="details">\n' +
+                            '<h4 class="prg-title mdl-pre-upgrade">'+ ele['title'] +'</h4>\n' +
+                            '<p class="prg-time mdl-pre-upgrade">'+ '<span>'+ dateVal +'</span>' + timeVal +'</p>\n' +
+                            '<p class="prg-pfm mdl-pre-upgrade">'+ ele['performer'] +'</p>\n' +
+                        '</div>\n' +
+                    '</div>')
+                        .on('click', function () {
+                            console.log('clicked');
+                        }).hover(function () {
+                            $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
+                        }, function () {
+                            $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
+                        }).appendTo(self.$cardGroup);
+                });
+                Util.setElementAsMdl(self.$cardGroup);
+                this.noticeCards();
             }
         }
 
         noticeFailure(){
-            this.$spinner.removeClass('is-active');
-            this.$cardGroup.hide();
+            this.hideAllResult();
             this.$errResult.show();
         }
 
-        static generateUid(){
-            let rnd = Math.floor(Math.random() * 1000000000) + "" + (new Date()).getTime();
-            return MD5_hexhash(rnd);
+        noticeNonResult(){
+            this.hideAllResult();
+            this.$nonResult.show();
+        }
+
+        noticeSuggest(word){
+            this.hideAllResult();
+            this.$suggestResult.show();
+            this.$suggestA.html(word);
+        }
+
+        noticeCards(){
+            this.hideAllResult();
+            this.$cardGroup.show();
+        }
+
+        /**
+         * {@link #noticeFailure}と{@link noticeNonResult}付属。
+         */
+        hideAllResult(){
+            this.$spinner.removeClass('is-active');
+            this.$cardGroup.hide();
+            this.$errResult.hide();
+            this.$nonResult.hide();
+            this.$suggestResult.hide();
+        }
+
+        /**
+         * @see <a href="../../doc/SearchResult2.json"></a>
+         * @param prgDate ex. 20120517
+         */
+        static generateTimeVal(prgDate){
+            const momentM = moment(prgDate, 'YYYYMMDD');
+            return momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
+            // return val +' '+ startHhSs.splice(2, 0, ':') +' - '+  endHhSs.splice(2, 0, ':');
         }
     }
 }();

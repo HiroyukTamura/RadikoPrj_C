@@ -114,6 +114,10 @@
         width: 300px;
         margin: 16px;
         z-index: 0;
+        cursor: pointer;
+        &.is-hovered {
+          color: $textGray;
+        }
         .station-logo {
           height: 52px;
           width: 100%;
@@ -138,9 +142,14 @@
           }
           .prg-time {
             font-size: 16px;
+            span {
+              padding-right: 1em;
+              font-size: 1.4rem;
+            }
           }
           .prg-pfm {
-            font-size: 16px;
+            font-size: 14px;
+            line-height: 22px;
           }
         }
       }

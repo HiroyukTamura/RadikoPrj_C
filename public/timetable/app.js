@@ -564,7 +564,7 @@
             const url = 'http://radiko.jp/v3/api/program/search/suggest?' +
                 'key=' + encodeURIComponent(key) +
                 '&filter=&start_day=&end_day=&area_id=&cul_area_id=' +
-                '&uid=' + Util.makeUid() +
+                '&uid=' + Util.generateUid() +
                 '&row_limit=8&page_idx=0&app_id=pc';
 
             console.log(url);

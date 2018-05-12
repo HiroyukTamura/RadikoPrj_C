@@ -110,7 +110,10 @@
         align-items: center;
         width: 300px;
         margin: 16px;
-        z-index: 0; }
+        z-index: 0;
+        cursor: pointer; }
+        .mdl-layout__content #second-row #card-group .item.is-hovered {
+          color: rgba(0, 0, 0, 0.54); }
         .mdl-layout__content #second-row #card-group .item .station-logo {
           height: 52px;
           width: 100%;
@@ -131,5 +134,9 @@
             margin-bottom: 16px; }
           .mdl-layout__content #second-row #card-group .item .details .prg-time {
             font-size: 16px; }
+            .mdl-layout__content #second-row #card-group .item .details .prg-time span {
+              padding-right: 1em;
+              font-size: 1.4rem; }
           .mdl-layout__content #second-row #card-group .item .details .prg-pfm {
-            font-size: 16px; }
+            font-size: 14px;
+            line-height: 22px; }
