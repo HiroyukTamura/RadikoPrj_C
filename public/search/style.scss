@@ -102,56 +102,70 @@
         color: $primaryBlue;
       }
     }
+
     #card-group {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0 24px 72px 24px;
       width: 100%;
-      align-items: center;
-      .item {
-        flex-direction: column;
-        align-items: center;
-        width: 300px;
-        margin: 16px;
-        z-index: 0;
-        cursor: pointer;
-        &.is-hovered {
-          color: $textGray;
-        }
-        .station-logo {
-          height: 52px;
-          width: 100%;
-          text-align: center;
-          img {
-            height: 100%;
-            width: auto;
-          }
-        }
-        .prg-logo {
-          width: 100%;
-          height: auto;
-          display: block;
-        }
-        .details {
-          padding: 16px;
-          display: flex;
+      #card-group-in {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 24px 72px 24px;
+        width: 100%;
+        justify-content: center;
+        .item {
           flex-direction: column;
           align-items: center;
-          .prg-title {
-            margin-bottom: 16px;
+          width: 300px;
+          margin: 16px;
+          z-index: 0;
+          cursor: pointer;
+          &.is-hovered {
+            color: $textGray;
           }
-          .prg-time {
-            font-size: 16px;
-            span {
-              padding-right: 1em;
-              font-size: 1.4rem;
+          &.dummy {
+            visibility: hidden;
+          }
+          .station-logo {
+            height: 52px;
+            width: 100%;
+            text-align: center;
+            img {
+              height: 100%;
+              width: auto;
             }
           }
-          .prg-pfm {
-            font-size: 14px;
-            line-height: 22px;
+          .prg-logo {
+            width: 100%;
+            height: auto;
+            display: block;
+          }
+          .details {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            .prg-title {
+              margin-bottom: 16px;
+            }
+            .prg-time {
+              font-size: 16px;
+              span {
+                padding-right: 1em;
+                font-size: 1.4rem;
+              }
+            }
+            .prg-pfm {
+              font-size: 14px;
+              line-height: 22px;
+            }
           }
         }
+      }
+
+      #bottom-spinner {
+        width: 100%;
+        justify-content: center;
+        height: 72px;
+        display: none;
       }
     }
   }

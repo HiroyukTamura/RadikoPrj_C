@@ -100,43 +100,52 @@
         font-size: 18px;
         color: #00a7e9; }
     .mdl-layout__content #second-row #card-group {
-      display: flex;
-      flex-wrap: wrap;
-      padding: 0 24px 72px 24px;
-      width: 100%;
-      align-items: center; }
-      .mdl-layout__content #second-row #card-group .item {
-        flex-direction: column;
-        align-items: center;
-        width: 300px;
-        margin: 16px;
-        z-index: 0;
-        cursor: pointer; }
-        .mdl-layout__content #second-row #card-group .item.is-hovered {
-          color: rgba(0, 0, 0, 0.54); }
-        .mdl-layout__content #second-row #card-group .item .station-logo {
-          height: 52px;
-          width: 100%;
-          text-align: center; }
-          .mdl-layout__content #second-row #card-group .item .station-logo img {
-            height: 100%;
-            width: auto; }
-        .mdl-layout__content #second-row #card-group .item .prg-logo {
-          width: 100%;
-          height: auto;
-          display: block; }
-        .mdl-layout__content #second-row #card-group .item .details {
-          padding: 16px;
-          display: flex;
+      width: 100%; }
+      .mdl-layout__content #second-row #card-group #card-group-in {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 0 24px 72px 24px;
+        width: 100%;
+        justify-content: center; }
+        .mdl-layout__content #second-row #card-group #card-group-in .item {
           flex-direction: column;
-          align-items: center; }
-          .mdl-layout__content #second-row #card-group .item .details .prg-title {
-            margin-bottom: 16px; }
-          .mdl-layout__content #second-row #card-group .item .details .prg-time {
-            font-size: 16px; }
-            .mdl-layout__content #second-row #card-group .item .details .prg-time span {
-              padding-right: 1em;
-              font-size: 1.4rem; }
-          .mdl-layout__content #second-row #card-group .item .details .prg-pfm {
-            font-size: 14px;
-            line-height: 22px; }
+          align-items: center;
+          width: 300px;
+          margin: 16px;
+          z-index: 0;
+          cursor: pointer; }
+          .mdl-layout__content #second-row #card-group #card-group-in .item.is-hovered {
+            color: rgba(0, 0, 0, 0.54); }
+          .mdl-layout__content #second-row #card-group #card-group-in .item.dummy {
+            visibility: hidden; }
+          .mdl-layout__content #second-row #card-group #card-group-in .item .station-logo {
+            height: 52px;
+            width: 100%;
+            text-align: center; }
+            .mdl-layout__content #second-row #card-group #card-group-in .item .station-logo img {
+              height: 100%;
+              width: auto; }
+          .mdl-layout__content #second-row #card-group #card-group-in .item .prg-logo {
+            width: 100%;
+            height: auto;
+            display: block; }
+          .mdl-layout__content #second-row #card-group #card-group-in .item .details {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; }
+            .mdl-layout__content #second-row #card-group #card-group-in .item .details .prg-title {
+              margin-bottom: 16px; }
+            .mdl-layout__content #second-row #card-group #card-group-in .item .details .prg-time {
+              font-size: 16px; }
+              .mdl-layout__content #second-row #card-group #card-group-in .item .details .prg-time span {
+                padding-right: 1em;
+                font-size: 1.4rem; }
+            .mdl-layout__content #second-row #card-group #card-group-in .item .details .prg-pfm {
+              font-size: 14px;
+              line-height: 22px; }
+      .mdl-layout__content #second-row #card-group #bottom-spinner {
+        width: 100%;
+        justify-content: center;
+        height: 72px;
+        display: none; }

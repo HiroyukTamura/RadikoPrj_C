@@ -88,7 +88,13 @@
                     }
                     return false;
                 }
-                requestOperator.onPreRequest().requestJson(keyInput.val(), startDropDown.getSelectedYmd(), endDropDown.getSelectedYmd());
+                let startM = moment(startDropDown.getSelectedYmd(), 'YYYYMMDD');
+                let endM = moment(endDropDown.getSelectedYmd(), 'YYYYMMDD');
+                console.log(startM, endM);
+                requestOperator.requestMeta = new SearchRequestMeta(startM, endM, keyInput.val());
+                requestOperator
+                    .onPreRequest()
+                    .requestJson();
             });
             return this;
         }
@@ -178,13 +184,17 @@
 
     class RequestOperator{
         constructor(){
-            this.$spinner = $('.mdl-spinner');
+            this.$spinner = $('#spinner-1st');
             this.$resultGroup = $('.result');
             this.$cardGroup =$('#card-group');
+            this.$cardGroupIn = $('#card-group-in');
+            this.$btmSpinWrapper = $('#bottom-spinner');
             this.$errResult =$('#err-result');
             this.$nonResult =$('#non-result');
             this.$suggestResult =$('#suggest-word');
             this.$suggestA = this.$suggestResult.find('a');
+            this.uid = Util.generateUid();
+            this.requestMeta = null;
 
             this.init();
         }
@@ -195,31 +205,42 @@
                 searchDom.$keyInput.val(value);
                 return false;
             });
+            const self = this;
+            const secondRow = $('#second-row');
+            const headerRow = $('.mdl-layout__header-row');
+            $('.mdl-layout__content').scroll(function (e) {
+                if (self.$btmSpinWrapper.is(":visible")
+                    && $(this).height()+ headerRow.height() - self.$btmSpinWrapper.offset().top > 32 /*半分以上スピナーラッパーが表示されたら*/){
+                    self.requestMeta.pageIndex++;
+                    self.requestJson();
+                    self.$btmSpinWrapper.css('display', 'none');
+                }
+            });
         }
 
         onPreRequest(){
             this.$resultGroup.hide();
             this.$spinner.addClass('is-active');
-            this.$cardGroup.empty();
+            this.$cardGroupIn.empty();
             return this;
         }
 
         /**
          * StorageにereaIdが保存されていることを前提とする。
          */
-        requestJson(key, startYmd, endYmd){
+        requestJson(){
             const ereaId = localStorage.getItem('ereaId');
             const url = 'http://radiko.jp/v3/api/program/search?' +
-                'key=' + encodeURIComponent(key) +
+                'key=' + encodeURIComponent(this.requestMeta.key) +
                 '&filter=' + 'past'+
-                '&start_day=' + moment(startYmd, 'YYYYMMDD').format('YYYY-MM-DD') +
-                '&end_day=' + moment(endYmd, 'YYYYMMDD').format('YYYY-MM-DD') +
+                '&start_day=' + this.requestMeta.startM.format('YYYY-MM-DD') +
+                '&end_day=' + this.requestMeta.endM.format('YYYY-MM-DD') +
                 '&area_id=' + ereaId +
                 '&region_id=&' +
                 'cul_area_id=' + ereaId +
-                '&page_idx=' +
-                '&uid=' + Util.generateUid() +
-                '&row_limit=12' +
+                '&page_idx='+ this.requestMeta.pageIndex +
+                '&uid='+ this.uid +
+                '&row_limit='+ this.requestMeta.rowLimit+
                 '&app_id=pc' +
                 '&action_id=1' +
                 '&action_rank=1';
@@ -246,7 +267,7 @@
                 $.each(data.data, function(i, ele) {
                     const timeVal = ele['start_time_s'].splice(2, 0, ':') +' - '+  ele['end_time_s'].splice(2, 0, ':');
                     const dateVal = RequestOperator.generateTimeVal(ele['program_date']);
-                    const $card = $('<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
+                    $('<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
                         '<div class="station-logo">\n' +
                             '<img src="http://radiko.jp/station/logo/'+ ele['station_id'] +'/logo_medium.png" alt="'+ ele['station_id'] +'">\n' +
                         '</div>\n' +
@@ -263,10 +284,22 @@
                             $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
                         }, function () {
                             $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
-                        }).appendTo(self.$cardGroup);
+                        }).appendTo(self.$cardGroupIn);
                 });
-                Util.setElementAsMdl(self.$cardGroup);
+                Util.setElementAsMdl(self.$cardGroupIn);
                 this.noticeCards();
+
+                if (data['meta']['row_limit'] * (data['meta']['page_idx']+1) < data['meta']['result_count']) {
+                    self.$btmSpinWrapper.css('display', 'flex');
+                } else {
+                    self.$btmSpinWrapper.css('display', 'none');
+                    const groupWidth = self.$cardGroupIn.width();
+                    const columnNum = Math.floor(groupWidth / (300+16*2/*カード幅+マージン*/));
+                    const dummyNum = columnNum -data.data.length % columnNum;
+                    for (let i = 0; i < dummyNum; i++)
+                        $('<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item dummy"></div>')
+                            .appendTo(self.$cardGroupIn);
+                }
             }
         }
 
@@ -310,6 +343,16 @@
             const momentM = moment(prgDate, 'YYYYMMDD');
             return momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
             // return val +' '+ startHhSs.splice(2, 0, ':') +' - '+  endHhSs.splice(2, 0, ':');
+        }
+    }
+
+    class SearchRequestMeta{
+        constructor(startM, endM, key) {
+            this.startM = startM;
+            this.endM = endM;
+            this.key = key;
+            this.pageIndex = 0;
+            this.rowLimit = 12;
         }
     }
 }();
