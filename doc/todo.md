@@ -1,0 +1,1 @@
+・desc infoにおけるhtmlタグの処理(a href系)。

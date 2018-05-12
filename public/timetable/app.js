@@ -76,9 +76,7 @@
             this.currentM = moment();
             this.$dialog = $('.mdl-dialog');
             // this.WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'];
-            if (!this.$dialog[0].showModal) {
-                dialogPolyfill.registerDialog(this.$dialog[0]);
-            }
+            Util.setUpDialog(this.$dialog[0]);
         }
 
         init() {
@@ -144,18 +142,19 @@
                     return false;
                 $(this).parents('.mdl-menu__container').removeClass('is-visible');
             });
-            this.$dialog[0].addEventListener('close', function(e) {
-                if (this.returnValue === 'download') {
-                    console.log('download');
-                }
-                return false;
-            });
-            $('#dl-btm').on('click', function () {
-                self.$dialog[0].close();
-            });
-            $('.cancel-btn').on('click', function () {
-                self.$dialog[0].close();
-            });
+            Util.setDialogListeners(this.$dialog[0]);
+            // this.$dialog[0].addEventListener('close', function(e) {
+            //     if (this.returnValue === 'download') {
+            //         console.log('download');
+            //     }
+            //     return false;
+            // });
+            // $('#dl-btm').on('click', function () {
+            //     self.$dialog[0].close();
+            // });
+            // $('.cancel-btn').on('click', function () {
+            //     self.$dialog[0].close();
+            // });
         }
 
         initDateMenu(){
@@ -214,10 +213,10 @@
                 self.$dialog.find('.hp a').html(hp);
                 self.$dialog.find('.desc')
                     .empty()
-                    .append(TimeTableDom.wrapHtml(desc));
+                    .append(Util.wrapHtml(desc));
                 self.$dialog.find('.info')
                     .empty()
-                    .html(TimeTableDom.wrapHtml(info));
+                    .html(Util.wrapHtml(info));
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
@@ -472,36 +471,6 @@
                 .css('border-top-left-radius', 0)
                 .css('border-top-right-radius', 0);
         }
-
-        static unescapeHTML(str) {
-            // let div = document.createElement("div");
-            // return str.replace(/</g,"&lt;")
-            //     .replace(/>/g,"&gt;")
-            //     .replace(/ /g, "&nbsp;")
-            //     .replace(/\r/g, "&#13;")
-            //     .replace(/\n/g, "&#10;");
-            let s = this.replaceAll(str, "&gt;", '>');
-            s = this.replaceAll(s, "&lt;", '<');
-            s = this.replaceAll(s, '&nbsp;', ' ');
-            s = this.replaceAll(s, "&#13;", '\r');
-            s = this.replaceAll(s, "&#10;", '\n');
-
-            return s;
-            // return div.textContent || div.innerText;
-        }
-
-        static wrapHtml(str){
-            return $('<span>').html(this.unescapeHTML(str));
-        }
-
-        static replaceAll(str, before, after) {
-            let result = str;
-            do {
-                str = result;
-                result = str.replace(before, after);
-            } while (str !== result);
-            return result;
-        };
     }
 }();
 

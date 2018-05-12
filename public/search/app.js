@@ -17,11 +17,18 @@
         searchDom = new SearchDom();
         requestOperator = new RequestOperator();
         searchDom.initializeSearchBar();
+
+
     };
 
     class Conductor {
-        init(){
+        constructor(){
             this.currentM = moment();
+            this.$dialog = $('.mdl-dialog');
+        }
+        init(){
+            Util.setUpDialog(this.$dialog[0]);
+            Util.setDialogListeners(this.$dialog[0]);
         }
     }
 
@@ -296,27 +303,8 @@
                     this.noticeNonResult();
                 }
             } else {
-                $.each(data.data, function(i, ele) {
-                    const timeVal = ele['start_time_s'].splice(2, 0, ':') +' - '+  ele['end_time_s'].splice(2, 0, ':');
-                    const dateVal = RequestOperator.generateTimeVal(ele['program_date']);
-                    $('<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
-                        '<div class="station-logo">\n' +
-                            '<img src="http://radiko.jp/station/logo/'+ ele['station_id'] +'/logo_medium.png" alt="'+ ele['station_id'] +'">\n' +
-                        '</div>\n' +
-                        '<img src="'+ ele['img'] +'" class="prg-logo" alt="番組ロゴ">\n' +
-                        '<div class="details">\n' +
-                            '<h4 class="prg-title mdl-pre-upgrade">'+ ele['title'] +'</h4>\n' +
-                            '<p class="prg-time mdl-pre-upgrade">'+ '<span>'+ dateVal +'</span>' + timeVal +'</p>\n' +
-                            '<p class="prg-pfm mdl-pre-upgrade">'+ ele['performer'] +'</p>\n' +
-                        '</div>\n' +
-                    '</div>')
-                        .on('click', function () {
-                            console.log('clicked');
-                        }).hover(function () {
-                            $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
-                        }, function () {
-                            $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
-                        }).appendTo(self.$cardGroupIn);
+                $.each(data.data, function(i) {
+                    new Card(this).$card.appendTo(self.$cardGroupIn);
                 });
                 Util.setElementAsMdl(self.$cardGroupIn);
                 this.noticeCards();
@@ -395,6 +383,63 @@
         }
         goSubmit(){
             this.button.click();
+        }
+    }
+
+    class Card {
+        constructor(ele){
+            this.stationId = ele['station_id'];
+            this.performer = ele['performer'];
+            this.title = ele['title'];
+            this.imgUrl = ele['img'];
+            this.prgDate = ele['program_date'];
+            this.startTimeS = ele['start_time_s'];
+            this.endTimeS = ele['end_time_s'];
+            this.info = ele['info'];
+            this.desc = ele['description'];
+            this.$card = this.createCardWithListener();
+        }
+
+        createCardWithListener(){
+            const self = this;
+            const timeVal = this.startTimeS.splice(2, 0, ':') +' - '+  this.endTimeS.splice(2, 0, ':');
+            const dateVal = RequestOperator.generateTimeVal(this.prgDate);
+
+            return $(
+                '<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
+                    '<div class="station-logo">\n' +
+                        '<img src="http://radiko.jp/station/logo/'+ this.stationId +'/logo_medium.png" alt="'+ this.stationId +'">\n' +
+                    '</div>\n' +
+                    '<img src="'+ this.imgUrl +'" class="prg-logo" alt="番組ロゴ">\n' +
+                        '<div class="details">\n' +
+                        '<h4 class="prg-title mdl-pre-upgrade">'+ this.title +'</h4>\n' +
+                        '<p class="prg-time mdl-pre-upgrade">'+ '<span>'+ dateVal +'</span>' + timeVal +'</p>\n' +
+                        '<p class="prg-pfm mdl-pre-upgrade">'+ this.performer +'</p>\n' +
+                    '</div>\n' +
+                '</div>')
+                .on('click', function () {
+                    console.log('clicked');
+                    conductor.$dialog.find('.prg-logo')
+                        .removeAttr('src')
+                        .attr('src', self.imgUrl);
+                    conductor.$dialog.find('.title').html(self.title);
+                    conductor.$dialog.find('.performer').html(self.performer);
+                    // conductor.$dialog.find('.hp').hide();
+                    conductor.$dialog.find('.desc')
+                        .empty()
+                        .append(Util.wrapHtml(self.desc));
+                    conductor.$dialog.find('.info')
+                        .empty()
+                        .html(Util.wrapHtml(self.info));
+
+                    if (!conductor.$dialog.prop('open'))
+                        conductor.$dialog[0].showModal();
+
+                }).hover(function () {
+                    $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
+                }, function () {
+                    $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
+                });
         }
     }
 }();

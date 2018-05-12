@@ -67,37 +67,7 @@
         </section>
     </main>
 </div>
-<dialog class="mdl-dialog">
-    <div>
-        <div class="header">
-            <h1 class="title"></h1>
-            <!--<img src="http://radiko.jp/v2/static/station/logo/TBS/224x100.png" class="station-logo">-->
-        </div>
-        <div class="cont-top">
-            <div class="left-box">
-                <img class="prg-logo">
-            </div>
-            <div class="right-box">
-                <div>
-                    <p class="date">5月8日（火） 15:30-17:50</p>
-                    <p class="performer"></p>
-                    <button class="btn btn-block" value="download" id="dl-btm">
-                        <i class="fas fa-download"></i>
-                        ダウンロード
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="cont-middle">
-            <div class="info"></div>
-            <div class="desc"></div>
-        </div>
-    </div>
-    <span class="ui-helper-hidden-accessible"><input type="image"/></span>
-    <button class="rounded-circle cancel-btn">
-        <i class="fas fa-times"></i>
-    </button>
-</dialog>
+<% include ../common/_dialog.ejs %>
 <% include ../common/_foot_template.ejs %>
 <script src="app.js"></script>
 </body></html>
