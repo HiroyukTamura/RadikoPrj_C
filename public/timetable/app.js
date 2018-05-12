@@ -1,6 +1,7 @@
 'use strict';
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
+const ipcRenderer = require('electron').ipcRenderer;
 
 !function(){
     const moment = require('moment');/*グローバルに定義してはいけない??*/
@@ -87,7 +88,6 @@ require('bootstrap');
             this.$grid =$('#grid');
             this.currentM = moment();
             this.$dialog = $('.mdl-dialog');
-            // this.WEEK_DAYS = ['日', '月', '火', '水', '木', '金', '土'];
             Util.setUpDialog(this.$dialog[0]);
         }
 
@@ -155,9 +155,9 @@ require('bootstrap');
             });
             Util.setDialogListeners(this.$dialog[0]);
             $('#dl-btm').on('click', function () {
-                this.$dialog[0].close();
+                self.$dialog[0].close();
                 //todo ダウンロード！！
-                new ProcessCommunicator();
+                new ProcessCommunicator().callDL();
             });
             // this.$dialog[0].addEventListener('close', function(e) {
             //     if (this.returnValue === 'download') {
@@ -234,10 +234,13 @@ require('bootstrap');
                 self.$dialog.find('.info')
                     .empty()
                     .html(Util.wrapHtml(info));
-                self.$dialog.attr('ft', ft);
+                self.$dialog.attr('ft', ft)
+                    .attr('station', $(this).attr('station'));
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
+
+                return false;
             });
         }
 
@@ -354,7 +357,7 @@ require('bootstrap');
             const self = this;
 
             this.$stations.each((i, ele) => {
-                const id = $(ele).attr('id');
+                const stationId = $(ele).attr('id');
                 const name = $(ele).find('name').html();
                 const progs = $(ele).find('progs');
                 const ymd = progs.find('date').html();
@@ -362,15 +365,15 @@ require('bootstrap');
                 // const canRec = $(ele).find('failed_record').html();
 
                 //Tabbarの画像をセット
-                const logoUrl = 'http://radiko.jp/station/logo/'+ id +'/logo_medium.png';
+                const logoUrl = 'http://radiko.jp/station/logo/'+ stationId +'/logo_medium.png';
                 const html = $(
-                    '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ id +'">\n' +
+                    '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ stationId +'">\n' +
                         '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
                     '</a>');
                 tabBar.append(html);
 
                 //menu作成
-                const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ id +'">'+ name +'</li>');
+                const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'">'+ name +'</li>');
                 stationMenu.append(menuLi);
 
                 progs.find('prog').each((j, ele)=> {
@@ -392,7 +395,7 @@ require('bootstrap');
                     const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
                     const durMin = Math.round(parseInt(durSec)/60);
                     const $cardOrgin = $(
-                        '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button mdl-pre-upgrade" style="flex-grow: '+ durMin +'" prgid="'+ id +'">\n'+
+                        '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button mdl-pre-upgrade" style="flex-grow: '+ durMin +'" prgid="'+ id +'" station="'+ stationId +'">\n'+
                             '<div class="top"></div>\n'+
                             '<li class="mdl-list__item mdl-list__item--two-line mdl-pre-upgrade">\n'+
                                 '<span class="mdl-list__item-primary-content mdl-pre-upgrade">\n'+
@@ -507,7 +510,16 @@ require('bootstrap');
 
     class ProcessCommunicator{
         constructor(){
-            domFrame.$dialog
+            this.ft = domFrame.$dialog.attr('ft');
+            this.stationId = domFrame.$dialog.attr('station');
+        }
+
+        callDL(){
+            const data = {
+                ft: this.ft,
+                stationId: this.stationId
+            };
+            ipcRenderer.send('startDlWithFt', data);
         }
     }
 }();

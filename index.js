@@ -83,7 +83,7 @@ const ffmpeg_static = require('ffmpeg-static');
 const http = require('http');
 const httpProxy = require('http-proxy');
 const request = require('request');
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, ipcMain} = require('electron');
 const url = require('url');
 const rp = require('request-promise');
 const csv = require('csvtojson');
@@ -136,6 +136,14 @@ function createWindow () {
         win = null;
     });
 
+    ipcMain.on('startDlWithFt', (event, arg) => {
+        new PuppeteerKicker(arg).launchPuppeteer().then(_=> {
+            console.warn('launchPuppeteer completed');
+        }).catch((e) => {
+            console.warn(e);
+        });
+    });
+
     // new OpenVpn().init();
     // masterJson = new MasterJson();
     // masterJson.requestJson();
@@ -164,6 +172,67 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+class PuppeteerKicker {
+    constructor(arg){
+        this.ft = arg.ft;
+        this.stationId = arg.stationId;
+        this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
+        this.USER_DATA_PATH = '';
+        this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
+        this.chunkListDir = 'chunklist';
+    }
+
+    async launchPuppeteer() {
+        const self = this;
+        const browser = await puppeteer.launch({
+            // executablePath: 'C:\\Program Files (x86)\\Google\\Chrome Dev\\Application\\chrome.exe',
+            args: [
+                // '--auto-open-devtools-for-tabs',
+                // '--auto-select-desktop-capture-source=pickme',
+                '--ppapi-flash-path= '+ self.FLASH_PATH,
+                'userDataDir= '+ self.USER_DATA_PATH,
+                // '--disable-infobars',
+                '--load-extension=' + __dirname,  // eslint-disable-line no-path-concat
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                // No autoplay
+                // '--autoplay-policy=user-gesture-required'
+            ]
+        });
+        const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
+        page.on('response', response => {
+            console.log(response.status(), response.url());
+            const url = response.url();
+            if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
+                return;
+
+            // response.text().then(function (status) {
+            //     if (status.trim() === '') {
+            //         console.log('空ファイル', response.url());
+            //         return;
+            //     }
+            //
+            //     if (isFileExists(self.chunkListDir)) {
+            //         fs.removeSync(self.chunkListDir);
+            //     }
+            //     const pathE = self.chunkListDir + '/' + path.basename(url);
+            //     writeFile(pathE, response).then(() => {
+            //         console.log('書き込み完了');
+            //         runFfmpeg(pathE);
+            //     }).catch(err => {
+            //         console.log(err);
+            //     });
+            // });
+        });
+        await page.goto(this.URL);
+        await page.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
+        await page.click('#colorbox--term > p.colorbox__btn > a');
+        await page.waitFor(10 * 1000);
+        await page.close();
+    }
+}
 
 class PuppeteerOperator {
     // http://radiko.jp/v3/station/list/JP13.xml
@@ -674,28 +743,6 @@ function runFfmpeg(pathE) {
 
     // testSample();
 })();
-
-async function testSample() {
-    const browser = await puppeteer.launch({
-        // Ug: https://bugs.chromium.org/p/chromium/issues/detail?id=706008
-        headless: false,
-        // TODO: smarter way to find this
-        // Ug: https://bugs.chromium.org/p/chromium/issues/detail?id=769894
-        executablePath: 'C:\\Program Files (x86)\\Google\\Chrome Dev\\Application\\chrome.exe',
-        args: [
-            // '--auto-open-devtools-for-tabs',
-            '--auto-select-desktop-capture-source=pickme',
-            '--disable-infobars',
-            '--load-extension=' + __dirname,  // eslint-disable-line no-path-concat
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            // No autoplay
-            '--autoplay-policy=user-gesture-required'
-        ],
-        slowMo: 100
-    });
-    const page = await browser.newPage();
-}
 
 async function connect(page) {
     page.on('response', response => {

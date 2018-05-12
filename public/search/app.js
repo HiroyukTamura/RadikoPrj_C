@@ -33,6 +33,11 @@ require('bootstrap');
         init(){
             Util.setUpDialog(this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
+            $('#dl-btm').on('click', function () {
+                this.$dialog[0].close();
+                //todo ダウンロード！！
+                new ProcessCommunicator();
+            });
         }
 
         static checkUrlParam(){
@@ -482,6 +487,12 @@ require('bootstrap');
                 }, function () {
                     $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
                 });
+        }
+    }
+
+    class ProcessCommunicator{
+        constructor(){
+            console.log(conductor.$dialog.attr('ft'));
         }
     }
 }();
