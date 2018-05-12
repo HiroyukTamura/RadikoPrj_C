@@ -46,11 +46,10 @@
             this.setOnClickBtnListener();
 
             this.initSuggester();
-
         }
 
         initSuggester(){
-            suggester = new ProgramSearcher();
+            suggester = new Suggester();
             suggester.init();
             const self = this;
             this.$suggestDiv.on('click', function () {
@@ -59,6 +58,18 @@
 
             window.onresize = function () {
                 self.$suggestDiv.width(self.$keyInput.width());
+            };
+
+            //サジェスト以外をクリックしたらサジェストを非表示に
+            window.onclick = function (e) {
+                if (suggester.$dropDown.is(':visible')) {
+                    const rect = suggester.$dropDown[0].getBoundingClientRect();
+                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {
+                        suggester.$dropDown.hide();
+                        return false;
+                    }
+                }
+                return true;
             };
         }
 
@@ -374,6 +385,16 @@
             this.key = key;
             this.pageIndex = 0;
             this.rowLimit = 12;
+        }
+    }
+
+    class Suggester extends ProgramSearcher {
+        constructor(){
+            super();
+            this.button = $('#first-row .btn');
+        }
+        goSubmit(){
+            this.button.click();
         }
     }
 }();
