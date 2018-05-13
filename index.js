@@ -93,6 +93,7 @@ const Sudoer = require('electron-sudo').default;
 const cheerio = require('cheerio');
 const parseString = require('xml2js').parseString;
 const moment = require('moment');
+const events = require('events');
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -108,7 +109,25 @@ const HTML_PATH = 'public/timetable/index.html';
 //     });
 // };
 
+class DlTaskList {
+    constructor(){
+        this.TASK_LIMIT = 2;
+        this.tasks = [];
+    }
+}
+
+class DlTask {
+    constructor(stationId, ft){
+        this.stationId = stationId;
+        this.ft = ft;
+        this.isDownLoading = false;
+    }
+}
+
 let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
+let emitter = new events.EventEmitter();
+const dlTaskList = new DlTaskList();
+
 function createWindow () {
     // Create the browser window.
     console.log('createWindow');
@@ -137,11 +156,9 @@ function createWindow () {
     });
 
     ipcMain.on('startDlWithFt', (event, arg) => {
-        new PuppeteerKicker(arg).launchPuppeteer().then(_=> {
-            console.warn('launchPuppeteer completed');
-        }).catch((e) => {
-            console.warn(e);
-        });
+        setTask(arg);
+        arg['taskNum'] = dlTaskList.tasks.length;
+        event.sender.send('startDlWithFt-SUCCESS', arg);
     });
 
     // new OpenVpn().init();
@@ -150,6 +167,12 @@ function createWindow () {
     // vpnJson = new GateVpnCsv();
     // vpnJson.requestCsv();
     // new PuppeteerOperator().getRegionWithPuppeteer();
+
+    function setTask(arg){
+        const dlTask = new DlTask(arg.stationId, arg.ft);
+        dlTaskList.tasks.push(dlTask);
+        emitter.emit('setTask', arg);
+    }
 }
 
 app.on('ready', createWindow);
@@ -173,7 +196,11 @@ app.on('activate', () => {
     }
 });
 
-class PuppeteerKicker {
+emitter.on('setTask', async(args) => {
+    console.log('setTask', args);
+});
+
+class PuppeteerOperator {
     constructor(arg){
         this.ft = arg.ft;
         this.stationId = arg.stationId;

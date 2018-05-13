@@ -1,6 +1,7 @@
 'use strict';
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
+const dialogPolyfill = require('dialog-polyfill');
 
 !function () {
     const moment = require('moment');
@@ -31,7 +32,7 @@ require('bootstrap');
         }
 
         init(){
-            Util.setUpDialog(this.$dialog[0]);
+            Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
             $('#dl-btm').on('click', function () {
                 this.$dialog[0].close();
@@ -57,12 +58,12 @@ require('bootstrap');
                 //サジェスト以外をクリックしたらサジェストを非表示に
                 if (suggester.$dropDown.is(':visible')) {
                     const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {
+                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {//todo これ絶対おかしいはず
                         suggester.$dropDown.hide();
                         return false;
                     }
                 } else if (self.$dialog.prop('open')) {
-                    console.log('こっち');
+                    console.log('こっち');//todo rect判定して閉じるべき
                     self.$dialog[0].close();
                     return false;
                 }

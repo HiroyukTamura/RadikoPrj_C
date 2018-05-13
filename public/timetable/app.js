@@ -2,6 +2,7 @@
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const ipcRenderer = require('electron').ipcRenderer;
+const dialogPolyfill = require('dialog-polyfill');
 
 !function(){
     const moment = require('moment');/*グローバルに定義してはいけない??*/
@@ -12,18 +13,23 @@ const ipcRenderer = require('electron').ipcRenderer;
 
     window.onload = function() {
         console.log('onload');
+        ProcessCommunicator.setOnReceiveListeners();
         ereaChecker = new EreaChecker();
         domFrame = new DomFrame();
         conductor = new OperationConductor();
         searcher = new ProgramSearcherCustom();
 
         conductor.initialOperate();
-        window.onclick = function (event) {
-            console.log('Im clicked' , event.clientX, event.clientY);
+        window.onclick = function (e) {
+            console.log('Im clicked' , e.clientX, e.clientY);
             // searcher.onClickWindow(event);
             if (domFrame.$dialog.prop('open')) {
-                domFrame.$dialog[0].close();
-                return false;
+                const rect = domFrame.$dialog[0].getBoundingClientRect();
+                if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+                    domFrame.$dialog[0].close();
+                    return false;
+                }
+                return true;
             }
             const $clickedEle = searcher.$dropDown.find('.mouseover');
             if ($clickedEle.length) {
@@ -88,7 +94,7 @@ const ipcRenderer = require('electron').ipcRenderer;
             this.$grid =$('#grid');
             this.currentM = moment();
             this.$dialog = $('.mdl-dialog');
-            Util.setUpDialog(this.$dialog[0]);
+            Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
         }
 
         init() {
@@ -157,7 +163,10 @@ const ipcRenderer = require('electron').ipcRenderer;
             $('#dl-btm').on('click', function () {
                 self.$dialog[0].close();
                 //todo ダウンロード！！
-                new ProcessCommunicator().callDL();
+                const ft = self.$dialog.attr('ft');
+                const stationId = self.$dialog.attr('station');
+                const title = self.$dialog.attr('title');
+                ProcessCommunicator.callDL(ft, stationId);
             });
             // this.$dialog[0].addEventListener('close', function(e) {
             //     if (this.returnValue === 'download') {
@@ -235,7 +244,8 @@ const ipcRenderer = require('electron').ipcRenderer;
                     .empty()
                     .html(Util.wrapHtml(info));
                 self.$dialog.attr('ft', ft)
-                    .attr('station', $(this).attr('station'));
+                    .attr('station', $(this).attr('station'))
+                    .attr('title', $(this).attr(html));
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
@@ -509,17 +519,17 @@ const ipcRenderer = require('electron').ipcRenderer;
     }
 
     class ProcessCommunicator{
-        constructor(){
-            this.ft = domFrame.$dialog.attr('ft');
-            this.stationId = domFrame.$dialog.attr('station');
-        }
-
-        callDL(){
+        static callDL(ft, stationId){
             const data = {
-                ft: this.ft,
-                stationId: this.stationId
+                ft: ft,
+                stationId: stationId
             };
             ipcRenderer.send('startDlWithFt', data);
+        }
+        static setOnReceiveListeners(){
+            ipcRenderer.on('startDlWithFt-SUCCESS', (event, arg) => {
+                console.log(arg);
+            });
         }
     }
 }();
