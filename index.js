@@ -111,16 +111,21 @@ const HTML_PATH = 'public/timetable/index.html';
 
 class DlTaskList {
     constructor(){
-        this.TASK_LIMIT = 2;
-        this.tasks = [];
+        this.tasks = {};
+        this.working = 0;
+    }
+
+    getCurrentProgress(){
+        return this.working === 0 ? 0 : this.tasks[this.working]['progress']
     }
 }
 
 class DlTask {
-    constructor(stationId, ft){
+    constructor(stationId, ft, title){
         this.stationId = stationId;
         this.ft = ft;
-        this.isDownLoading = false;
+        this.title = title;
+        this.progress = 0;
     }
 }
 
@@ -157,8 +162,11 @@ function createWindow () {
 
     ipcMain.on('startDlWithFt', (event, arg) => {
         setTask(arg);
-        arg['taskNum'] = dlTaskList.tasks.length;
-        event.sender.send('startDlWithFt-SUCCESS', arg);
+        const data = {
+            taskLength: Object.keys(dlTaskList.tasks).length,
+            progress: dlTaskList.getCurrentProgress()
+        };
+        event.sender.send('startDlWithFt-SUCCESS', data);
     });
 
     // new OpenVpn().init();
@@ -169,8 +177,8 @@ function createWindow () {
     // new PuppeteerOperator().getRegionWithPuppeteer();
 
     function setTask(arg){
-        const dlTask = new DlTask(arg.stationId, arg.ft);
-        dlTaskList.tasks.push(dlTask);
+        const timeStamp = moment().valueOf();
+        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
         emitter.emit('setTask', arg);
     }
 }

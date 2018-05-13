@@ -3,6 +3,7 @@ window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const ipcRenderer = require('electron').ipcRenderer;
 const dialogPolyfill = require('dialog-polyfill');
+const circleProgress = require('jquery-circle-progress');
 
 !function(){
     const moment = require('moment');/*グローバルに定義してはいけない??*/
@@ -10,10 +11,11 @@ const dialogPolyfill = require('dialog-polyfill');
     let domFrame;
     let conductor;
     let searcher;
+    let ipcConn;
 
     window.onload = function() {
         console.log('onload');
-        ProcessCommunicator.setOnReceiveListeners();
+        ipcConn = new ProcessCommunicator();
         ereaChecker = new EreaChecker();
         domFrame = new DomFrame();
         conductor = new OperationConductor();
@@ -166,7 +168,7 @@ const dialogPolyfill = require('dialog-polyfill');
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('title');
-                ProcessCommunicator.callDL(ft, stationId);
+                ProcessCommunicator.callDL(ft, stationId, title);
             });
             // this.$dialog[0].addEventListener('close', function(e) {
             //     if (this.returnValue === 'download') {
@@ -519,16 +521,41 @@ const dialogPolyfill = require('dialog-polyfill');
     }
 
     class ProcessCommunicator{
-        static callDL(ft, stationId){
+        constructor(){
+            const self = this;
+            this.setOnReceiveListeners();
+            this.$status = $('#dl-status');
+            this.$status.on('click', function (e) {
+                self.onClickStatus();
+            });
+        }
+
+        onClickStatus(){
+
+        }
+
+        static callDL(ft, stationId, title){
             const data = {
                 ft: ft,
-                stationId: stationId
+                stationId: stationId,
+                title: title
             };
             ipcRenderer.send('startDlWithFt', data);
         }
-        static setOnReceiveListeners(){
+
+        setOnReceiveListeners(){
+            const self = this;
             ipcRenderer.on('startDlWithFt-SUCCESS', (event, arg) => {
                 console.log(arg);
+                self.$status.circleProgress({
+                    value: arg.progress,
+                    animation: false,
+                    fill: '#fdf2f2',
+                    size: 32,
+                    emptyFill: '#e73c64',
+                    startAngle: -Math.PI / 2
+                }).find('span').html(arg.taskLength);
+                self.$status.show();
             });
         }
     }

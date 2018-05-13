@@ -190,6 +190,21 @@
   .mdl-layout__header #btn-date .material-icons :hover, .mdl-layout__header #radio-menu .material-icons :hover {
     background: unset; }
 
+.mdl-layout__header #dl-status {
+  margin-left: 8px;
+  height: 32px;
+  width: 32px;
+  background: #e73c64;
+  display: none;
+  position: relative;
+  cursor: pointer; }
+  .mdl-layout__header #dl-status span {
+    color: white;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%); }
+
 .mdl-layout__header #search-btn {
   padding: 16px 0;
   position: relative; }

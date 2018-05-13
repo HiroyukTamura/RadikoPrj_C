@@ -2,9 +2,22 @@
 @import "../../scss/component";
 
 .mdl-layout__header{
-  #btn-date, #radio-menu{
+  #btn-date, #radio-menu {
     @include buttonInterval;
     @include whitenHover;
+  }
+  #dl-status {
+    @include buttonInterval;
+    height: 32px;
+    width: 32px;
+    background: $primaryRed;
+    display: none;
+    position: relative;
+    cursor: pointer;
+    span {
+      color: white;
+      @include centerAbs;
+    }
   }
   #search-btn {
     padding: 16px 0;
@@ -15,9 +28,6 @@
     #suggest-drop-down {
       @include forSearchDropDown;
     }
-    //&.is-focused #suggest-drop-down.has-val {
-    //  display: block;
-    //}
   }
 }
 
