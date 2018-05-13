@@ -109,6 +109,10 @@ const HTML_PATH = 'public/timetable/index.html';
 //     });
 // };
 
+String.prototype.splice = function(start, delCount, newSubStr) {
+    return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+};
+
 class DlTaskList {
     constructor(){
         this.tasks = {};
@@ -129,90 +133,12 @@ class DlTask {
     }
 }
 
-let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
-let emitter = new events.EventEmitter();
-const dlTaskList = new DlTaskList();
-
-function createWindow () {
-    // Create the browser window.
-    console.log('createWindow');
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            // nodeIntegration: false,
-            webSecurity: false
-        }
-    });
-
-    // and load the index.html of the app.
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, HTML_PATH),
-        protocol: 'file:',
-        slashes: true
-    }));
-
-    win.webContents.openDevTools();
-
-    win.on('closed', () => {
-        // ウィンドウオブジェクトを参照から外す。
-        // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
-        win = null;
-    });
-
-    ipcMain.on('startDlWithFt', (event, arg) => {
-        setTask(arg);
-        const data = {
-            taskLength: Object.keys(dlTaskList.tasks).length,
-            progress: dlTaskList.getCurrentProgress()
-        };
-        event.sender.send('startDlWithFt-SUCCESS', data);
-    });
-
-    // new OpenVpn().init();
-    // masterJson = new MasterJson();
-    // masterJson.requestJson();
-    // vpnJson = new GateVpnCsv();
-    // vpnJson.requestCsv();
-    // new PuppeteerOperator().getRegionWithPuppeteer();
-
-    function setTask(arg){
-        const timeStamp = moment().valueOf();
-        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
-        emitter.emit('setTask', arg);
-    }
-}
-
-app.on('ready', createWindow);
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-    console.log('window-all-closed');
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-});
-
-app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    console.log('active');
-    if (win === null) {
-        createWindow();
-    }
-});
-
-emitter.on('setTask', async(args) => {
-    console.log('setTask', args);
-});
-
 class PuppeteerOperator {
     constructor(arg){
-        this.ft = arg.ft;
-        this.stationId = arg.stationId;
-        this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
+        this.ft = null;
+        this.stationId = null;
+        // this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
+        this.URL = null;
         this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
         this.chunkListDir = 'TempChunkList';
@@ -291,9 +217,86 @@ class PuppeteerOperator {
     }
 }
 
-String.prototype.splice = function(start, delCount, newSubStr) {
-    return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
-};
+let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
+const emitter = new events.EventEmitter();
+const dlTaskList = new DlTaskList();
+const operator = new PuppeteerOperator();
+
+function createWindow () {
+    // Create the browser window.
+    console.log('createWindow');
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            // nodeIntegration: false,
+            webSecurity: false
+        }
+    });
+
+    // and load the index.html of the app.
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, HTML_PATH),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    win.webContents.openDevTools();
+
+    win.on('closed', () => {
+        // ウィンドウオブジェクトを参照から外す。
+        // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
+        win = null;
+    });
+
+    ipcMain.on('startDlWithFt', (event, arg) => {
+        setTask(arg);
+        const data = {
+            taskLength: Object.keys(dlTaskList.tasks).length,
+            progress: dlTaskList.getCurrentProgress()
+        };
+        event.sender.send('startDlWithFt-SUCCESS', data);
+    });
+
+    // new OpenVpn().init();
+    // masterJson = new MasterJson();
+    // masterJson.requestJson();
+    // vpnJson = new GateVpnCsv();
+    // vpnJson.requestCsv();
+    // new PuppeteerOperator().getRegionWithPuppeteer();
+
+    function setTask(arg){
+        const timeStamp = moment().valueOf();
+        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
+        emitter.emit('setTask', arg);
+    }
+}
+
+app.on('ready', createWindow);
+
+// Quit when all windows are closed.
+app.on('window-all-closed', () => {
+    console.log('window-all-closed');
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+});
+
+app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    console.log('active');
+    if (win === null) {
+        createWindow();
+    }
+});
+
+emitter.on('setTask', async(args) => {
+    console.log('setTask', args);
+    await operator.launchPuppeteer();
+});
 
 class MasterJson {
     constructor(){

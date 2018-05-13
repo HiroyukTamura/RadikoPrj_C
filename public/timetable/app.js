@@ -245,12 +245,15 @@ const circleProgress = require('jquery-circle-progress');
                 self.$dialog.find('.info')
                     .empty()
                     .html(Util.wrapHtml(info));
+                const stationId = $(this).attr('station');
                 self.$dialog.attr('ft', ft)
-                    .attr('station', $(this).attr('station'))
+                    .attr('station', stationId)
                     .attr('title', $(this).attr(html));
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
+
+                self.requestIsAvilable(stationId, ft);
 
                 return false;
             });
@@ -262,6 +265,35 @@ const circleProgress = require('jquery-circle-progress');
             const date = startM.format('M/D') +'('+ Util.getWeekDays()[startM.day()] +')';
             const time = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
             return date + ' ' + time;
+        }
+
+        requestIsAvilable(stationId, ft){
+            const self = this;
+            $.ajax({
+                url: Util.getPageUrl(stationId, ft),
+            }).done(data => {
+                switch (Util.isCanAvialble($(data))){
+                    case 1:
+                        self.showDlBtn(stationId, ft);
+                        break;
+                    case 0:
+                        Util.showDialogErrOnBtn(self.$dialog, Util.getErrMsgUnAvailable());
+                        break;
+                    case -1:
+                        Util.showDialogErrOnBtn(self.$dialog, Util.getErrMsgUnknown());
+                        break;
+                }
+            }).catch(e => {
+                console.log(e);
+                Util.showDialogErrOnBtn(self.$dialog, Util.getErrMsgNetWork());
+                //todo エラー分岐 ネットワーク系かどうか
+            });
+        }
+
+        showDlBtn(stationId, ft){
+            if (this.$dialog.prop('open') && this.$dialog.attr('station') === stationId && this.$dialog.attr('ft') == ft) {
+                Util.showDialogDlBtn(this.$dialog);
+            }
         }
     }
 
