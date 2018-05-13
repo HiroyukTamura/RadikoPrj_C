@@ -100,13 +100,13 @@ let postGotJsons;
 const RADIKO_URL = 'http://radiko.jp/#!/ts/TBS/20180427180000';
 const HTML_PATH = 'public/timetable/index.html';
 
-console.log = function (...val) {
-    const vals = val.join(' ') + '\n';
-    fs.appendFile('./debug.log', vals, function (err) {
-        if (err)
-            throw err;
-    });
-};
+// console.log = function (...val) {
+//     const vals = val.join(' ') + '\n';
+//     fs.appendFile('./debug.log', vals, function (err) {
+//         if (err)
+//             throw err;
+//     });
+// };
 
 let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
 function createWindow () {
@@ -180,20 +180,41 @@ class PuppeteerKicker {
         this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
         this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
-        this.chunkListDir = 'chunklist';
+        this.chunkListDir = 'TempChunkList';
+        this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
+        this.browser = null;
+        this.DlTasks = [];
+        this.taskLimit = 2;
+    }
+
+    async isPossibleToDl(){
+        const page = await browser.newPage();
+        await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
+        await page.goto(this.URL);
+        return await page.$(this.playBtnSlector) === null;
+    }
+
+    async closeBrowser(){
+
     }
 
     async launchPuppeteer() {
-        const self = this;
-        const browser = await puppeteer.launch({
+        if (this.browser)
+            return;
+        this.browser = await puppeteer.launch({
+            headless: false,
             // userDataDir: 'UserData',
-            executablePath: 'C:\\Program Files (x86)\\Google\\Chrome Dev\\Application\\chrome.exe',
+            executablePath: 'Application/chrome.exe',
             args: [
                 // '--auto-open-devtools-for-tabs',
                 // '--auto-select-desktop-capture-source=pickme',
                 // '--ppapi-flash-path= '+ self.FLASH_PATH,
                 // 'userDataDir= '+ self.USER_DATA_PATH,
                 // '--disable-infobars',
+                '--mute-audio', // Mute any audio
+                '--disable-sync',// Disable syncing to a Google account
+                '--no-first-run',// Skip first run wizards
+                '--disable-default-apps',// Disable installation of default apps on first run
                 '--load-extension=' + __dirname,  // eslint-disable-line no-path-concat
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -201,37 +222,37 @@ class PuppeteerKicker {
                 // '--autoplay-policy=user-gesture-required'
             ]
         });
-        const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
-        page.on('response', response => {
-            console.log(response.status(), response.url());
-            const url = response.url();
-            if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
-                return;
-
-            // response.text().then(function (status) {
-            //     if (status.trim() === '') {
-            //         console.log('空ファイル', response.url());
-            //         return;
-            //     }
-            //
-            //     if (isFileExists(self.chunkListDir)) {
-            //         fs.removeSync(self.chunkListDir);
-            //     }
-            //     const pathE = self.chunkListDir + '/' + path.basename(url);
-            //     writeFile(pathE, response).then(() => {
-            //         console.log('書き込み完了');
-            //         runFfmpeg(pathE);
-            //     }).catch(err => {
-            //         console.log(err);
-            //     });
-            // });
-        });
-        await page.goto(this.URL);
-        await page.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
-        await page.click('#colorbox--term > p.colorbox__btn > a');
-        await page.waitFor(10 * 1000);
-        await page.close();
+        // const page = await browser.newPage();
+        // await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
+        // page.on('response', response => {
+        //     console.log(response.status(), response.url());
+        //     const url = response.url();
+        //     if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
+        //         return;
+        //
+        //     response.text().then(function (status) {
+        //         if (status.trim() === '') {
+        //             console.log('空ファイル', response.url());
+        //             return;
+        //         }
+        //
+        //         if (isFileExists(self.chunkListDir)) {
+        //             fs.removeSync(self.chunkListDir);
+        //         }
+        //         const pathE = self.chunkListDir + '/' + path.basename(url);
+        //         writeFile(pathE, response).then(() => {
+        //             console.log('書き込み完了');
+        //             // runFfmpeg(pathE);
+        //         }).catch(err => {
+        //             console.log(err);
+        //         });
+        //     });
+        // });
+        // await page.goto(this.URL);
+        // await page.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
+        // await page.click('#colorbox--term > p.colorbox__btn > a');
+        // await page.waitFor(10 * 1000);
+        // await browser.close();
     }
 }
 
@@ -713,7 +734,7 @@ function runFfmpeg(pathE) {
         .outputOptions([
             '-bsf:a aac_adtstoasc'
         ])
-        .output('output.mp4')
+        .output('output/output.mp4')
         .run();
 }
 
