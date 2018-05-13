@@ -118,6 +118,18 @@ class DlTaskList {
     getCurrentProgress(){
         return this.working === 0 ? 0 : this.tasks[this.working]['progress']
     }
+
+    isExistTask(stationId, ft){
+        const dlTaskArr = Object.values(this.tasks);
+        let isExist = false;
+        for (let i = 0; i < dlTaskArr.length; i++) {
+            if (dlTaskArr[i]['stationId'] === stationId && dlTaskArr[i]['ft'] === ft) {
+                isExist = true;
+                break;
+            }
+        }
+        return isExist;
+    }
 }
 
 class DlTask {
@@ -129,104 +141,31 @@ class DlTask {
     }
 }
 
-let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
-let emitter = new events.EventEmitter();
-const dlTaskList = new DlTaskList();
-
-function createWindow () {
-    // Create the browser window.
-    console.log('createWindow');
-    win = new BrowserWindow({
-        width: 800,
-        height: 600,
-        webPreferences: {
-            // nodeIntegration: false,
-            webSecurity: false
-        }
-    });
-
-    // and load the index.html of the app.
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, HTML_PATH),
-        protocol: 'file:',
-        slashes: true
-    }));
-
-    win.webContents.openDevTools();
-
-    win.on('closed', () => {
-        // ウィンドウオブジェクトを参照から外す。
-        // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
-        win = null;
-    });
-
-    ipcMain.on('startDlWithFt', (event, arg) => {
-        setTask(arg);
-        const data = {
-            taskLength: Object.keys(dlTaskList.tasks).length,
-            progress: dlTaskList.getCurrentProgress()
-        };
-        event.sender.send('startDlWithFt-SUCCESS', data);
-    });
-
-    // new OpenVpn().init();
-    // masterJson = new MasterJson();
-    // masterJson.requestJson();
-    // vpnJson = new GateVpnCsv();
-    // vpnJson.requestCsv();
-    // new PuppeteerOperator().getRegionWithPuppeteer();
-
-    function setTask(arg){
-        const timeStamp = moment().valueOf();
-        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
-        emitter.emit('setTask', arg);
-    }
-}
-
-app.on('ready', createWindow);
-
-// Quit when all windows are closed.
-app.on('window-all-closed', () => {
-    console.log('window-all-closed');
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
-        app.quit()
-    }
-});
-
-app.on('activate', () => {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    console.log('active');
-    if (win === null) {
-        createWindow();
-    }
-});
-
-emitter.on('setTask', async(args) => {
-    console.log('setTask', args);
-});
-
 class PuppeteerOperator {
-    constructor(arg){
-        this.ft = arg.ft;
-        this.stationId = arg.stationId;
-        this.URL = 'http://radiko.jp/#!/ts/'+ arg.stationId +'/'+ arg.ft;
+    constructor(){
+        this.ft = null;
+        this.stationId = null;
+        this.URL = null;
         this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
         this.chunkListDir = 'TempChunkList';
         this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
+        this.errMsgSelector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan';
         this.browser = null;
-        this.DlTasks = [];
-        this.taskLimit = 2;
+        this.page = null;
     }
 
-    async isPossibleToDl(){
-        const page = await browser.newPage();
-        await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
-        await page.goto(this.URL);
-        return await page.$(this.playBtnSlector) === null;
+    static getTimeFreeUrl(stationId, ft){
+        return 'http://radiko.jp/#!/ts/'+ stationId +'/'+ ft;
+    }
+
+    async isPossibleToDl(stationId, ft){
+        await this.page.goto(PuppeteerOperator.getTimeFreeUrl(stationId, ft));
+        if (await this.page.$(this.playBtnSlector) !== null)
+            return 1;
+        if (await this.page.$(this.errMsgSelector) !== null)
+            return 0;
+        return -1;
     }
 
     async closeBrowser(){
@@ -237,7 +176,7 @@ class PuppeteerOperator {
         if (this.browser)
             return;
         this.browser = await puppeteer.launch({
-            headless: false,
+            headless: true,
             // userDataDir: 'UserData',
             executablePath: 'Application/chrome.exe',
             args: [
@@ -257,8 +196,8 @@ class PuppeteerOperator {
                 // '--autoplay-policy=user-gesture-required'
             ]
         });
-        // const page = await browser.newPage();
-        // await page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
+        this.page = await this.browser.newPage();
+        this.page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
         // page.on('response', response => {
         //     console.log(response.status(), response.url());
         //     const url = response.url();
@@ -294,6 +233,99 @@ class PuppeteerOperator {
 String.prototype.splice = function(start, delCount, newSubStr) {
     return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
+
+let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
+let emitter = new events.EventEmitter();
+const dlTaskList = new DlTaskList();
+const operator = new PuppeteerOperator();
+
+function createWindow () {
+    // Create the browser window.
+    console.log('createWindow');
+    win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+            // nodeIntegration: false,
+            webSecurity: false
+        }
+    });
+
+    // and load the index.html of the app.
+    win.loadURL(url.format({
+        pathname: path.join(__dirname, HTML_PATH),
+        protocol: 'file:',
+        slashes: true
+    }));
+
+    win.webContents.openDevTools();
+
+    win.on('closed', () => {
+        // ウィンドウオブジェクトを参照から外す。
+        // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
+        win = null;
+    });
+
+    ipcMain.on('startDlWithFt', (event, arg) => {
+        const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
+        let taskLen = Object.keys(dlTaskList.tasks).length;
+        if (!isDuplicated)
+            taskLen++;
+        const data = {
+            taskLength: taskLen,
+            progress: dlTaskList.getCurrentProgress(),
+            duplicated: isDuplicated
+        };
+        event.sender.send('startDlWithFt-REPLY', data);
+        if (!isDuplicated) {
+            const timeStamp = moment().valueOf();
+            dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
+            emitter.emit('setTask', arg);
+        }
+    });
+
+    // new OpenVpn().init();
+    // masterJson = new MasterJson();
+    // masterJson.requestJson();
+    // vpnJson = new GateVpnCsv();
+    // vpnJson.requestCsv();
+    // new PuppeteerOperator().getRegionWithPuppeteer();
+}
+
+app.on('ready', createWindow);
+
+// Quit when all windows are closed.
+app.on('window-all-closed', () => {
+    console.log('window-all-closed');
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
+});
+
+app.on('activate', () => {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    console.log('active');
+    if (win === null) {
+        createWindow();
+    }
+});
+
+emitter.on('setTask', async(args) => {
+    console.log('setTask', args);
+    await operator.launchPuppeteer().catch(e=>{
+        console.log(e);
+    });
+    const status = await operator.isPossibleToDl(args.stationId, args.ft).catch(e=>{
+        console.log(e);
+    });
+    if (status === -1) {
+        //todo サーバにエラー送信したい
+    }
+    win.webContents.send('isDownloadable', status);
+});
 
 class MasterJson {
     constructor(){

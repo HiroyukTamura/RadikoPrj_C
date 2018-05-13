@@ -545,17 +545,47 @@ const circleProgress = require('jquery-circle-progress');
 
         setOnReceiveListeners(){
             const self = this;
-            ipcRenderer.on('startDlWithFt-SUCCESS', (event, arg) => {
+            ipcRenderer.on('startDlWithFt-REPLY', (event, arg) => {
                 console.log(arg);
-                self.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
-                    value: arg.progress,
-                    animation: false,
-                    fill: '#fdf2f2',
-                    size: 32,
-                    emptyFill: '#e73c64',
-                    startAngle: -Math.PI / 2
-                }).find('span').html(arg.taskLength);
-                self.$status.show();
+                if (arg.duplicated) {
+                    $.notify({
+                        message: 'この番組は現在ダウンロード中です'
+                    },{
+                        type: 'danger'
+                    });
+                } else {
+                    self.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
+                        value: arg.progress,
+                        animation: false,
+                        fill: '#fdf2f2',
+                        size: 32,
+                        emptyFill: '#e73c64',
+                        startAngle: -Math.PI / 2
+                    }).find('span').html(arg.taskLength);
+                    self.$status.show();
+                }
+            });
+
+            ipcRenderer.on('isDownloadable', (event, status) => {
+                switch (status){
+                    case 1:
+                        console.log('yeah! let\' DL!!');
+                        break;
+                    case 0:
+                        $.notify({
+                            message: 'この番組はタイムフリー非対応です'
+                        },{
+                            type: 'danger'
+                        });
+                        break;
+                    case -1:
+                        $.notify({
+                            message: '処理に失敗しました'
+                        },{
+                            type: 'danger'
+                        });
+                        break;
+                }
             });
         }
     }
