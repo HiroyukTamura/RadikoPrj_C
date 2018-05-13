@@ -547,7 +547,7 @@ const circleProgress = require('jquery-circle-progress');
             const self = this;
             ipcRenderer.on('startDlWithFt-SUCCESS', (event, arg) => {
                 console.log(arg);
-                self.$status.circleProgress({
+                self.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
                     value: arg.progress,
                     animation: false,
                     fill: '#fdf2f2',
