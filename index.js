@@ -147,6 +147,18 @@ class DlTaskList {
         data['title'] = this.getWorkingTask().title;
         data['taskLength'] = Object.keys(this.tasks).length;
     }
+
+    switchToNext() {
+        dlTaskList.working = 0;
+        const keyArr = Object.keys(this.tasks);
+        if (!keyArr.length)
+            return null;
+        keyArr.sort((a, b) => {
+            return b - a;
+        });
+        this.working = keyArr[0];
+        return this.tasks[keyArr[0]];
+    }
 }
 
 class DlTask {
@@ -154,6 +166,7 @@ class DlTask {
         this.stationId = stationId;
         this.ft = ft;
         this.title = title;
+        this.chunkFileName = null;
     }
 }
 
@@ -245,9 +258,7 @@ class PuppeteerOperator {
                     return;
                 }
 
-                if (isFileExists(self.chunkListDir)) {
-                    fs.removeSync(self.chunkListDir);
-                }
+                dlTaskList.getWorkingTask().chunkFileName = path.basename(url);
                 const pathE = self.chunkListDir + '/' + path.basename(url);
                 if (isDone)
                     return;
@@ -261,8 +272,11 @@ class PuppeteerOperator {
                 });
             });
         });
+        await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
+        await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
+        Sender.sendMiddleData('pageReached');
     }
 }
 
@@ -308,10 +322,9 @@ function createWindow () {
         if (!isDuplicated) {
             const timeStamp = moment().valueOf();
             dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
-            arg.timeStamp = timeStamp;
-            emitter.emit('setTask', arg);
+            emitter.emit('setTask');
         }
-        Sender.sendReply(isDuplicated);
+        Sender.sendReply(arg.stationId, arg.ft, isDuplicated);
     });
 
     // new OpenVpn().init();
@@ -343,30 +356,30 @@ app.on('activate', () => {
     }
 });
 
-emitter.on('setTask', async(args) => {
+emitter.on('setTask', async() => {
     console.log('setTask', args);
     await operator.launchPuppeteer().catch(e=>{
         console.log(e);
         //todo エラー処理
     });
-    const status = await operator.isPossibleToDl(args.stationId, args.ft).catch(e=>{
+    let status = await operator.isPossibleToDl(args.stationId, args.ft).catch(e=>{
         console.log(e);
+        status = 'UNKNOWN';
         //todo エラー処理
     });
 
     if (status === 'UNKNOWN') {
         //todo サーバにエラー送信したい
     }
-    if (status !== 'SUCCESS')
-        delete dlTaskList.tasks[args.timeStamp];
-    const taskLength = Object.keys(dlTaskList.tasks).length;
-    Sender.sendIsDownloadable(status);
-    if (status === 'SUCCESS' && taskLength) {
+    Sender.sendIsDownloadable(status, args);
+    if (status === 'SUCCESS') {
         dlTaskList.working = args.timeStamp;
         operator.startDlChain().catch(e => {
-            onError(e);
             Sender.sendMiddleData('startDlChainError');
+            onError(e);
         });
+    } else {
+        connectEndToNext();
     }
 });
 
@@ -512,7 +525,7 @@ function isFileExists(filePath) {
 }
 
 function runFfmpeg(pathE) {
-    const path = output+'/'+ dlTaskList.getWorkingTask().stationId;
+    const path = 'output/'+ dlTaskList.getWorkingTask().stationId;
     if (!fs.existsSync(path)){
         fs.mkdirSync(path);
     }
@@ -523,9 +536,7 @@ function runFfmpeg(pathE) {
         .videoCodec('copy')
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
-            // const data = dlTaskList.getSimpleData();
-            // win.webContents.send('ffmpegStart', data);
-            Sender.sendFfmpegStart();
+            Sender.sendMiddleData('ffmpegStart', data);
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
@@ -537,7 +548,7 @@ function runFfmpeg(pathE) {
             Sender.sendMiddleData('ffmpegEnd');
         }).on('progress', function(progress) {
             console.log('Processing: ' + progress.percent + '% done');
-            Sender.sendMiddleData('ffmpegPrg');
+            Sender.sendFfmpegPrg(progress.percent);
         })
         .inputOptions([
             '-protocol_whitelist', 'file,http,https,tcp,tls,crypto'
@@ -560,32 +571,58 @@ class Sender {
         win.webContents.send(command, dlTaskList.getMiddleData());
     }
 
-    static sendReply(duplicated){
-        const data = dlTaskList.getMiddleData();
-        data['duplicated'] = duplicated;
-        event.sender.send('startDlWithFt-REPLY', data);
+    /**
+     * taskに書き込む前なので、taskは参照できない
+     */
+    static sendReply(stationId, ft, duplicated){
+        const data = {
+            stationId: stationId,
+            ft: ft,
+            duplicated: duplicated,
+            taskLength: Object.keys(dlTaskList.tasks).length
+        };
+        win.webContents.send('startDlWithFt-REPLY', data);
     }
 
-    static sendIsDownloadable(status){
-        const data = dlTaskList.getMiddleData();
-        data['status'] = status;
-        event.sender.send('isDownloadable', data);
+    /**
+     * taskに書き込む前なので、taskは参照できない
+     */
+    static sendIsDownloadable(status, arg){
+        console.log('sendIsDownloadable', status);
+        arg['status'] = status;
+        win.webContents.send('isDownloadable', arg);
     }
 
-    static sendFfmpegStart(){
-        win.webContents.send('ffmpegStart', dlTaskList.getSimpleData());
-    }
-
-    static sendFfmpegPrg(){
+    static sendFfmpegPrg(percent){
         const data = dlTaskList.getSimpleData();
-        data['ffmpegPrg'] = progress.percent;
+        data['ffmpegPrg'] = percent;
         win.webContents.send('ffmpegPrg', data);
     }
 }
 
 function onError(e) {
-    // Sender.sendOnError(command);
+    connectEndToNext();
     //todo エラー送信
-    //todo エラー時chunkListからm3u8を削除
     console.log(e);
+}
+
+function connectEndToNext() {
+    const chunkFileName = dlTaskList.getWorkingTask().chunkFileName;
+    if (chunkFileName) {
+        const stationId = dlTaskList.getWorkingTask().stationId;
+        const path = stationId +'/'+ chunkFileName;
+        if (fs.existsSync(path)){
+            fs.unlinkSync(path);
+        }
+    }
+    delete dlTaskList.getWorkingTask();
+    const taskNext = dlTaskList.switchToNext();
+    console.log('taskNext: ', taskNext);
+
+    if (taskNext) {
+        operator.startDlChain().catch(e => {
+            Sender.sendMiddleData('startDlChainError');
+            onError(e);
+        });
+    }
 }
