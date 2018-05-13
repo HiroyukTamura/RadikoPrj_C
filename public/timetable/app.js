@@ -248,7 +248,7 @@
                     .html(Util.wrapHtml(info));
                 self.$dialog.attr('ft', ft)
                     .attr('station', $(this).attr('station'))
-                    .attr('title', $(this).attr(html));
+                    .attr('title', html);
 
                 if (!self.$dialog.prop('open'))
                     self.$dialog[0].showModal();
@@ -566,9 +566,10 @@
             console.log(arg);
             if (arg.duplicated) {
                 Util.dangerNotify('この番組は現在ダウンロード中です');
+                this.rollbackStatus();
             } else {
                 this.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
-                    value: 0.2,
+                    value: 0.1,
                     animation: false,
                     fill: '#fdf2f2',
                     size: 32,
@@ -580,20 +581,17 @@
         }
 
         onGetIsDownloadable(data){
-            switch (data.status){
-                case 1:
-                    console.log('yeah! let\' DL!!');
-                    break;
-                case 0:
-                case -1:
-                    const msg = data.status === 0 ? 'この番組はタイムフリー非対応です' : '処理に失敗しました';
-                    Util.dangerNotify(msg);
-                    if (data.taskLength)
-                        this.$status.find('span').html(data.taskLength);
-                    else
-                        this.hideStatus();
-                    break;
+            if (data.status === 'SUCCESS') {
+                console.log('yeah! let\' DL!!');
+                this.$status.circleProgress({
+                    value: 0.3
+                });
+                return;
             }
+
+            const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+            Util.dangerNotify(msg);
+            this.rollbackStatus();
         }
 
         onGetFfmpegStart(data){
@@ -603,26 +601,20 @@
         }
 
         onGetFfmpegError(data) {
+            console.log(data);
             const msg = ProcessCommunicator.generateNtfVal(data);
-            Util.successNotify('処理に失敗しました\n'+ msg);
-
-            if (data.taskLength <= 1)
-                this.hideStatus();
-            else
-                this.$status.find('span').html(data.taskLength);
+            Util.dangerNotify(msg);
+            this.rollbackStatus('処理に失敗しました\n'+ msg)
         }
 
         onGetFfmpegEnd(data) {
             const msg = ProcessCommunicator.generateNtfVal(data);
             Util.successNotify('ダウンロード完了\n'+ msg);
-
-            if (data.taskLength <= 1)
-                this.hideStatus();
-            else
-                this.$status.find('span').html(data.taskLength);
+            this.rollbackStatus();
         }
 
         onGetFfmpegProgress(data){
+            console.log(data);//todo ここ表示デバッグ
             this.$status.circleProgress({
                 value: 0.4 + Math.floor(data['ffmpegPrg']/100/5*3)
             });
@@ -631,6 +623,17 @@
         hideStatus(){
             this.$status.find('span').html();
             this.$status.hide();
+        }
+
+        rollbackStatus(){
+            if (data.taskLength) {
+                this.$status.find('span').html(data.taskLength);
+                this.$status.circleProgress({
+                    value: 0
+                });
+            }
+            else
+                this.hideStatus();
         }
 
         static generateNtfVal(data){
