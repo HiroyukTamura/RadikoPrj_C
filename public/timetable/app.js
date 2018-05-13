@@ -545,48 +545,98 @@
         }
 
         setOnReceiveListeners(){
-            const self = this;
             ipcRenderer.on('startDlWithFt-REPLY', (event, arg) => {
-                console.log(arg);
-                if (arg.duplicated) {
-                    $.notify({
-                        message: 'この番組は現在ダウンロード中です'
-                    },{
-                        type: 'danger'
-                    });
-                } else {
-                    self.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
-                        value: arg.progress,
-                        animation: false,
-                        fill: '#fdf2f2',
-                        size: 32,
-                        emptyFill: '#e73c64',
-                        startAngle: -Math.PI / 2
-                    }).find('span').html(arg.taskLength);
-                    self.$status.show();
-                }
+                this.onGetStartDlWithFtReply(arg);
+            }).on('isDownloadable', (event, data) => {
+                this.onGetIsDownloadable(data);
+            }).on('startDlChainError', (event, data) => {
+                this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
+            }).on('ffmpegStart', (event, data) => {
+                this.onGetFfmpegStart(data);
+            }).on('ffmpegError', (event, data) => {
+                this.onGetFfmpegError(data);
+            }).on('ffmpegEnd', (event, data) => {
+                this.onGetFfmpegEnd(data);
+            }).on('ffmpegPrg', (event, data) => {
+                this.onGetFfmpegProgress(data);
             });
+        }
 
-            ipcRenderer.on('isDownloadable', (event, data) => {
-                switch (data.status){
-                    case 1:
-                        console.log('yeah! let\' DL!!');
-                        break;
-                    case 0:
-                    case -1:
-                        const msg = data.status === 0 ? 'この番組はタイムフリー非対応です' : '処理に失敗しました';
-                        $.notify({
-                            message: msg
-                        },{
-                            type: 'danger'
-                        });
-                        if (data.taskLength)
-                            self.$status.find('span').html(data.taskLength);
-                        else
-                            self.$status.hide();
-                        break;
-                }
+        onGetStartDlWithFtReply(arg){
+            console.log(arg);
+            if (arg.duplicated) {
+                Util.dangerNotify('この番組は現在ダウンロード中です');
+            } else {
+                this.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
+                    value: 0.2,
+                    animation: false,
+                    fill: '#fdf2f2',
+                    size: 32,
+                    emptyFill: '#e73c64',
+                    startAngle: -Math.PI / 2
+                }).find('span').html(arg.taskLength);
+                this.$status.show();
+            }
+        }
+
+        onGetIsDownloadable(data){
+            switch (data.status){
+                case 1:
+                    console.log('yeah! let\' DL!!');
+                    break;
+                case 0:
+                case -1:
+                    const msg = data.status === 0 ? 'この番組はタイムフリー非対応です' : '処理に失敗しました';
+                    Util.dangerNotify(msg);
+                    if (data.taskLength)
+                        this.$status.find('span').html(data.taskLength);
+                    else
+                        this.hideStatus();
+                    break;
+            }
+        }
+
+        onGetFfmpegStart(data){
+            this.$status.circleProgress({
+                value: 0.4
             });
+        }
+
+        onGetFfmpegError(data) {
+            const msg = ProcessCommunicator.generateNtfVal(data);
+            Util.successNotify('処理に失敗しました\n'+ msg);
+
+            if (data.taskLength <= 1)
+                this.hideStatus();
+            else
+                this.$status.find('span').html(data.taskLength);
+        }
+
+        onGetFfmpegEnd(data) {
+            const msg = ProcessCommunicator.generateNtfVal(data);
+            Util.successNotify('ダウンロード完了\n'+ msg);
+
+            if (data.taskLength <= 1)
+                this.hideStatus();
+            else
+                this.$status.find('span').html(data.taskLength);
+        }
+
+        onGetFfmpegProgress(data){
+            this.$status.circleProgress({
+                value: 0.4 + Math.floor(data['ffmpegPrg']/100/5*3)
+            });
+        }
+
+        hideStatus(){
+            this.$status.find('span').html();
+            this.$status.hide();
+        }
+
+        static generateNtfVal(data){
+            const momentM = moment(data.ft, 'YYYYMMDDhhmmss');
+            const val = momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
+            return val +' '+ data.title;
         }
     }
 }();

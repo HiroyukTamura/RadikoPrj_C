@@ -130,6 +130,17 @@ class DlTaskList {
         }
         return isExist;
     }
+
+    getWorkingTask(){
+        return this.tasks[this.working];
+    }
+
+    getSimpleData(){
+        return {
+            stationId: this.getWorkingTask().stationId,
+            ft: this.getWorkingTask().ft
+        }
+    }
 }
 
 class DlTask {
@@ -151,8 +162,9 @@ class PuppeteerOperator {
         this.chunkListDir = 'TempChunkList';
         this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
         this.errMsgSelector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan';
+        this.userAgent = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
         this.browser = null;
-        this.page = null;
+        this.pageForDl = null;
     }
 
     static getTimeFreeUrl(stationId, ft){
@@ -160,12 +172,16 @@ class PuppeteerOperator {
     }
 
     async isPossibleToDl(stationId, ft){
-        await this.page.goto(PuppeteerOperator.getTimeFreeUrl(stationId, ft));
-        if (await this.page.$(this.playBtnSlector) !== null)
-            return 1;
-        if (await this.page.$(this.errMsgSelector) !== null)
-            return 0;
-        return -1;
+        const page = await this.browser.newPage();
+        page.setUserAgent(this.userAgent);
+        await page.goto(PuppeteerOperator.getTimeFreeUrl(stationId, ft));
+        let status = -1;
+        if (await page.$(this.playBtnSlector) !== null)
+            status = 1;
+        if (await page.$(this.errMsgSelector) !== null)
+            status = 0;
+        await page.close();
+        return status;
     }
 
     async closeBrowser(){
@@ -196,8 +212,6 @@ class PuppeteerOperator {
                 // '--autoplay-policy=user-gesture-required'
             ]
         });
-        this.page = await this.browser.newPage();
-        this.page.setUserAgent('Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36');
         // page.on('response', response => {
         //     console.log(response.status(), response.url());
         //     const url = response.url();
@@ -227,6 +241,49 @@ class PuppeteerOperator {
         // await page.click('#colorbox--term > p.colorbox__btn > a');
         // await page.waitFor(10 * 1000);
         // await browser.close();
+    }
+
+    async startDlChain(){
+        if (!this.pageForDl) {
+            this.pageForDl = await this.browser.newPage();
+            await this.pageForDl.setUserAgent(this.userAgent);
+        }
+        const task = dlTaskList.tasks[dlTaskList.working];
+        const url = PuppeteerOperator.getTimeFreeUrl(task.stationId, task.ft);
+        await this.pageForDl.goto(url);
+        const self = this;
+        this.pageForDl.on('response', response => {
+            console.log(response.status(), response.url());
+            const url = response.url();
+            if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
+                return;
+
+            let isDone = false;
+            response.text().then(function (status) {
+                if (status.trim() === '') {
+                    console.log('空ファイル', response.url());
+                    return;
+                }
+
+                if (isFileExists(self.chunkListDir)) {
+                    fs.removeSync(self.chunkListDir);
+                }
+                const pathE = self.chunkListDir + '/' + path.basename(url);
+                if (isDone)
+                    return;
+                writeFile(pathE, response).then(() => {
+                    console.log('書き込み完了');
+                    runFfmpeg(pathE);
+                }).catch(err => {
+                    throw err;
+                }).finally(_=> {
+                    isDone = true;
+                });
+            });
+        });
+        await this.pageForDl.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
+        await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
+        await this.closeBrowser();
     }
 }
 
@@ -325,15 +382,20 @@ emitter.on('setTask', async(args) => {
     if (status === -1) {
         //todo サーバにエラー送信したい
     }
-    if (status === 1 || status === 0){
+    if (status === -1 || status === 0)
         delete dlTaskList.tasks[args.timeStamp];
-    }
+    const taskLength = Object.keys(dlTaskList.tasks).length;
     const data = {
         status: status,
-        taskLength: Object.keys(dlTaskList.tasks).length
+        taskLength: taskLength
     };
     win.webContents.send('isDownloadable', data);
-    await operator.closeBrowser();
+    if (status === 1 && !taskLength) {
+        dlTaskList.working = args.timeStamp;
+        operator.startDlChain().catch(e => {
+            onError('startDlChainError', e);
+        });
+    }
 });
 
 class MasterJson {
@@ -484,14 +546,24 @@ function runFfmpeg(pathE) {
         .videoCodec('copy')
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
+            const data = dlTaskList.getSimpleData();
+            win.webContents.send('ffmpegStart', data);
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
+            onError('ffmpegError', err);
         })
         .on('end', function(stdout, stderr) {
             console.log('Transcoding s  ucceeded !');
+            const data = dlTaskList.getSimpleData();
+            data['title'] = dlTaskList.getWorkingTask().title;
+            data['taskLen'] = Object.keys(dlTaskList.tasks).length;
+            win.webContents.send('ffmpegEnd', data);
         }).on('progress', function(progress) {
             console.log('Processing: ' + progress.percent + '% done');
+            const data = dlTaskList.getSimpleData();
+            data['ffmpegPrg'] = progress.percent;
+            win.webContents.send('ffmpegPrg', data);
         })
         .inputOptions([
             '-protocol_whitelist', 'file,http,https,tcp,tls,crypto'
@@ -499,6 +571,21 @@ function runFfmpeg(pathE) {
         .outputOptions([
             '-bsf:a aac_adtstoasc'
         ])
-        .output('output/output.mp4')
+        .output(getOutputPath())
         .run();
+}
+
+function getOutputPath() {
+    const task = dlTaskList.getWorkingTask();
+    const ymd = moment(task.ft, 'YYYYMMDDhhmmss').format('YYYY-MM-DD');
+    return 'output/' + task.stationId +'/'+ task.title +'('+ ymd +').mp4';
+}
+
+function onError(command, e) {
+    const data = dlTaskList.getSimpleData();
+    data['title'] = dlTaskList.getWorkingTask().title;
+    data['taskLen'] = Object.keys(dlTaskList.tasks).length;
+    win.webContents.send(command, data);
+    //todo エラー送信
+    console.log(e);
 }
