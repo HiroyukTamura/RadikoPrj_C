@@ -169,7 +169,7 @@ class PuppeteerOperator {
     }
 
     async closeBrowser(){
-
+        await this.browser.close();
     }
 
     async launchPuppeteer() {
@@ -280,6 +280,7 @@ function createWindow () {
         if (!isDuplicated) {
             const timeStamp = moment().valueOf();
             dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
+            arg.timeStamp = timeStamp;
             emitter.emit('setTask', arg);
         }
     });
@@ -324,7 +325,15 @@ emitter.on('setTask', async(args) => {
     if (status === -1) {
         //todo サーバにエラー送信したい
     }
-    win.webContents.send('isDownloadable', status);
+    if (status === 1 || status === 0){
+        delete dlTaskList.tasks[args.timeStamp];
+    }
+    const data = {
+        status: status,
+        taskLength: Object.keys(dlTaskList.tasks).length
+    };
+    win.webContents.send('isDownloadable', data);
+    await operator.closeBrowser();
 });
 
 class MasterJson {

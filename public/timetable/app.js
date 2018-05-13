@@ -1,11 +1,12 @@
 'use strict';
-window.jQuery = window.$= require("jquery");
-require('bootstrap');
-const ipcRenderer = require('electron').ipcRenderer;
-const dialogPolyfill = require('dialog-polyfill');
-const circleProgress = require('jquery-circle-progress');
 
 !function(){
+    window.jQuery = window.$= require("jquery");
+    require('bootstrap');
+    const ipcRenderer = require('electron').ipcRenderer;
+    const dialogPolyfill = require('dialog-polyfill');
+    const circleProgress = require('jquery-circle-progress');
+    const notify = require('bootstrap-notify');
     const moment = require('moment');/*グローバルに定義してはいけない??*/
     let ereaChecker;
     let domFrame;
@@ -566,24 +567,23 @@ const circleProgress = require('jquery-circle-progress');
                 }
             });
 
-            ipcRenderer.on('isDownloadable', (event, status) => {
-                switch (status){
+            ipcRenderer.on('isDownloadable', (event, data) => {
+                switch (data.status){
                     case 1:
                         console.log('yeah! let\' DL!!');
                         break;
                     case 0:
-                        $.notify({
-                            message: 'この番組はタイムフリー非対応です'
-                        },{
-                            type: 'danger'
-                        });
-                        break;
                     case -1:
+                        const msg = data.status === 0 ? 'この番組はタイムフリー非対応です' : '処理に失敗しました';
                         $.notify({
-                            message: '処理に失敗しました'
+                            message: msg
                         },{
                             type: 'danger'
                         });
+                        if (data.taskLength)
+                            self.$status.find('span').html(data.taskLength);
+                        else
+                            self.$status.hide();
                         break;
                 }
             });
