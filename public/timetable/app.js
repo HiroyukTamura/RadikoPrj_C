@@ -528,6 +528,15 @@
             this.ntfList = [];
         }
 
+        relaseNtf(stationId, ft){
+            for (let i = 0; i < this.ntfList.length; i++) {
+                if (this.ntfList[i].stationId === stationId && this.ntfList[i].ft === ft) {
+                    this.ntfList.splice(i, 1);
+                    return;
+                }
+            }
+        }
+
         getNtf(stationId, ft){
             let ntf = null;
             this.ntfList.forEach(function (ele) {
@@ -636,6 +645,7 @@
             const ntf = this.getNtf(data.stationId, data.ft);
             if (ntf)
                 ntf.updateAsFailed();
+            this.relaseNtf(data.stationId, data.ft);
         }
 
         onGetFfmpegEnd(data) {
@@ -647,6 +657,7 @@
             const ntf = this.getNtf(data.stationId, data.ft);
             if (ntf)
                 ntf.updateAsSuccess();
+            this.relaseNtf(data.stationId, data.ft);
         }
 
         // onGetFfmpegProgress(data){
