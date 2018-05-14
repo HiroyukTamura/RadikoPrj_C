@@ -559,9 +559,10 @@
                 this.onGetFfmpegError(data);
             }).on('ffmpegEnd', (event, data) => {
                 this.onGetFfmpegEnd(data);
-            }).on('ffmpegPrg', (event, data) => {
-                this.onGetFfmpegProgress(data);
-            });
+            })
+            //     .on('ffmpegPrg', (event, data) => {
+            //     this.onGetFfmpegProgress(data);
+            // });
         }
 
         onGetStartDlWithFtReply(arg){
@@ -571,7 +572,7 @@
                 this.rollbackStatus(arg);
             } else {
                 this.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
-                    value: 0.1,
+                    value: 0.2,
                     animation: false,
                     fill: '#fdf2f2',
                     size: 32,
@@ -579,7 +580,8 @@
                     startAngle: -Math.PI / 2
                 }).find('span').html(arg.taskLength);
                 this.$status.show();
-                Util.successNotify('ダウンロードを開始します');
+                const msg = ProcessCommunicator.generateNtfVal(data);
+                Util.successNotify('ダウンロードを開始しています...\n'+msg);
             }
         }
 
@@ -587,7 +589,7 @@
             if (data.status === 'SUCCESS') {
                 console.log('yeah! let\' DL!!');
                 this.$status.circleProgress({
-                    value: 0.2
+                    value: 0.4
                 });
                 const msg = ProcessCommunicator.generateNtfVal(data);
                 Util.successNotify('データを確認しています...\n'+ msg);
@@ -601,7 +603,7 @@
 
         onGetFfmpegStart(data){
             this.$status.circleProgress({
-                value: 0.4
+                value: 0.8
             });
             const msg = ProcessCommunicator.generateNtfVal(data);
             Util.successNotify('データを再構成しています...\n'+ msg);
@@ -621,18 +623,19 @@
             this.rollbackStatus(data);
         }
 
-        onGetFfmpegProgress(data){
-            console.log(data);//todo ここ表示デバッグ
-            this.$status.circleProgress({
-                value: 0.4 + Math.floor(data['ffmpegPrg']/100/5*3)
-            });
-        }
+        // onGetFfmpegProgress(data){
+        //     console.log(data);
+        //     console.log(0.4 + Math.floor(data['ffmpegPrg']/100/5*3));
+        //     this.$status.circleProgress({
+        //         value: 0.4 + Math.floor(data['ffmpegPrg']/100/5*3)
+        //     });
+        // }
 
         onGetPageReached(data) {
             const msg = ProcessCommunicator.generateNtfVal(data);
             Util.successNotify('データを取得しています...\n'+ msg);
             this.$status.circleProgress({
-                value: 0.3
+                value: 0.6
             });
         }
 
