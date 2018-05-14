@@ -58,14 +58,16 @@ const dialogPolyfill = require('dialog-polyfill');
                 //サジェスト以外をクリックしたらサジェストを非表示に
                 if (suggester.$dropDown.is(':visible')) {
                     const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom < e.clientY && e.clientY < rect.top)) {//todo これ絶対おかしいはず
+                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
                         suggester.$dropDown.hide();
                         return false;
                     }
                 } else if (self.$dialog.prop('open')) {
-                    console.log('こっち');//todo rect判定して閉じるべき
-                    self.$dialog[0].close();
-                    return false;
+                    const rect = self.$dialog[0].getBoundingClientRect();
+                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+                        self.$dialog[0].close();
+                        return false;
+                    }
                 }
                 return true;
             }
