@@ -336,7 +336,7 @@ function createWindow () {
         Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
     });
 
-    // operator.launchPuppeteer();//todo コメントアウト外すこと
+    operator.launchPuppeteer();//todo コメントアウト外すこと
 
     // new OpenVpn().init();
     // masterJson = new MasterJson();

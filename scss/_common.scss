@@ -81,6 +81,10 @@ $columnWidth: 258px;
   }
 }
 
+a:focus, /*area, input, */button:focus/*, select, option, textarea, output, summary, video, audio, object, embed*/ {
+  outline: none;
+}
+
 .mdl-dialog {
   width: 780px;
   height: 80%;

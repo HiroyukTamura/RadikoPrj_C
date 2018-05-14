@@ -1,3 +1,6 @@
+a:focus, button:focus {
+  outline: none; }
+
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -93,6 +96,9 @@
     cursor: pointer; }
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
+
+a:focus, button:focus {
+  outline: none; }
 
 .mdl-dialog {
   width: 780px;

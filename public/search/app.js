@@ -2,6 +2,7 @@
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
+const notify = require('bootstrap-notify');
 
 !function () {
     const moment = require('moment');
@@ -11,8 +12,10 @@ const dialogPolyfill = require('dialog-polyfill');
     let endDropDown;
     let requestOperator;
     let suggester;
+    let ipcComm;
     localStorage.setItem('ereaId', 'JP13');//todo これ後で消すこと
     window.onload = function () {
+        ipcComm = new ProcessCommunicator();
         $('form').on('submit', function () {
             return false;
         });
@@ -32,12 +35,15 @@ const dialogPolyfill = require('dialog-polyfill');
         }
 
         init(){
+            const self = this;
             Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
             $('#dl-btm').on('click', function () {
-                this.$dialog[0].close();
-                //todo ダウンロード！！
-                new ProcessCommunicator();
+                self.$dialog[0].close();
+                const ft = self.$dialog.attr('ft');
+                const stationId = self.$dialog.attr('station');
+                const title = self.$dialog.attr('data-title');
+                ProcessCommunicator.callDL(ft, stationId, title);
             });
         }
 
@@ -86,10 +92,10 @@ const dialogPolyfill = require('dialog-polyfill');
         initializeSearchBar(){
             this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
             startDropDown = new StartDropDown('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn', this.momentOpe)
-                .init(0)
+                .init()
                 .setOnDateSelected();
             endDropDown = new EndDropDown('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn', this.momentOpe)
-                .init(6)
+                .init()
                 .setOnDateSelected();
             // this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
             this.initKeyInput();
@@ -143,7 +149,7 @@ const dialogPolyfill = require('dialog-polyfill');
             $dateInput.on('click', function () {
                 $dpBtn.click();
                 return false;
-            });
+            })
         }
 
         initKeyInput(){
@@ -214,6 +220,8 @@ const dialogPolyfill = require('dialog-polyfill');
             this.$dateInput.on('click', function () {
                 self.$dpBtn.click();
                 return false;
+            }).focusin(function () {
+                $(this).blur();
             });
             return this;
         }
@@ -497,6 +505,12 @@ const dialogPolyfill = require('dialog-polyfill');
                         errMsg.html('').hide();
                     }
 
+                    const ft = self.prgDate + '' +self.startTimeS + '00';
+                    console.log(ft);
+                    conductor.$dialog.attr('ft', ft)
+                        .attr('station', self.stationId)
+                        .attr('data-title', self.title);
+
                     conductor.$dialog[0].showModal();
 
                     return false;
@@ -507,12 +521,6 @@ const dialogPolyfill = require('dialog-polyfill');
                     if (self.tsNg != 2)
                         $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
                 });
-        }
-    }
-
-    class ProcessCommunicator{
-        constructor(){
-            console.log(conductor.$dialog.attr('ft'));
         }
     }
 }();
