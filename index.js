@@ -208,10 +208,11 @@ class PuppeteerOperator {
     }
 
     async closeBrowser(){
-        if (!this.browser)
+        if (!this.browser || Object.keys(dlTaskList.tasks).length)//非同期だからこういうチェックはちゃんとしないとね
             return;
-        if (!Object.keys(dlTaskList.tasks).length)//非同期だからこういうチェックはちゃんとしないとね
-            await this.browser.close();
+        await this.browser.close();
+        this.browser = null;
+        this.pageForDl = null;
     }
 
     async launchPuppeteer() {
@@ -331,7 +332,7 @@ function createWindow () {
                 dlTaskList.working = timeStamp;
             emitter.emit('setTask');
         }
-        Sender.sendReply(arg.stationId, arg.ft, isDuplicated);
+        Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
     });
 
     operator.launchPuppeteer();
@@ -367,7 +368,7 @@ app.on('activate', () => {
 
 app.on('will-quit', (event)=>{
     console.log('will-quit');
-    if (operator !== null && operator.browser !== null) {
+    if (operator.browser !== null) {
         event.preventDefault();
         emitter.emit('closeBrowser');
     }
@@ -398,6 +399,7 @@ emitter.on('setTask', async() => {
     Sender.sendIsDownloadable(status);
     if (status === 'SUCCESS') {
         operator.startDlChain().catch(e => {
+            console.log('startDlChain error');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
         });
@@ -569,7 +571,7 @@ function runFfmpeg(pathE) {
             fs.mkdirSync(path);
         }
         if (fs.existsSync(totalPath)) {
-            fs.unlinkSync(path);//既に同じmp3が存在しているなら削除
+            fs.unlinkSync(totalPath);//既に同じmp3が存在しているなら削除
         }
     } catch (e) {
         err = e;
@@ -599,7 +601,7 @@ function runFfmpeg(pathE) {
             emitter.emit('connectEndToNext');
         }).on('progress', function(progress) {
             console.log('Processing: ' + progress.percent + '% done');
-            Sender.sendFfmpegPrg(progress.percent);
+            // Sender.sendFfmpegPrg(progress.percent);
         })
         .inputOptions([
             '-protocol_whitelist', 'file,http,https,tcp,tls,crypto'
@@ -625,12 +627,13 @@ class Sender {
     /**
      * taskに書き込む前なので、taskは参照できない
      */
-    static sendReply(stationId, ft, duplicated){
+    static sendReply(stationId, ft, duplicated, title){
         const data = {
             stationId: stationId,
             ft: ft,
             duplicated: duplicated,
-            taskLength: Object.keys(dlTaskList.tasks).length
+            taskLength: Object.keys(dlTaskList.tasks).length,
+            title: title
         };
         win.webContents.send('startDlWithFt-REPLY', data);
     }
@@ -661,8 +664,7 @@ async function onError(e) {
 async function connectEndToNext() {
     const chunkFileName = dlTaskList.getWorkingTask().chunkFileName;
     if (chunkFileName) {
-        const stationId = dlTaskList.getWorkingTask().stationId;
-        const path = stationId +'/'+ chunkFileName;
+        const path = operator.chunkListDir +'/'+ chunkFileName;
         if (fs.existsSync(path)){
             fs.unlinkSync(path);
         }
@@ -673,6 +675,7 @@ async function connectEndToNext() {
 
     if (taskNext) {
         operator.startDlChain().catch(e => {
+            console.log('connectEndToNext()内 startDlChain エラー!');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
         });

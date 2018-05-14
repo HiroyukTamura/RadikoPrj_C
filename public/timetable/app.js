@@ -523,16 +523,22 @@
 
     class ProcessCommunicator{
         constructor(){
-            const self = this;
             this.setOnReceiveListeners();
             this.$status = $('#dl-status');
-            this.$status.on('click', function (e) {
-                self.onClickStatus();
-            });
+            this.ntfList = [];
         }
 
-        onClickStatus(){
-
+        getNtf(stationId, ft){
+            let ntf = null;
+            this.ntfList.forEach(function (ele) {
+                if (ele.stationId === stationId && ele.ft === ft)
+                    ntf = ele;
+            });
+            if (ntf === null) {
+                //todo エラー送信
+                console.warn('ntf==null');
+            }
+            return ntf;
         }
 
         static callDL(ft, stationId, title){
@@ -568,59 +574,79 @@
         onGetStartDlWithFtReply(arg){
             console.log(arg);
             if (arg.duplicated) {
-                Util.dangerNotify('この番組は現在ダウンロード中です');
-                this.rollbackStatus(arg);
+                // Util.dangerNotify('この番組は現在ダウンロード中です');
+                // this.rollbackStatus(arg);
+                DlNotification.showDuplicatedNtf();
             } else {
-                this.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
-                    value: 0.2,
-                    animation: false,
-                    fill: '#fdf2f2',
-                    size: 32,
-                    emptyFill: '#e73c64',
-                    startAngle: -Math.PI / 2
-                }).find('span').html(arg.taskLength);
-                this.$status.show();
-                const msg = ProcessCommunicator.generateNtfVal(data);
-                Util.successNotify('ダウンロードを開始しています...\n'+msg);
+                // this.$status.circleProgress({//todo ここらへんhtmlで補完できるのでは？
+                //     value: 0.2,
+                //     animation: false,
+                //     fill: '#fdf2f2',
+                //     size: 32,
+                //     emptyFill: '#e73c64',
+                //     startAngle: -Math.PI / 2
+                // }).find('span').html(arg.taskLength);
+                // this.$status.show();
+                // const msg = ProcessCommunicator.generateNtfVal(data);
+                // Util.successNotify('ダウンロードを開始しています...\n'+msg);
+                let ntf = new DlNotification(arg.stationId, arg.ft, arg.title);
+                ntf.showNtf();
+                this.ntfList.push(ntf);
             }
         }
 
         onGetIsDownloadable(data){
+            const ntf = this.getNtf(data.stationId, data.ft);
+            if (!ntf) return;
+
             if (data.status === 'SUCCESS') {
-                console.log('yeah! let\' DL!!');
-                this.$status.circleProgress({
-                    value: 0.4
-                });
-                const msg = ProcessCommunicator.generateNtfVal(data);
-                Util.successNotify('データを確認しています...\n'+ msg);
-                return;
+                // console.log('yeah! let\' DL!!');
+                // this.$status.circleProgress({
+                //     value: 0.4
+                // });
+                // const msg = ProcessCommunicator.generateNtfVal(data);
+                // Util.successNotify('データを確認しています...\n'+ msg);
+                ntf.updateAs2nd();
+            } else {
+                const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+                ntf.updateAsFailed(msg);
             }
 
-            const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
-            Util.dangerNotify(msg);
-            this.rollbackStatus(data);
+            // const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+            // Util.dangerNotify(msg);
+            // this.rollbackStatus(data);
         }
 
         onGetFfmpegStart(data){
-            this.$status.circleProgress({
-                value: 0.8
-            });
-            const msg = ProcessCommunicator.generateNtfVal(data);
-            Util.successNotify('データを再構成しています...\n'+ msg);
+            // this.$status.circleProgress({
+            //     value: 0.8
+            // });
+            // const msg = ProcessCommunicator.generateNtfVal(data);
+            // Util.successNotify('データを再構成しています...\n'+ msg);
+            const ntf = this.getNtf(data.stationId, data.ft);
+            if (ntf)
+                ntf.updateAs4th();
         }
 
         onGetFfmpegError(data) {
             console.log(data);
-            const msg = ProcessCommunicator.generateNtfVal(data);
-            Util.dangerNotify('処理に失敗しました\n'+ msg);
-            this.rollbackStatus(data);
+            // const msg = ProcessCommunicator.generateNtfVal(data);
+            // Util.dangerNotify('処理に失敗しました\n'+ msg);
+            // this.rollbackStatus(data);
+            const ntf = this.getNtf(data.stationId, data.ft);
+            if (ntf)
+                ntf.updateAsFailed();
         }
 
         onGetFfmpegEnd(data) {
-            const msg = ProcessCommunicator.generateNtfVal(data);
-            Util.successNotify('ダウンロード完了\n'+ msg);
-            data.taskLength--;
-            this.rollbackStatus(data);
+            // const msg = ProcessCommunicator.generateNtfVal(data);
+            // Util.successNotify('ダウンロード完了\n'+ msg);
+            // data.taskLength--;
+            // this.rollbackStatus(data);
+
+            const ntf = this.getNtf(data.stationId, data.ft);
+            if (ntf)
+                ntf.updateAsSuccess();
         }
 
         // onGetFfmpegProgress(data){
@@ -632,11 +658,14 @@
         // }
 
         onGetPageReached(data) {
-            const msg = ProcessCommunicator.generateNtfVal(data);
-            Util.successNotify('データを取得しています...\n'+ msg);
-            this.$status.circleProgress({
-                value: 0.6
-            });
+            // const msg = ProcessCommunicator.generateNtfVal(data);
+            // Util.successNotify('データを取得しています...\n'+ msg);
+            // this.$status.circleProgress({
+            //     value: 0.6
+            // });
+            const ntf = this.getNtf(data.stationId, data.ft);
+            if (ntf)
+                ntf.updateAs3rd();
         }
 
         hideStatus(){
