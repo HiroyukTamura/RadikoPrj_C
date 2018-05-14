@@ -30,24 +30,23 @@
                 const rect = domFrame.$dialog[0].getBoundingClientRect();
                 if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
                     domFrame.$dialog[0].close();
-                    return false;
+                    e.stopPropagation();
                 }
-                return true;
+            } else {
+                const $clickedEle = searcher.$dropDown.find('.mouseover');
+                if ($clickedEle.length) {
+                    searcher.resetSuggestion($clickedEle.html());
+                    e.stopPropagation();
+                }
             }
-            const $clickedEle = searcher.$dropDown.find('.mouseover');
-            if ($clickedEle.length) {
-                searcher.resetSuggestion($clickedEle.html());
-                return false;
-            }
-            return true;
         };
     };
 
     class OperationConductor{
         initialOperate(){
             domFrame.init();
-            ereaChecker.check().then((ereaId => {
-                return new ProgramListGetter(ereaId, domFrame.currentM).request();
+            ereaChecker.check().then((ereaId => {//todo ereaId保存しておいて、ProgramListGetterエラー時にエリアチェッカーからやり直すべきでは？
+                return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
@@ -68,7 +67,7 @@
             domFrame.updateDateMenu();
             ereaChecker.check().then((ereaId => {
                 localStorage.setItem('ereaId', ereaId);
-                return new ProgramListGetter(ereaId, domFrame.currentM).request();
+                return new ProgramListGetter(domFrame.currentM).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
@@ -77,6 +76,24 @@
                 //todo エラー処理
                 console.log(err);
             });
+        }
+
+        startChangeToStationTable(stationId, stationName){
+            domFrame.setToolbarTitle(stationName);
+            domFrame.setOnLoadingMode();
+            domFrame.resetAllDoms();
+
+            new ProgramListGetter(domFrame.currentM)
+                .setStationUrl(stationId)
+                .request()
+                .then(()=>{
+                    new TimeTableDom(data).init();
+                    domFrame.setOnCardClickListener();
+                    domFrame.show();
+                }).catch((e)=>{
+                    console.log(e);
+                    //todo エラー処理
+                });
         }
     }
 
@@ -127,6 +144,21 @@
             this.$spinner.removeClass('is-active');
             this.$timeTable.show();
             $('.mdl-layout__tab').show();
+            $('.optional-btn').removeAttr('disabled');
+        }
+
+        setOnLoadingMode(){
+            $('.mdl-layout__tab').hide();
+            this.$timeTable.hide();
+            this.$spinner.addClass('is-active');
+            $('.optional-btn').prop('disabled', true);
+        }
+
+        resetAllDoms(){
+            $('.mdl-layout__tab').remove();
+            this.$grid.children().remove();
+            this.$header.hide();
+            this.$footer.hide();
         }
 
         removeAllDoms(){
@@ -157,11 +189,6 @@
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
             });
-            $('#station-menu .mdl-menu__item').on('click', function () {
-                console.log($(this).attr('station'));
-                if (!$(this).prop('disabled'))
-                    $(this).parents('.mdl-menu__container').removeClass('is-visible');
-            });
             Util.setDialogListeners(this.$dialog[0]);
             $('#dl-btm').on('click', function () {
                 self.$dialog[0].close();
@@ -171,25 +198,37 @@
                 const title = self.$dialog.attr('data-title');
                 ProcessCommunicator.callDL(ft, stationId, title);
             });
-            // this.$dialog[0].addEventListener('close', function(e) {
-            //     if (this.returnValue === 'download') {
-            //         console.log('download');
-            //     }
-            //     return false;
-            // });
-            // $('#dl-btm').on('click', function () {
-            //     self.$dialog[0].close();
-            // });
-            // $('.cancel-btn').on('click', function () {
-            //     self.$dialog[0].close();
-            // });
+        }
+
+        setOnClickPostGetPrg(){
+            $('.mdl-layout__tab').on('click', function () {
+                const id = $(this).attr('id');
+                const name = $(this).attr('data-name');
+                console.log(id);
+                const menuItem = $('#station-menu .mdl-menu__item#'+ id);
+                menuItem.prop('disabled', true);
+                conductor.startChangeToStationTable(id, name);
+                return false;//tagがaなので必要
+            });
+            $('#station-menu .mdl-menu__item').on('click', function () {
+                const id = $(this).attr('station');
+                const name = $(this).attr('data-name');
+                console.log(id);
+                if (!$(this).prop('disabled'))
+                    $(this).parents('.mdl-menu__container').removeClass('is-visible');
+                conductor.startChangeToStationTable(id, name);
+            });
+        }
+
+        static setToolbarTitle(date){
+            $('.mdl-layout-title').html(date);
         }
 
         initDateMenu(){
             const momentOpe = domFrame.currentM.clone();
 
             for (let i = 0; i < 7; i++) {
-                let val = momentOpe.format('M/D') +'('+ Util.getWeekDays()[momentOpe.day()] +')';
+                let val = Util.getMDWithWeekDay(momentOpe);
                 const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" date="'+ momentOpe.format('YYYYMMDD') +'">'+ val +'</li>');
                 if (i === 0)
                     menuLi.addClass('current')
@@ -265,7 +304,7 @@
                 } else if (moment(ft, 'YYYYMMDDhhmmss').diff(moment()) > 0) {
                     dlBtn.hide();
                     errMsg.html('この番組はまだ配信されていません').show();
-                } else if (moment(to, 'YYYYMMDDhhmmss').diff(moment())){
+                } else if (moment(to, 'YYYYMMDDhhmmss').diff(moment()) > 0){
                     dlBtn.hide();
                     errMsg.html('放送中の番組はダウンロードできません').show();
                 } else {
@@ -289,9 +328,19 @@
     }
 
     class ProgramListGetter {
-        constructor(ereaId, requestM){
-            const ymd = requestM.format('YYYYMMDD');
-            this.URL = 'http://radiko.jp/v3/program/date/'+ ymd +'/'+ ereaId + '.xml';
+        constructor(requestM){
+            this.ymd = requestM.format('YYYYMMDD');
+            this.URL = null;
+        }
+
+        setStationUrl(stationId){
+            this.URL = 'http://radiko.jp/v3/program/weekly/'+ stationId + '.xml';
+            return this;
+        }
+
+        setAreaUrl(areaId){
+            this.URL = 'http://radiko.jp/v3/program/date/'+ this.ymd +'/'+ areaId + '.xml';
+            return this;
         }
 
         request(){
@@ -345,9 +394,13 @@
         }
 
         init(){
+            const unixTime = $(this.data).find('srvtime');
+            const toolbarTitle = Util.getMDWithWeekDay(moment(unixTime));
+            DomFrame.setToolbarTitle(toolbarTitle);
             this.setGridCss();
             this.setGridCells();
             this.inputCards();
+            domFrame.setOnClickPostGetPrg();
             Util.setElementAsMdl($(document));
         }
 
@@ -402,13 +455,13 @@
                 //Tabbarの画像をセット
                 const logoUrl = 'http://radiko.jp/station/logo/'+ stationId +'/logo_medium.png';
                 const html = $(
-                    '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ stationId +'">\n' +
+                    '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ stationId +'" data-name="'+ name +'">\n' +
                         '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
                     '</a>');
                 tabBar.append(html);
 
                 //menu作成
-                const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'">'+ name +'</li>');
+                const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'" data-name="'+ name +'">'+ name +'</li>');
                 stationMenu.append(menuLi);
 
                 progs.find('prog').each((j, ele)=> {
