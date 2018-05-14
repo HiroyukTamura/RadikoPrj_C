@@ -124,7 +124,6 @@
         &[row="23"]{background-color:desaturate(rgba(#131154,$alpha), $dest);}
         &[row="24"]{background-color:desaturate(rgba(#0f0d27,$alpha), $dest);}
 
-
         .time {
           @include centerAbs;
           color: $textGray;
@@ -146,6 +145,13 @@
           transition: unset;
           line-height: unset;
           border-radius: .25rem;
+
+          &.cant-dl {
+            background: rgb(253,253,253, .3);
+            .prg-title {
+              color: $textGray;
+            }
+          }
 
           &.mdl-button:hover {
             background-color: rgb(253,253,253);

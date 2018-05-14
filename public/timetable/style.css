@@ -347,6 +347,9 @@
           background-color: rgba(38, 37, 64, 0.27); }
         .mdl-layout__content #mix-table #grid .cell[row="24"] {
           background-color: rgba(24, 23, 29, 0.27); }
+        .mdl-layout__content #mix-table #grid .cell.cant-dl {
+          border: none;
+          background: unset; }
         .mdl-layout__content #mix-table #grid .cell .time {
           position: absolute;
           top: 50%;

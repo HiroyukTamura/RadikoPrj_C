@@ -152,7 +152,7 @@
                 if ($(this).prop('disabled'))
                     return false;
                 $(this).parents('.mdl-menu__container')
-                    .removeClass('is-visible')
+                    .removeClass('is-visible');
                 const ymd = $(this).attr('date');
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
@@ -222,6 +222,9 @@
                 e.preventDefault();
                 console.log('click');
 
+                if (self.$dialog.prop('open'))
+                    return false;
+
                 // '<span class="desc">'+ desc +'</span>\n'+
                 // '<span class="pfm">'+ pfm +'</span>\n'+
                 // '<span class="img">'+ img +'</span>\n'+
@@ -250,8 +253,11 @@
                     .attr('station', $(this).attr('station'))
                     .attr('title', html);
 
-                if (!self.$dialog.prop('open'))
-                    self.$dialog[0].showModal();
+                if ($(this).hasClass('cant-dl')) {
+                    self.$dialog.find('#dl-btm');
+                }
+
+                self.$dialog[0].showModal();
 
                 return false;
             });
@@ -400,6 +406,7 @@
                     const desc = $(ele).find('desc').html();
                     const pfm = $(ele).find('pfm').html();
                     const img = $(ele).find('img').html();
+                    const tsIn = $(ele).find('ts_in_ng').html();
 
                     const startM = moment(ft, 'YYYYMMDDHHmmss');
                     const endM = moment(to, 'YYYYMMDDHHmmss');
@@ -428,6 +435,9 @@
                             '</div>\n'+
                         '</div>'
                     );
+                    if (parseInt(tsIn) !== 2) {
+                        $cardOrgin.addClass('cant-dl');
+                    }
 
                     let startOpe = startM.clone();
                     let count = 0;
