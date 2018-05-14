@@ -168,7 +168,7 @@
                 //todo ダウンロード！！
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
-                const title = self.$dialog.attr('title');
+                const title = self.$dialog.attr('data-title');
                 ProcessCommunicator.callDL(ft, stationId, title);
             });
             // this.$dialog[0].addEventListener('close', function(e) {
@@ -251,10 +251,23 @@
                     .html(Util.wrapHtml(info));
                 self.$dialog.attr('ft', ft)
                     .attr('station', $(this).attr('station'))
-                    .attr('title', html);
+                    .attr('data-title', html);
 
                 if ($(this).hasClass('cant-dl')) {
                     self.$dialog.find('#dl-btm');
+                }
+
+                const dlBtn = self.$dialog.find('#dl-btm');
+                const errMsg = self.$dialog.find('.error-msg');
+                if ($(this).hasClass('cant-dl')) {
+                    dlBtn.hide();
+                    errMsg.html('この番組はタイムフリー非対応です').show();
+                } else if (moment(ft, 'YYYYMMDDhhmmss').diff(moment()) > 0) {
+                    dlBtn.hide();
+                    errMsg.html('この番組はまだ配信されていません').show();
+                } else {
+                    dlBtn.show();
+                    errMsg.html('').hide();
                 }
 
                 self.$dialog[0].showModal();
@@ -435,8 +448,12 @@
                             '</div>\n'+
                         '</div>'
                     );
-                    if (parseInt(tsIn) !== 2) {
+                    if (tsIn == 2) {
                         $cardOrgin.addClass('cant-dl');
+                    }
+
+                    if (startM.diff(moment()) > 0) {
+                        $cardOrgin.addClass('pre-start');
                     }
 
                     let startOpe = startM.clone();
