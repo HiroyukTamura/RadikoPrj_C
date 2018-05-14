@@ -265,6 +265,9 @@
                 } else if (moment(ft, 'YYYYMMDDhhmmss').diff(moment()) > 0) {
                     dlBtn.hide();
                     errMsg.html('この番組はまだ配信されていません').show();
+                } else if (moment(to, 'YYYYMMDDhhmmss').diff(moment())){
+                    dlBtn.hide();
+                    errMsg.html('放送中の番組はダウンロードできません').show();
                 } else {
                     dlBtn.show();
                     errMsg.html('').hide();
@@ -452,7 +455,7 @@
                         $cardOrgin.addClass('cant-dl');
                     }
 
-                    if (startM.diff(moment()) > 0) {
+                    if (endM.diff(moment()) > 0) {
                         $cardOrgin.addClass('pre-start');
                     }
 
@@ -589,8 +592,8 @@
         setOnReceiveListeners(){
             ipcRenderer.on('startDlWithFt-REPLY', (event, arg) => {
                 this.onGetStartDlWithFtReply(arg);
-            }).on('isDownloadable', (event, data) => {
-                this.onGetIsDownloadable(data);
+            // }).on('isDownloadable', (event, data) => {
+            //     this.onGetIsDownloadable(data);
             }).on('startDlChainError', (event, data) => {
                 this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
             }).on('pageReached', (event, data) => {
@@ -631,27 +634,27 @@
             }
         }
 
-        onGetIsDownloadable(data){
-            const ntf = this.getNtf(data.stationId, data.ft);
-            if (!ntf) return;
-
-            if (data.status === 'SUCCESS') {
+        // onGetIsDownloadable(data){
+        //     const ntf = this.getNtf(data.stationId, data.ft);
+        //     if (!ntf) return;
+        //
+        //     if (data.status === 'SUCCESS') {
                 // console.log('yeah! let\' DL!!');
                 // this.$status.circleProgress({
                 //     value: 0.4
                 // });
                 // const msg = ProcessCommunicator.generateNtfVal(data);
                 // Util.successNotify('データを確認しています...\n'+ msg);
-                ntf.updateAs2nd();
-            } else {
-                const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
-                ntf.updateAsFailed(msg);
-            }
+            //     ntf.updateAs2nd();
+            // } else {
+            //     const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+            //     ntf.updateAsFailed(msg);
+            // }
 
             // const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
             // Util.dangerNotify(msg);
             // this.rollbackStatus(data);
-        }
+        // }
 
         onGetFfmpegStart(data){
             // this.$status.circleProgress({

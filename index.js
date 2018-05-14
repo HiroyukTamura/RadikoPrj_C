@@ -108,6 +108,7 @@ const HTML_PATH = 'public/timetable/index.html';
 //             throw err;
 //     });
 // };
+//todo タイムアウトエラーを作成すること(特にffmpeg)
 
 class DlTaskList {
     constructor(){
@@ -252,13 +253,13 @@ class PuppeteerOperator {
         console.log(url);
         await this.pageForDl.goto(url);
         const self = this;
+        let isDone = false;/*現在配信中の番組の場合、chunkListは適宜動的に更新されてゆく為、isDoneのスコープに注意すること*/
         this.pageForDl.on('response', response => {
             console.log(response.status(), response.url());
             const url = response.url();
             if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
                 return;
 
-            let isDone = false;
             response.text().then(function (status) {
                 if (status.trim() === '') {
                     console.log('空ファイル', response.url());
@@ -269,13 +270,13 @@ class PuppeteerOperator {
                 const pathE = self.chunkListDir + '/' + path.basename(url);
                 if (isDone)
                     return;
+                isDone = true;
                 writeFile(pathE, response).then(() => {
                     console.log('書き込み完了');
                     runFfmpeg(pathE);
                 }).catch(err => {
                     throw err;
                 });
-                isDone = true;
             });
         });
         await this.pageForDl.waitFor(2 * 1000);
@@ -335,7 +336,7 @@ function createWindow () {
         Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
     });
 
-    // operator.launchPuppeteer();//todo コメントアウト外すこと
+    operator.launchPuppeteer();//todo コメントアウト外すこと
 
     // new OpenVpn().init();
     // masterJson = new MasterJson();
@@ -385,27 +386,27 @@ emitter.on('setTask', async() => {
     if (isFailed)
         return;
 
-    let s = null;
-    let status = await operator.isPossibleToDl().catch(e=>{
-        console.log(e);
-        s = 'UNKNOWN';
-    });
-    if (s !== null)
-        status = s;
-
-    if (status === 'UNKNOWN') {
-        //todo サーバにエラー送信したい
-    }
-    Sender.sendIsDownloadable(status);
-    if (status === 'SUCCESS') {
+    // let s = null;
+    // let status = await operator.isPossibleToDl().catch(e=>{
+    //     console.log(e);
+    //     s = 'UNKNOWN';
+    // });
+    // if (s !== null)
+    //     status = s;
+    //
+    // if (status === 'UNKNOWN') {
+    //     //todo サーバにエラー送信したい
+    // }
+    // Sender.sendIsDownloadable(status);
+    // if (status === 'SUCCESS') {
         operator.startDlChain().catch(e => {
             console.log('startDlChain error');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
         });
-    } else {
-        await connectEndToNext();
-    }
+    // } else {
+    //     await connectEndToNext();
+    // }
 });
 
 emitter.on('onErrorHandler', async (e) => {
