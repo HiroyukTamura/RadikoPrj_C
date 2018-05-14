@@ -130,6 +130,13 @@
           &.dummy {
             visibility: hidden;
           }
+          &.cant-dl {
+            background: rgba(255,255,255,.5);
+            box-shadow: none;
+            .prg-logo {
+              filter: grayscale(50%) opacity(70%);
+            }
+          }
           .station-logo {
             height: 52px;
             width: 100%;

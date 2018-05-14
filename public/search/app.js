@@ -84,10 +84,10 @@ const dialogPolyfill = require('dialog-polyfill');
         initializeSearchBar(){
             this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
             startDropDown = new StartDropDown('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn', this.momentOpe)
-                .init()
+                .init(0)
                 .setOnDateSelected();
             endDropDown = new EndDropDown('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn', this.momentOpe)
-                .init()
+                .init(6)
                 .setOnDateSelected();
             // this.initDateMenu('#end-dp-ul .mdl-menu__item', '#end-form .mdl-menu__container', '#end-input', '#end-dp-btn');
             this.initKeyInput();
@@ -199,9 +199,10 @@ const dialogPolyfill = require('dialog-polyfill');
         init(){
             const self = this;
             this.momentOpe.add(-6, 'd');
+            const index = this.$menuContainer.find('.is-selected').index();
             for (let i = 0; i < 7; i++) {
                 const val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
-                if (i === 6)
+                if (i === index)
                     this.$dateInput.val(val);
                 const ymd = this.momentOpe.format('YYYYMMDD');
                 this.$dateMenuItem.eq(i/*「全て」の分*/).attr('date', ymd).html(val);
@@ -444,6 +445,7 @@ const dialogPolyfill = require('dialog-polyfill');
             this.endTimeS = ele['end_time_s'];
             this.info = ele['info'];
             this.desc = ele['description'];
+            this.tsNg = ele['ts_in_ng'];
             this.$card = this.createCardWithListener();
         }
 
@@ -451,9 +453,10 @@ const dialogPolyfill = require('dialog-polyfill');
             const self = this;
             const timeVal = this.startTimeS.splice(2, 0, ':') +' - '+  this.endTimeS.splice(2, 0, ':');
             const dateVal = RequestOperator.generateTimeVal(this.prgDate);
+            const cantDl = this.tsNg == 2 ? 'cant-dl' : '';
 
             return $(
-                '<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item">\n' +
+                '<div class="mdl-card mdl-shadow--2dp mdl-pre-upgrade item '+ cantDl +'">\n' +
                     '<div class="station-logo">\n' +
                         '<img src="http://radiko.jp/station/logo/'+ this.stationId +'/logo_medium.png" alt="'+ this.stationId +'">\n' +
                     '</div>\n' +
@@ -465,6 +468,9 @@ const dialogPolyfill = require('dialog-polyfill');
                     '</div>\n' +
                 '</div>')
                 .on('click', function () {
+                    if (conductor.$dialog.prop('open'))
+                        return;
+                    
                     console.log('clicked');
                     conductor.$dialog.find('.prg-logo')
                         .removeAttr('src')
@@ -479,14 +485,25 @@ const dialogPolyfill = require('dialog-polyfill');
                         .empty()
                         .html(Util.wrapHtml(self.info));
 
-                    if (!conductor.$dialog.prop('open'))
-                        conductor.$dialog[0].showModal();
+                    const dlBtn = conductor.$dialog.find('#dl-btm');
+                    const errMsg = conductor.$dialog.find('.error-msg');
+                    if (self.tsNg == 2) {
+                        dlBtn.hide();
+                        errMsg.html('この番組はタイムフリー非対応です').show();
+                    } else {
+                        dlBtn.show();
+                        errMsg.html('').hide();
+                    }
+
+                    conductor.$dialog[0].showModal();
 
                     return false;
                 }).hover(function () {
-                    $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
+                    if (self.tsNg != 2)
+                        $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
                 }, function () {
-                    $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
+                    if (self.tsNg != 2)
+                        $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
                 });
         }
     }

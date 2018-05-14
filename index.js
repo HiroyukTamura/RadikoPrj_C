@@ -99,7 +99,7 @@ let vpnJson;
 let postGotJsons;
 
 const RADIKO_URL = 'http://radiko.jp/#!/ts/TBS/20180427180000';
-const HTML_PATH = 'public/timetable/index.html';
+const HTML_PATH = 'public/search/index.html';
 
 // console.log = function (...val) {
 //     const vals = val.join(' ') + '\n';
@@ -336,7 +336,7 @@ function createWindow () {
         Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
     });
 
-    operator.launchPuppeteer();//todo コメントアウト外すこと
+    // operator.launchPuppeteer();//todo コメントアウト外すこと
 
     // new OpenVpn().init();
     // masterJson = new MasterJson();
