@@ -98,7 +98,7 @@ let masterJson;
 let vpnJson;
 let postGotJsons;
 
-const HTML_PATH = 'public/about/index.html';
+const HTML_PATH = 'public/download/index.html';
 
 // console.log = function (...val) {
 //     const vals = val.join(' ') + '\n';
@@ -115,9 +115,9 @@ class DlTaskList {
         this.working = 0;
     }
 
-    getCurrentProgress(){
-        return this.working === 0 ? 0 : this.tasks[this.working]['progress']
-    }
+    // getCurrentProgress(){
+    //     return this.working === 0 ? 0 : this.tasks[this.working]['progress']
+    // }
 
     isExistTask(stationId, ft){
         const dlTaskArr = Object.values(this.tasks);
@@ -163,11 +163,13 @@ class DlTaskList {
 }
 
 class DlTask {
-    constructor(stationId, ft, title){
+    constructor(stationId, ft, to, title){
         this.stationId = stationId;
         this.ft = ft;
+        this.to = to;
         this.title = title;
         this.chunkFileName = null;
+        this.stage = 'UNSET';
     }
 }
 
@@ -243,11 +245,11 @@ class PuppeteerOperator {
 
     async startDlChain(){
         console.log('startDlChain');
+        const task = dlTaskList.tasks[dlTaskList.working];
         if (!this.pageForDl) {
             this.pageForDl = await this.browser.newPage();
             await this.pageForDl.setUserAgent(this.userAgent);
         }
-        const task = dlTaskList.tasks[dlTaskList.working];
         const url = PuppeteerOperator.getTimeFreeUrl(task.stationId, task.ft);
         console.log(url);
         await this.pageForDl.goto(url);
@@ -283,6 +285,7 @@ class PuppeteerOperator {
         await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
         Sender.sendMiddleData('pageReached');
+        task.stage = 'pageReached';
     }
 }
 
@@ -327,12 +330,17 @@ function createWindow () {
         const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
         if (!isDuplicated) {
             const timeStamp = moment().valueOf();
-            dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.title);
+            dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title);
             if (!dlTaskList.working)
                 dlTaskList.working = timeStamp;
             emitter.emit('setTask');
         }
         Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
+    });
+
+    ipcMain.on('dlStatus', (event, arg) => {
+        console.log('dlStatus');
+        Sender.sendDlStatus(dlTaskList);
     });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと
@@ -589,6 +597,7 @@ function runFfmpeg(pathE) {
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
             Sender.sendMiddleData('ffmpegStart');
+            dlTaskList.getWorkingTask().stage = 'ffmpegStart';
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
@@ -598,6 +607,7 @@ function runFfmpeg(pathE) {
         .on('end', function(stdout, stderr) {
             console.log('Transcoding s  ucceeded !');
             Sender.sendMiddleData('ffmpegEnd');
+            dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
             emitter.emit('connectEndToNext');
         }).on('progress', function(progress) {
             console.log('Processing: ' + progress.percent + '% done');
@@ -652,6 +662,10 @@ class Sender {
         const data = dlTaskList.getSimpleData();
         data['ffmpegPrg'] = percent;
         win.webContents.send('ffmpegPrg', data);
+    }
+
+    static sendDlStatus(){
+        win.webContents.send('dlStatus_REPLY', JSON.stringify(dlTaskList));
     }
 }
 

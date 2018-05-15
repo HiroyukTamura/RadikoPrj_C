@@ -196,7 +196,8 @@
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('data-title');
-                ProcessCommunicator.callDL(ft, stationId, title);
+                const to = self.$dialog.attr('to');
+                ProcessCommunicator.callDL(ft, to, stationId, title);
             });
         }
 
@@ -321,7 +322,8 @@
                     .html(Util.wrapHtml(info));
                 self.$dialog.attr('ft', ft)
                     .attr('station', $(this).attr('station'))
-                    .attr('data-title', html);
+                    .attr('data-title', html)
+                    .attr('to', to);
 
                 if ($(this).hasClass('cant-dl')) {
                     self.$dialog.find('#dl-btm');

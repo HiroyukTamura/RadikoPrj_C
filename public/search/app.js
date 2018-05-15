@@ -43,7 +43,7 @@ const notify = require('bootstrap-notify');
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('data-title');
-                ProcessCommunicator.callDL(ft, stationId, title);
+                ProcessCommunicator.callDL(ft, to, stationId, title);
             });
         }
 
@@ -506,8 +506,10 @@ const notify = require('bootstrap-notify');
                     }
 
                     const ft = self.prgDate + '' +self.startTimeS + '00';
+                    const to = self.prgDate + '' +self.endTimeS + '00';
                     console.log(ft);
                     conductor.$dialog.attr('ft', ft)
+                        .attr('to', to)
                         .attr('station', self.stationId)
                         .attr('data-title', self.title);
 

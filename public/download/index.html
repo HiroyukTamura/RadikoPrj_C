@@ -25,11 +25,11 @@
 
         </header>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href=""><i class="fas fa-table"></i>&#x30BF;&#x30A4;&#x30E0;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
+            <a class="mdl-navigation__link" href="timetable.ejs"><i class="fas fa-table"></i>&#x30BF;&#x30A4;&#x30E0;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a>
+            <a class="mdl-navigation__link" href="search.ejs"><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
             <!--<a class="mdl-navigation__link" href=""><i class="fas fa-star"></i>&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;</a>-->
-            <a class="mdl-navigation__link" href=""><i class="fas fa-cog current"></i>ダウンロード</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
+            <a class="mdl-navigation__link current" href="#" onclick="returnFalse()"><i class="fas fa-cog"></i>ダウンロード</a>
+            <a class="mdl-navigation__link" href="about.ejs"><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
         </nav>
     </div>
 
@@ -38,6 +38,9 @@
             <div class="mdl-card mdl-shadow--2dp">
                 <h1>ダウンロード中</h1>
                 <ul>
+                    <li id="non-list">
+                        ダウンロード中の番組はありあません
+                    </li>
                     <li>
                         <div class="wrapper">
                             <img src="https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg" alt="番組ロゴ" class="prg-logo">
@@ -88,13 +91,13 @@
         </section>
         <section id="file-location">
             <div class="mdl-card mdl-shadow--2dp">
-                <h1>ダウンロード先</h1>
-                <form action="#">
+                <h1>ダウンロードフォルダ</h1>
+                <form action="#" onsubmit="return false">
                     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
                         <input class="mdl-textfield__input" type="text" id="sample3">
                         <label class="mdl-textfield__label" for="sample3"></label>
                     </div>
-                    <button class="mdl-button mdl-js-button mdl-button--icon">
+                    <button class="mdl-button mdl-js-button mdl-button--icon" id="dpdn">
                         <i class="material-icons">arrow_drop_down</i>
                     </button>
                 </form>

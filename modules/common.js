@@ -222,9 +222,10 @@ class ProcessCommunicator{
         return ntf;
     }
 
-    static callDL(ft, stationId, title){
+    static callDL(ft, to, stationId, title){
         const data = {
             ft: ft,
+            to: to,
             stationId: stationId,
             title: title
         };
