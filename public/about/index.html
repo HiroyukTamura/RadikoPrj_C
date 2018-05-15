@@ -29,7 +29,7 @@
             <a class="mdl-navigation__link" href="search.ejs"><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
             <!--<a class="mdl-navigation__link" href=""><i class="fas fa-star"></i>&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;</a>-->
             <a class="mdl-navigation__link" href="download.ejs"><i class="fas fa-cog"></i>ダウンロード</a>
-            <a class="mdl-navigation__link current" href="#"><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
+            <a class="mdl-navigation__link current" href="#" onclick="returnFalse()"><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
         </nav>
     </div>
 
@@ -49,44 +49,44 @@
         <section id="notice-radiko">
             <h1>公式からのお知らせ</h1>
             <p>以下のお知らせは公式HPからの引用です。必ず<a href="http://radiko.jp/">公式HP</a>をご確認ください。</p><!--todo a href対応-->
-            <div class="mdl-card mdl-shadow--2dp">
-                <p class="news-detail__date">2018年5月14日 (月）</p>
-                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
-                <div class="news-detail__content">
-                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
-                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
-                    下記時間帯に、メンテンナンスがございます。<br />
-                    <br />
-                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
-                    <br />
-                    当メンテナンス中は<br />
-                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
-                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
-                    メンテナンス終了をお待ちいただき再度お試しください。<br />
-                    <br />
-                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
-                    何卒よろしくお願い申し上げます。
-                </div>
-            </div>
-            <div class="mdl-card mdl-shadow--2dp">
-                <p class="news-detail__date">2018年5月14日 (月）</p>
-                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
-                <div class="news-detail__content">
-                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
-                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
-                    下記時間帯に、メンテンナンスがございます。<br />
-                    <br />
-                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
-                    <br />
-                    当メンテナンス中は<br />
-                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
-                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
-                    メンテナンス終了をお待ちいただき再度お試しください。<br />
-                    <br />
-                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
-                    何卒よろしくお願い申し上げます。
-                </div>
-            </div>
+            <!--<div class="mdl-card mdl-shadow&#45;&#45;2dp">-->
+                <!--<p class="news-detail__date">2018年5月14日 (月）</p>-->
+                <!--<h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>-->
+                <!--<div class="news-detail__content">-->
+                    <!--いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />-->
+                    <!--『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />-->
+                    <!--下記時間帯に、メンテンナンスがございます。<br />-->
+                    <!--<br />-->
+                    <!--実施時間帯：2018年5月23日（水）AM0時～3時<br />-->
+                    <!--<br />-->
+                    <!--当メンテナンス中は<br />-->
+                    <!--『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />-->
+                    <!--登録/解約ができない場合は、大変お手数をおかけしますが、<br />-->
+                    <!--メンテナンス終了をお待ちいただき再度お試しください。<br />-->
+                    <!--<br />-->
+                    <!--今後ともradiko.jpへのご愛顧を賜りますよう、<br />-->
+                    <!--何卒よろしくお願い申し上げます。-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="mdl-card mdl-shadow&#45;&#45;2dp">-->
+                <!--<p class="news-detail__date">2018年5月14日 (月）</p>-->
+                <!--<h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>-->
+                <!--<div class="news-detail__content">-->
+                    <!--いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />-->
+                    <!--『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />-->
+                    <!--下記時間帯に、メンテンナンスがございます。<br />-->
+                    <!--<br />-->
+                    <!--実施時間帯：2018年5月23日（水）AM0時～3時<br />-->
+                    <!--<br />-->
+                    <!--当メンテナンス中は<br />-->
+                    <!--『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />-->
+                    <!--登録/解約ができない場合は、大変お手数をおかけしますが、<br />-->
+                    <!--メンテナンス終了をお待ちいただき再度お試しください。<br />-->
+                    <!--<br />-->
+                    <!--今後ともradiko.jpへのご愛顧を賜りますよう、<br />-->
+                    <!--何卒よろしくお願い申し上げます。-->
+                <!--</div>-->
+            <!--</div>-->
         </section>
 
         <section id="tos">
@@ -122,13 +122,14 @@
                         </form>
                     </div>
                 </div>
-                <button class="mdl-button mdl-js-button mdl-button--fab">
+                <button class="mdl-button mdl-js-button mdl-button--fab" title="送信" id="send-btn">
                     <i class="material-icons">send</i>
                 </button>
             </div>
         </section>
     </main>
 </div>
+<script src="../../modules/network.js"></script>
 <script src="../../modules/common.js"></script>
 <script src="app.js"></script>
 </body></html>

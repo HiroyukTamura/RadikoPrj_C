@@ -298,3 +298,5 @@ a:focus, button:focus {
       margin: auto 56px auto 108px;
       background: #00a7e9;
       color: white; }
+      .mdl-layout__content #contact .mdl-card-w .mdl-button:focus {
+        outline: none; }

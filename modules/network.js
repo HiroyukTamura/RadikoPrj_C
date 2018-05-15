@@ -41,16 +41,25 @@ class EreaChecker {
             }).done((data, textStatus, jqXHR) => {
                 try {
                     const html = $(data.split("'")[1]);
-                    const erea = html.attr('class');
-                    resolve(erea);
+                    const area = html.attr('class');
+                    console.log(html, area);
+                    EreaChecker.setAreaIdToStorage(area);
+                    resolve(area);
                 } catch (e) {
                     reject(e);
                 }
-            })
-                .fail((jqXHR, textStatus, errorThrown) => {
-                    console.log('fail', jqXHR.status, textStatus);
-                    reject(errorThrown);
-                });
+            }).fail((jqXHR, textStatus, errorThrown) => {
+                console.log('fail', jqXHR.status, textStatus);
+                reject(errorThrown);
+            });
         });
+    }
+
+    static getAreaIdFromStorage(){
+        return localStorage.getItem('areaId');
+    }
+
+    static setAreaIdToStorage(areaId){
+        localStorage.setItem('areaId', areaId);
     }
 }

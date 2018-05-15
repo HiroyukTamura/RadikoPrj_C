@@ -50,6 +50,7 @@
     "selenium-webdriver": "^4.0.0-alpha.1",
     "stream": "0.0.2",
     "sudo-prompt": "^8.2.0",
+    "tippy.js": "^2.5.2",
     "webdriverajax": "^2.2.0",
     "webdriverio": "^4.12.0",
     "xhook": "^1.4.7",
