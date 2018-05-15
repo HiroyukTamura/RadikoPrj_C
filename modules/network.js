@@ -5,7 +5,7 @@ class ProgramListGetter {
     }
 
     setStationUrl(stationId){
-        this.URL = 'http://radiko.jp/v3/program/weekly/'+ stationId + '.xml';
+        this.URL = 'http://radiko.jp/v3/program/station/weekly/'+ stationId + '.xml';
         return this;
     }
 

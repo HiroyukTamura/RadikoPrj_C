@@ -79,15 +79,14 @@
         }
 
         startChangeToStationTable(stationId, stationName){
-            domFrame.setToolbarTitle(stationName);
             domFrame.setOnLoadingMode();
             domFrame.resetAllDoms();
 
             new ProgramListGetter(domFrame.currentM)
                 .setStationUrl(stationId)
                 .request()
-                .then(()=>{
-                    new TimeTableDom(data).init();
+                .then((data)=>{
+                    new StationTableDom(data).init();
                     domFrame.setOnCardClickListener();
                     domFrame.show();
                 }).catch((e)=>{
@@ -327,18 +326,58 @@
         }
     }
 
-    class TimeTableDom {
+    class StationTableDom extends DomUtil{
         constructor(data){
-            this.data = data;
-            this.columnWidth = 258;//px scssより引用
-            this.$stations = $(data).find('stations station');
-            this.$grid = $('#grid');
-            // this.$dialog = $('.mdl-dialog');
+            super();
+            const $station = $(data).find('station');
+            this.stationId = $station.attr('id');
+            this.stationName =  $station.find('name').eq(0).html();
+            this.$prgs =  $station.find('progs');
         }
 
         init(){
-            const unixTime = $(this.data).find('srvtime');
-            const toolbarTitle = Util.getMDWithWeekDay(moment(unixTime));
+            this.setColumnLen(7);
+            DomFrame.setToolbarTitle(this.stationName);
+            this.setGridCss();
+            this.setGridCells();
+            this.inputTabs();
+            this.inputCards();
+        }
+
+        //これ本来はDomFrameに移譲するべきでは？
+        inputTabs(){
+            const opeM = this.currentM.clone();
+            const tabBar = $('.mdl-layout__tab-bar');
+            for (let i = 0; i < 7; i++) {
+                const md = Util.getMDWithWeekDay(opeM);
+                $('<a href="#" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>')
+                    .prependTo(tabBar);
+                opeM.add(-1, 'd');
+            }
+        }
+
+        inputCards(){
+            const opeM = this.currentM.clone();
+            opeM.add(-7, 'd');
+            for (let i = 0; i < 7; i++) {
+                const $prg = this.$prgs.find('date:contains('+ opeM.format('YYYYMMDD') +')')
+                    .parent().find('prog');
+                this.inputEachCard($prg, i, this.stationId);
+                opeM.add(1, 'd');
+            }
+        }
+    }
+
+    class TimeTableDom extends DomUtil{
+        constructor(data){
+            super();
+            this.$stations = $(data).find('stations station');
+        }
+
+        init(){
+            this.setColumnLen(this.$stations.length);
+
+            const toolbarTitle = Util.getMDWithWeekDay(this.currentM);
             DomFrame.setToolbarTitle(toolbarTitle);
             this.setGridCss();
             this.setGridCells();
@@ -347,45 +386,10 @@
             Util.setElementAsMdl($(document));
         }
 
-        setGridCss(){
-            let cells = '';
-            for (let i = 0; i < this.$stations.length; i++)
-                cells += '.. ';
-            const rowArea = "'"+ cells +"'";
-            let str = '';
-            for (let i = 0; i < 24; i++)
-                str += rowArea;
-
-            let columnsStr = this.columnWidth/2 + "px ";//時間軸
-            for (let i = 0; i < this.$stations.length; i++)
-                columnsStr += (this.columnWidth + "px ");
-            this.$grid.css('grid-template-areas', str)
-                .css('grid-template-columns', columnsStr);
-        }
-
-        setGridCells() {
-            //セル作成
-            for (let i = 1; i < 25; i++) {
-                for (let j = 1; j < this.$stations.length+2/*時間軸の分*/; j++) {
-                    let cell;
-                    if (j === 1) {
-                        let time = i+4;
-                        if (time < 10)
-                            time = 0 + time.toString();
-                        const val = '<div class="time">'+ time +'</div>';
-                        cell = '<div class="cell item--hour'+ time +'" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;">'+ val +'</div>';
-                    } else
-                        cell = '<div class="cell" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;"></div>';
-                    this.$grid.append(cell);
-                }
-            }
-        }
-
         inputCards() {
             console.log(this.$stations);
             const tabBar = $('.mdl-layout__tab-bar');
             const stationMenu = $('#station-menu');
-            const self = this;
 
             this.$stations.each((i, ele) => {
                 const stationId = $(ele).attr('id');
@@ -407,136 +411,8 @@
                 const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'" data-name="'+ name +'">'+ name +'</li>');
                 stationMenu.append(menuLi);
 
-                progs.find('prog').each((j, ele)=> {
-                    const id = $(ele).attr('id');
-                    const ft = $(ele).attr('ft');
-                    const to = $(ele).attr('to');
-                    const durSec = $(ele).attr('dur');
-                    const title = $(ele).find('title').html();
-                    const url = $(ele).find('url').html();
-                    const info = $(ele).find('info').html();
-                    const desc = $(ele).find('desc').html();
-                    const pfm = $(ele).find('pfm').html();
-                    const img = $(ele).find('img').html();
-                    const tsIn = $(ele).find('ts_in_ng').html();
-
-                    const startM = moment(ft, 'YYYYMMDDHHmmss');
-                    const endM = moment(to, 'YYYYMMDDHHmmss');
-                    const startHour = startM.hour();
-                    // const endHour = endM.hour();
-                    const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
-                    const durMin = Math.round(parseInt(durSec)/60);
-                    const $cardOrgin = $(
-                        '<div class="prg-card-w mdl-card shadow-sm mdl-button mdl-js-button mdl-pre-upgrade" style="flex-grow: '+ durMin +'" prgid="'+ id +'" station="'+ stationId +'">\n'+
-                            '<div class="top"></div>\n'+
-                            '<li class="mdl-list__item mdl-list__item--two-line mdl-pre-upgrade">\n'+
-                                '<span class="mdl-list__item-primary-content mdl-pre-upgrade">\n'+
-                                '<span class="prg-title">'+ title +'</span>\n'+
-                                '<span class="mdl-list__item-sub-title">'+ timeStr +'</span>\n'+
-                                '</span>\n'+
-                            '</li>\n'+
-                            '<div class="bottom"></div>\n'+
-                            '<div class="info_group">\n'+
-                                '<span class="url">'+ url +'</span>\n'+
-                                '<span class="info">'+ info +'</span>\n'+
-                                '<span class="desc">'+ desc +'</span>\n'+
-                                '<span class="pfm">'+ pfm +'</span>\n'+
-                                '<span class="img">'+ img +'</span>\n'+
-                                '<span class="ft">'+ ft +'</span>\n'+
-                                '<span class="to">'+ to +'</span>\n'+
-                            '</div>\n'+
-                        '</div>'
-                    );
-                    if (tsIn == 2) {
-                        $cardOrgin.addClass('cant-dl');
-                    }
-
-                    if (endM.diff(moment()) > 0) {
-                        $cardOrgin.addClass('pre-start');
-                    }
-
-                    let startOpe = startM.clone();
-                    let count = 0;
-                    while (true) {
-
-                        if (count > 5) {
-                            console.log('count > 10');//todo エラー処理
-                            break;
-                        }
-
-                        let cell;
-                        let $card = $cardOrgin.clone();
-                        const rowIndex = (startHour>=5 ? startHour-4 : startHour+24-4) + count;
-                        cell = this.$grid.find('.cell[column="'+ (i+2/*時間軸分と1始まり*/) +'"][row="'+ rowIndex +'"]');
-
-                        if (count > 0) {
-                            TimeTableDom.fillInTopSpace(cell, $card);
-                            $card.find('.prg-title').hide();
-                            $card.find('.mdl-list__item-sub-title').hide();
-                        }
-
-                        $card.hover(function () {
-                            $('.prg-card-w[prgid="'+ id +'"]').addClass("mouseover");
-                        }, function () {
-                            $('.prg-card-w[prgid="'+ id +'"]').removeClass("mouseover");
-                        });
-
-                        if (startM.hour() === endM.hour()) {
-                            //ex. 12:00 ⇒ 12:40
-                            $card.css('flex-grow', durMin%60);
-                            cell.append($card);
-                            break;
-                        } else if(startOpe.hour() === endM.hour()) {
-                            //ex. 12:00(StartOpe)⇒ 12:40
-                            $card.css('flex-grow', endM.diff(startOpe, 'minutes'));
-                            cell.append($card);
-                            break;
-                        } else if ((endM.hour() - startOpe.hour() === 1 && startOpe.minute() === 0 && endM.minute() === 0)
-                            || (endM.day() - startOpe.day() === 1 && endM.hour()+24 - startOpe.hour() === 1 && startOpe.minute() === 0 && endM.minute() === 0)) {
-                            //ex. 10:00(StartOpe) ⇒ 11:00 || 23:00 ⇒ 24:00
-                            $card.css('flex-grow', 1);
-                            cell.append($card);
-                            break;
-                        } else if (startOpe.minute() === 0 && endM.diff(startOpe, 'minutes') > 60) {
-                            //ex. 10:00(StartOpe) ⇒ 12:30
-                            $card.css('flex-grow', 1);
-                            cell.append($card);
-                        } else if ((endM.hour() - startOpe.hour() === 1 && endM.minute() === 0)
-                            || (endM.day() - startOpe.day() === 1 && endM.hour()+24 - startOpe.hour() === 1 && endM.minute() === 0)){
-                            //ex. 11:20(StartOpe) ⇒ 12:00 || 23:55 ⇒ 0:00
-                            $card.css('flex-grow', endM.diff(startOpe, 'minutes'));
-                            cell.append($card);
-                            break;
-                        } else {
-                            //ex. 10:30(StartOpe)⇒ 12:30
-                            let restMin = 60 - startOpe.minute();
-                            $card.css('flex-grow', restMin);
-                            cell.append($card);
-                        }
-
-                        startOpe.minute(0);
-                        startOpe.add(1, 'hour');
-
-                        count++;
-
-                        TimeTableDom.fillInBottomSpace(cell, $card);
-                    }
-                });
+                this.inputEachCard(progs.find('prog'), i, stationId);
             });
-        }
-
-        static fillInBottomSpace(cell, card){
-            cell.css('padding-bottom', 0);
-            card.css('margin-bottom', 0)
-                .css('border-bottom-left-radius', 0)
-                .css('border-bottom-right-radius', 0);
-        }
-
-        static fillInTopSpace(cell, card) {
-            cell.css('padding-top', 0);
-            card.css('margin-top', 0)
-                .css('border-top-left-radius', 0)
-                .css('border-top-right-radius', 0);
         }
     }
 
