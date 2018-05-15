@@ -2,31 +2,38 @@
 @import "../../scss/component";
 
 .mdl-layout__header{
-  #btn-date, #radio-menu {
-    @include buttonInterval;
-    @include whitenHover;
-  }
-  #dl-status {
-    @include buttonInterval;
-    height: 32px;
-    width: 32px;
-    background: $primaryRed;
-    display: none;
-    position: relative;
-    cursor: pointer;
-    span {
-      color: white;
-      @include centerAbs;
-    }
-  }
-  #search-btn {
-    padding: 16px 0;
-    position: relative;
-    .mdl-button {
+  .mdl-layout__header-row {
+    #btn-date, #radio-menu {
+      @include buttonInterval;
       @include whitenHover;
     }
-    #suggest-drop-down {
-      @include forSearchDropDown;
+    #dl-status {
+      @include buttonInterval;
+      height: 32px;
+      width: 32px;
+      background: $primaryRed;
+      display: none;
+      position: relative;
+      cursor: pointer;
+      span {
+        color: white;
+        @include centerAbs;
+      }
+    }
+    #search-btn {
+      padding: 16px 0;
+      position: relative;
+      .mdl-button {
+        @include whitenHover;
+      }
+      #suggest-drop-down {
+        @include forSearchDropDown;
+      }
+    }
+    .mdl-layout-title {
+      img {
+        display: none;
+      }
     }
   }
 }
@@ -44,6 +51,12 @@
     .mdl-layout__tab {
       width: $columnWidth; //28pxはMDL準拠
       display: none;
+      color: #00a7e9;
+      font-size: 24px;
+      text-decoration: none;
+      &.holiday {
+        color: $primaryRed;
+      }
       img {
         height: 48px;
         width: auto;
@@ -148,6 +161,7 @@
 
           &.cant-dl, &.pre-start {
             background: rgba(253,253,253, .3);
+            box-shadow: none!important;
             .prg-title {
               color: $textGray;
             }

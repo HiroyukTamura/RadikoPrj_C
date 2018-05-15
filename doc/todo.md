@@ -9,3 +9,6 @@
 ・ステーション別クリックでステーションごとのタイムスケジュールを作成すべき
 ・フォルダ名、StaitionIdではなくてラジオ局名にするべき
 ・やっぱり、ffmpegの進捗が欲しい
+・menuItem diabled時のcursor
+・window.onclickや、フォームでのエンター動作などもっと詰めるべき
+・tabのripple効いてない

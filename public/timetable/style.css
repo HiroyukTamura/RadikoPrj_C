@@ -221,14 +221,14 @@ a:focus, button:focus {
       background: white;
       color: #00a7e9; }
 
-.mdl-layout__header #btn-date, .mdl-layout__header #radio-menu {
+.mdl-layout__header .mdl-layout__header-row #btn-date, .mdl-layout__header .mdl-layout__header-row #radio-menu {
   margin-left: 8px; }
-  .mdl-layout__header #btn-date:hover, .mdl-layout__header #radio-menu:hover {
+  .mdl-layout__header .mdl-layout__header-row #btn-date:hover, .mdl-layout__header .mdl-layout__header-row #radio-menu:hover {
     background-color: rgba(255, 255, 255, 0.2); }
-  .mdl-layout__header #btn-date .material-icons :hover, .mdl-layout__header #radio-menu .material-icons :hover {
+  .mdl-layout__header .mdl-layout__header-row #btn-date .material-icons :hover, .mdl-layout__header .mdl-layout__header-row #radio-menu .material-icons :hover {
     background: unset; }
 
-.mdl-layout__header #dl-status {
+.mdl-layout__header .mdl-layout__header-row #dl-status {
   margin-left: 8px;
   height: 32px;
   width: 32px;
@@ -236,21 +236,21 @@ a:focus, button:focus {
   display: none;
   position: relative;
   cursor: pointer; }
-  .mdl-layout__header #dl-status span {
+  .mdl-layout__header .mdl-layout__header-row #dl-status span {
     color: white;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%); }
 
-.mdl-layout__header #search-btn {
+.mdl-layout__header .mdl-layout__header-row #search-btn {
   padding: 16px 0;
   position: relative; }
-  .mdl-layout__header #search-btn .mdl-button:hover {
+  .mdl-layout__header .mdl-layout__header-row #search-btn .mdl-button:hover {
     background-color: rgba(255, 255, 255, 0.2); }
-  .mdl-layout__header #search-btn .mdl-button .material-icons :hover {
+  .mdl-layout__header .mdl-layout__header-row #search-btn .mdl-button .material-icons :hover {
     background: unset; }
-  .mdl-layout__header #search-btn #suggest-drop-down {
+  .mdl-layout__header .mdl-layout__header-row #search-btn #suggest-drop-down {
     position: absolute;
     z-index: 100;
     left: 32px;
@@ -260,7 +260,7 @@ a:focus, button:focus {
     border-top-left-radius: 0;
     border-top-right-radius: 0;
     background-color: #f2f2f2; }
-    .mdl-layout__header #search-btn #suggest-drop-down > div {
+    .mdl-layout__header .mdl-layout__header-row #search-btn #suggest-drop-down > div {
       color: rgba(0, 0, 0, 0.87);
       font-size: 14px;
       width: 100%;
@@ -269,10 +269,13 @@ a:focus, button:focus {
       line-height: 28px;
       padding: 0 14px;
       cursor: pointer; }
-      .mdl-layout__header #search-btn #suggest-drop-down > div:hover {
+      .mdl-layout__header .mdl-layout__header-row #search-btn #suggest-drop-down > div:hover {
         background: white; }
-      .mdl-layout__header #search-btn #suggest-drop-down > div.key-focused {
+      .mdl-layout__header .mdl-layout__header-row #search-btn #suggest-drop-down > div.key-focused {
         background: white; }
+
+.mdl-layout__header .mdl-layout__header-row .mdl-layout-title img {
+  display: none; }
 
 .mdl-layout__tab-bar {
   background-color: #e2f4f9; }
@@ -285,7 +288,12 @@ a:focus, button:focus {
     padding-left: 129px; }
     .mdl-layout__tab-bar-container #header-2nd-row .mdl-layout__tab {
       width: 258px;
-      display: none; }
+      display: none;
+      color: #00a7e9;
+      font-size: 24px;
+      text-decoration: none; }
+      .mdl-layout__tab-bar-container #header-2nd-row .mdl-layout__tab.holiday {
+        color: #e73c64; }
       .mdl-layout__tab-bar-container #header-2nd-row .mdl-layout__tab img {
         height: 48px;
         width: auto; }
@@ -407,7 +415,8 @@ a:focus, button:focus {
           line-height: unset;
           border-radius: .25rem; }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w.cant-dl, .mdl-layout__content #mix-table #grid .cell .prg-card-w.pre-start {
-            background: rgba(253, 253, 253, 0.3); }
+            background: rgba(253, 253, 253, 0.3);
+            box-shadow: none !important; }
             .mdl-layout__content #mix-table #grid .cell .prg-card-w.cant-dl .prg-title, .mdl-layout__content #mix-table #grid .cell .prg-card-w.pre-start .prg-title {
               color: rgba(0, 0, 0, 0.54); }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w.mdl-button:hover {

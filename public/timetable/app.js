@@ -93,6 +93,7 @@
                     console.log(e);
                     //todo エラー処理
                 });
+            domFrame.disableStMenuItem(stationId);
         }
     }
 
@@ -204,23 +205,54 @@
                 const id = $(this).attr('id');
                 const name = $(this).attr('data-name');
                 console.log(id);
-                const menuItem = $('#station-menu .mdl-menu__item#'+ id);
-                menuItem.prop('disabled', true);
+                // const menuItem = $('#station-menu .mdl-menu__item[station="'+ id +'"]');
+                // menuItem.prop('disabled', true);
                 conductor.startChangeToStationTable(id, name);
                 return false;//tagがaなので必要
             });
+            this.setOnStMenuItemClick();
+        }
+
+        setOnStMenuItemClick(){
+            const self = this;
             $('#station-menu .mdl-menu__item').on('click', function () {
                 const id = $(this).attr('station');
                 const name = $(this).attr('data-name');
                 console.log(id);
-                if (!$(this).prop('disabled'))
+                //ここでliをdisabledにしても、なぜかリセットされてしまうので、後ほどdisabledする
+                if (!$(this).prop('disabled')) {
                     $(this).parents('.mdl-menu__container').removeClass('is-visible');
+                }
                 conductor.startChangeToStationTable(id, name);
             });
         }
 
-        static setToolbarTitle(date){
-            $('.mdl-layout-title').html(date);
+        disableStMenuItem(selectedId){
+            let menuList = [];
+            this.$stationMenu.children().each((i, ele) =>{
+                const stationId = $(ele).attr('station');
+                const name =  $(ele).attr('data-name');
+                const disabled = selectedId === stationId ? 'disabled' : '';
+                const html = '<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'" data-name="'+ name +'" '+ disabled +'>'+ name +'</li>';
+                menuList.push(html);
+            });
+            this.$stationMenu.children().remove();
+            for (let i = 0; i < menuList.length; i++)
+                this.$stationMenu.append($(menuList[i]));
+            Util.setElementAsMdl(this.$stationMenu);
+
+            this.setOnStMenuItemClick();
+        }
+
+        static setToolbarTitle(val, stationId){
+            if (stationId) {
+                const logoUrl = 'http://radiko.jp/station/logo/'+ stationId +'/logo_medium.png';
+                $('.mdl-layout-title img').attr('src', logoUrl).show();
+                $('.mdl-layout-title span').html('');
+            } else {
+                $('.mdl-layout-title img').hide();
+                $('.mdl-layout-title span').html(val);
+            }
         }
 
         initDateMenu(){
@@ -337,7 +369,7 @@
 
         init(){
             this.setColumnLen(7);
-            DomFrame.setToolbarTitle(this.stationName);
+            DomFrame.setToolbarTitle(this.stationName, this.stationId);
             this.setGridCss();
             this.setGridCells();
             this.inputTabs();
@@ -350,8 +382,10 @@
             const tabBar = $('.mdl-layout__tab-bar');
             for (let i = 0; i < 7; i++) {
                 const md = Util.getMDWithWeekDay(opeM);
-                $('<a href="#" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>')
-                    .prependTo(tabBar);
+                const $item = $('<a href="#" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>');
+                if (opeM.day() === 0)
+                    $item.addClass('holiday');
+                tabBar.append($item);
                 opeM.add(-1, 'd');
             }
         }
