@@ -11,15 +11,16 @@
 
         </header>
         <nav class="mdl-navigation">
-            <a class="mdl-navigation__link" href=""><i class="fas fa-table"></i>&#x30BF;&#x30A4;&#x30E0;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-star"></i>&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-cog"></i>&#x8A2D;&#x5B9A;</a>
-            <a class="mdl-navigation__link" href=""><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
+            <a class="mdl-navigation__link" href="timetable.ejs"><i class="fas fa-table"></i>&#x30BF;&#x30A4;&#x30E0;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a>
+            <a class="mdl-navigation__link" href="search.ejs"><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
+            <!--<a class="mdl-navigation__link" href=""><i class="fas fa-star"></i>&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;</a>-->
+            <a class="mdl-navigation__link" href="download.ejs"><i class="fas fa-cog"></i>ダウンロード</a>
+            <a class="mdl-navigation__link current" href="#"><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
         </nav>
     </div>
 
     <main class="mdl-layout__content">
+
         <section id="notice">
             <h1>お知らせ</h1>
             <div class="mdl-card mdl-shadow--2dp">
@@ -30,6 +31,7 @@
                 <p class="date-btm">2018年5月14日</p>
             </div>
         </section>
+
         <section id="notice-radiko">
             <h1>公式からのお知らせ</h1>
             <p>以下のお知らせは公式HPからの引用です。必ず<a href="http://radiko.jp/">公式HP</a>をご確認ください。</p><!--todo a href対応-->
@@ -72,6 +74,7 @@
                 </div>
             </div>
         </section>
+
         <section id="tos">
             <h1>おことわり</h1>
             <div class="mdl-card mdl-shadow--2dp">
@@ -91,6 +94,7 @@
                 <p class="date-btm">2018年5月14日</p>
             </div>
         </section>
+
         <section id="contact">
             <h1>お問い合わせ</h1>
             <div class="mdl-card-w">
@@ -111,6 +115,6 @@
         </section>
     </main>
 </div>
-<% include ../common/_foot_template.ejs %>
+<script src="../../modules/common.js"></script>
 <script src="app.js"></script>
 </body></html>

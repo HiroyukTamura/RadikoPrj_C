@@ -94,6 +94,14 @@ a:focus, /*area, input, */button:focus/*, select, option, textarea, output, summ
   outline: none;
 }
 
+.mdl-layout__drawer {
+  .mdl-navigation {
+    .mdl-navigation__link.current {
+      cursor: default;
+    }
+  }
+}
+
 .mdl-dialog {
   width: 780px;
   height: 80%;

@@ -1,6 +1,9 @@
 a:focus, button:focus {
   outline: none; }
 
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+  cursor: default; }
+
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -99,6 +102,9 @@ a:focus, button:focus {
 
 a:focus, button:focus {
   outline: none; }
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+  cursor: default; }
 
 .mdl-dialog {
   width: 780px;

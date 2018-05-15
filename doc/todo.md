@@ -12,3 +12,4 @@
 ・menuItem diabled時のcursor
 ・window.onclickや、フォームでのエンター動作などもっと詰めるべき
 ・tabのripple効いてない
+・レスポンシブ対応
