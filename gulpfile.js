@@ -32,6 +32,7 @@ gulp.task('css', function () {
 });
 
 gulp.task("ejs", function() {
+    const json = JSON.parse(fs.readFileSync('ejs/gulpconf.json'));
     return gulp.src(
         ["ejs/origin/*.ejs"] //参照するディレクトリ、出力を除外するファイル
     )
@@ -39,7 +40,7 @@ gulp.task("ejs", function() {
         .pipe(plumber({
             errorHandler: notify.onError("Error: <%= error.message %>")
         }))
-        .pipe(ejs({}))
+        .pipe(ejs(json))
         .pipe(getFileName(filePath))
         .pipe(rename(function(path) {
             console.log(filePath);

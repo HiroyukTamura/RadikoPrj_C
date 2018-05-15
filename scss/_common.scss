@@ -60,6 +60,21 @@ $columnWidth: 258px;
   }
 }
 
+@mixin bigErrStyle{
+  display: none;
+  h1 {
+    font-size: 160px;
+    color: $primaryBlue;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  p {
+    text-align: center;
+    font-size: 18px;
+    color: $primaryBlue;
+  }
+}
+
 @mixin forSearchDropDown{
   position: absolute;
   z-index: 100;

@@ -27,6 +27,13 @@
       max-width: 1000px;
       margin: 0 auto 1rem auto;
     }
+    a {
+      color: $primaryBlue;
+      text-decoration: underline;
+      &:hover {
+        color: $textGray;
+      }
+    }
   }
 
   padding-top: 24px;
@@ -53,6 +60,10 @@
         color: $primaryBlue;
       }
     }
+    .error-big {
+      margin-top: 48px;
+      @include bigErrStyle;
+    }
   }
   #tos, #notice, #contact {
     .mdl-card {
@@ -66,10 +77,15 @@
         color: rgba(0, 0, 0, 0.75);
         margin: 12px 0 0 0;
       }
-
     }
   }
   #contact {
+    .caption {
+      margin: 0 auto;
+    }
+    .caption-mail {
+      margin: 0 auto;
+    }
     .mdl-card-w {
       display: flex;
       max-width: 1000px;

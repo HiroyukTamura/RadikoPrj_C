@@ -49,44 +49,10 @@
         <section id="notice-radiko">
             <h1>公式からのお知らせ</h1>
             <p>以下のお知らせは公式HPからの引用です。必ず<a href="http://radiko.jp/">公式HP</a>をご確認ください。</p><!--todo a href対応-->
-            <!--<div class="mdl-card mdl-shadow&#45;&#45;2dp">-->
-                <!--<p class="news-detail__date">2018年5月14日 (月）</p>-->
-                <!--<h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>-->
-                <!--<div class="news-detail__content">-->
-                    <!--いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />-->
-                    <!--『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />-->
-                    <!--下記時間帯に、メンテンナンスがございます。<br />-->
-                    <!--<br />-->
-                    <!--実施時間帯：2018年5月23日（水）AM0時～3時<br />-->
-                    <!--<br />-->
-                    <!--当メンテナンス中は<br />-->
-                    <!--『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />-->
-                    <!--登録/解約ができない場合は、大変お手数をおかけしますが、<br />-->
-                    <!--メンテナンス終了をお待ちいただき再度お試しください。<br />-->
-                    <!--<br />-->
-                    <!--今後ともradiko.jpへのご愛顧を賜りますよう、<br />-->
-                    <!--何卒よろしくお願い申し上げます。-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="mdl-card mdl-shadow&#45;&#45;2dp">-->
-                <!--<p class="news-detail__date">2018年5月14日 (月）</p>-->
-                <!--<h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>-->
-                <!--<div class="news-detail__content">-->
-                    <!--いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />-->
-                    <!--『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />-->
-                    <!--下記時間帯に、メンテンナンスがございます。<br />-->
-                    <!--<br />-->
-                    <!--実施時間帯：2018年5月23日（水）AM0時～3時<br />-->
-                    <!--<br />-->
-                    <!--当メンテナンス中は<br />-->
-                    <!--『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />-->
-                    <!--登録/解約ができない場合は、大変お手数をおかけしますが、<br />-->
-                    <!--メンテナンス終了をお待ちいただき再度お試しください。<br />-->
-                    <!--<br />-->
-                    <!--今後ともradiko.jpへのご愛顧を賜りますよう、<br />-->
-                    <!--何卒よろしくお願い申し上げます。-->
-                <!--</div>-->
-            <!--</div>-->
+            <div class="error-big">
+                <h1><i class="fas fa-exclamation"></i></h1>
+                <p>データの取得に失敗しました</p>
+            </div>
         </section>
 
         <section id="tos">
@@ -110,19 +76,22 @@
         </section>
 
         <section id="contact">
-            <h1>お問い合わせ</h1>
+            <h1>ご意見・お問い合わせ</h1>
+            <p class="caption">頂いたご意見への回答は行っておりません。</p>
+            <p class="caption-mail"><a href="#">返信の必要なお問い合わせはこちら</a></p>
             <div class="mdl-card-w">
                 <div class="mdl-card mdl-shadow--2dp">
                     <div class="card-in">
                         <form action="#">
                             <div class="mdl-textfield mdl-js-textfield">
-                                <textarea class="mdl-textfield__input" type="text" rows= "3" id="sample5" ></textarea>
-                                <label class="mdl-textfield__label" for="sample5">Text...</label>
+                                <textarea class="mdl-textfield__input" type="text" rows= "4" id="comment" ></textarea>
+                                <label class="mdl-textfield__label" for="comment">ラジカッターについてのご意見をお聞かせください</label>
+                                <span class="mdl-textfield__error">メッセージを入力してください</span>
                             </div>
                         </form>
                     </div>
                 </div>
-                <button class="mdl-button mdl-js-button mdl-button--fab" title="送信" id="send-btn">
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--fab" title="送信" id="send-btn">
                     <i class="material-icons">send</i>
                 </button>
             </div>
@@ -131,5 +100,8 @@
 </div>
 <script src="../../modules/network.js"></script>
 <script src="../../modules/common.js"></script>
+<!--nodejs ver.8~はnpmでのfirebase動作非対応-->
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.11.0/firebase-firestore.js"></script>
 <script src="app.js"></script>
 </body></html>

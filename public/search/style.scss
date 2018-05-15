@@ -95,18 +95,7 @@
   #second-row {
     @include center72;
     .msg-group {
-      display: none;
-      h1 {
-        font-size: 160px;
-        color: $primaryBlue;
-        text-align: center;
-        margin-bottom: 32px;
-      }
-      p {
-        text-align: center;
-        font-size: 18px;
-        color: $primaryBlue;
-      }
+      @include bigErrStyle;
     }
 
     #card-group {

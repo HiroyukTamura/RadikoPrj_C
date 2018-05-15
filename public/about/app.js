@@ -1,5 +1,6 @@
 const $ = require('jquery');
 const tippy = require('tippy.js');
+require('bootstrap-notify');
 
 $(function(){
     const moment = require('moment');
@@ -15,13 +16,18 @@ $(function(){
                 }).then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e =>{
+                    //todo エラー送信
                     console.log(e);
-                    //todo エラー処理
+                    $('#notice-radiko .error-big').show();
                 });
             } else {
                 console.log('なぜだ？');
                 new InfoClient(areaId).request().then(data => {
                     Conductor.onGetInfoData(data);
+                }).cache(e => {
+                    //todo エラー送信
+                    console.log(e);
+                    $('#notice-radiko .error-big').show();
                 });
             }
         }
@@ -49,7 +55,22 @@ $(function(){
     class Presenter{
         constructor(){
             this.$rdkNtfW = $('#notice-radiko');
+            this.$input = $('#comment');
+            // this.$sendBtn = $('#send-btn');
             tippy('#send-btn');
+            this.setBtnClick();
+        }
+
+        setBtnClick(){
+            $('#send-btn').on('click', ()=>{
+                const val = this.$input.val();
+                if (!val) {
+                    this.$input.parent().addClass('is-invalid');
+                    return false;
+                }
+                fbClient.writeUserData(val);
+                return false;
+            });
         }
 
         appendRdkInfoItem(dateVal, title, body){
@@ -65,7 +86,7 @@ $(function(){
     class InfoClient{
         constructor(areaId){
             console.log(areaId);
-            this.URL ='http://radiko.jp/v2/information2/'+ areaId + '.xml';
+            this.URL ='http://radiko.jp/v2/information2/'+ areaId + 'eee.xml';//todo 元に戻すこと
         }
 
         request(){
@@ -76,13 +97,48 @@ $(function(){
                 }).done((data, textStatus, jqXHR) => {
                     resolve(data);
                 }).fail((jqXHR, textStatus, errorThrown) => {
+                    //todo エラー送信
                     console.log('fail', jqXHR.status, textStatus);
+                    $('#notice-radiko .error-big').show();
                     reject(errorThrown);
                 })
             })
         }
     }
 
+    class FirebaseClient{
+        constructor(){
+            const config = {
+                apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
+                authDomain: "radiko-7e63e.firebaseapp.com",
+                databaseURL: "https://radiko-7e63e.firebaseio.com",
+                projectId: "radiko-7e63e",
+                storageBucket: "radiko-7e63e.appspot.com",
+                messagingSenderId: "1032750813236"
+            };
+            firebase.initializeApp(config);
+            this.db = firebase.firestore();
+        }
+
+        writeUserData(comment) {
+            //todo ここでOSの種類などをメインプロセスから取得する
+            const time = moment().format('YYYYMMDDhhmmss');
+            this.db.collection("contact-comment").doc(time).set({
+                comment: comment,
+                ereaId: EreaChecker.getAreaIdFromStorage(),
+                type: 'DESK_TOP'
+            })
+            .then(()=> {
+                Util.dangerNotify('ご意見ありがとうございました！');
+            })
+            .catch(error => {
+                //todo エラー送信
+                Util.dangerNotify('送信に失敗しました');
+            });
+        }
+    }
+
+    const fbClient = new FirebaseClient();
     const presenter = new Presenter();
     new Conductor().init();
 });
