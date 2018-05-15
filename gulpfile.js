@@ -10,11 +10,11 @@ const Stream = require('stream');
 
 gulp.task('default', ['css']);
 
-const witchDir = ["timetable", "search", 'download'];
+const witchDir = ["timetable", "search", 'download', 'about'];
 let filePath = '';
 
 gulp.task('css', function () {
-    return gulp.src(['./public/'+ witchDir[2] +'/style.scss'])
+    return gulp.src(['./public/'+ witchDir[3] +'/style.scss'])
         .pipe(using())
         .pipe(plumber({
             errorHandler: notify.onError("Error: <%= error.message %>")
@@ -24,7 +24,7 @@ gulp.task('css', function () {
         .pipe(rename(function(path) {
             // let pathArr = filePath.substr(0, filePath.length-5).split('\\');
             // path.dirname = pathArr[pathArr.length-1];
-            path.dirname = witchDir[2];
+            path.dirname = witchDir[3];
             path.extname = '.css';
             path.basename = 'style';
         }))

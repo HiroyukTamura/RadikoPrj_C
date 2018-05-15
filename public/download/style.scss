@@ -93,12 +93,7 @@ $vertPad:48px;
         position: relative;
         .mdl-textfield {
           width: 100%;
-          .mdl-textfield__input {
-            padding: 4px 0 0 0;
-          }
-          .mdl-textfield__label:after {
-            bottom: 12px;
-          }
+          @include textField;
         }
         .mdl-button {
           right: 0;

@@ -1,0 +1,294 @@
+a:focus, button:focus {
+  outline: none; }
+
+.mdl-dialog {
+  width: 780px;
+  height: 80%;
+  padding: 0; }
+  .mdl-dialog > div {
+    padding: 36px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; }
+    .mdl-dialog > div::-webkit-scrollbar {
+      width: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-track {
+      background-color: #e2f4f9;
+      border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-thumb {
+      background-color: #00a7e9;
+      border-radius: 5px; }
+    .mdl-dialog > div .header {
+      display: flex;
+      margin-left: 16px; }
+      .mdl-dialog > div .header .title {
+        font-size: 2.2em;
+        flex-grow: 100;
+        height: 48px;
+        vertical-align: middle;
+        margin: 0; }
+    .mdl-dialog > div .cont-top {
+      margin: 24px;
+      display: flex; }
+      .mdl-dialog > div .cont-top > div {
+        width: 320px; }
+        .mdl-dialog > div .cont-top > div.right-box {
+          margin-left: 56px; }
+        .mdl-dialog > div .cont-top > div .prg-logo {
+          height: 200px;
+          width: 320px;
+          background-color: #e2f4f9; }
+        .mdl-dialog > div .cont-top > div .btn-wrapper {
+          width: 300px;
+          margin: 24px 0;
+          height: 52px;
+          background: #f2f2f2;
+          display: flex;
+          justify-content: center;
+          align-items: center; }
+          .mdl-dialog > div .cont-top > div .btn-wrapper button {
+            display: none;
+            width: 100%;
+            height: 100%;
+            color: white;
+            padding: 0 36px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 20px;
+            background-color: #00a7e9; }
+            .mdl-dialog > div .cont-top > div .btn-wrapper button i {
+              margin-right: 1em; }
+          .mdl-dialog > div .cont-top > div .btn-wrapper .error-msg {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 0 16px;
+            vertical-align: middle;
+            font-size: 18px;
+            color: #00a7e9; }
+        .mdl-dialog > div .cont-top > div > div {
+          color: rgba(0, 0, 0, 0.87);
+          padding-top: 1rem; }
+          .mdl-dialog > div .cont-top > div > div > p {
+            font-size: 16px;
+            line-height: 22px; }
+    .mdl-dialog > div .cont-middle {
+      padding: 32px 16px 0 16px; }
+      .mdl-dialog > div .cont-middle > div {
+        padding-bottom: 24px; }
+        .mdl-dialog > div .cont-middle > div a {
+          text-decoration: none;
+          color: rgba(0, 0, 0, 0.87); }
+          .mdl-dialog > div .cont-middle > div a:hover {
+            color: #00a7e9; }
+  .mdl-dialog .cancel-btn {
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    top: 6px;
+    right: 11px;
+    background-color: #00a7e9;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer; }
+  .mdl-dialog .ui-helper-hidden-accessible {
+    display: none; }
+
+a:focus, button:focus {
+  outline: none; }
+
+.mdl-dialog {
+  width: 780px;
+  height: 80%;
+  padding: 0; }
+  .mdl-dialog > div {
+    padding: 36px;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto; }
+    .mdl-dialog > div::-webkit-scrollbar {
+      width: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-track {
+      background-color: #e2f4f9;
+      border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-thumb {
+      background-color: #00a7e9;
+      border-radius: 5px; }
+    .mdl-dialog > div .header {
+      display: flex;
+      margin-left: 16px; }
+      .mdl-dialog > div .header .title {
+        font-size: 2.2em;
+        flex-grow: 100;
+        height: 48px;
+        vertical-align: middle;
+        margin: 0; }
+    .mdl-dialog > div .cont-top {
+      margin: 24px;
+      display: flex; }
+      .mdl-dialog > div .cont-top > div {
+        width: 320px; }
+        .mdl-dialog > div .cont-top > div.right-box {
+          margin-left: 56px; }
+        .mdl-dialog > div .cont-top > div .prg-logo {
+          height: 200px;
+          width: 320px;
+          background-color: #e2f4f9; }
+        .mdl-dialog > div .cont-top > div .btn-wrapper {
+          width: 300px;
+          margin: 24px 0;
+          height: 52px;
+          background: #f2f2f2;
+          display: flex;
+          justify-content: center;
+          align-items: center; }
+          .mdl-dialog > div .cont-top > div .btn-wrapper button {
+            display: none;
+            width: 100%;
+            height: 100%;
+            color: white;
+            padding: 0 36px;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 20px;
+            background-color: #00a7e9; }
+            .mdl-dialog > div .cont-top > div .btn-wrapper button i {
+              margin-right: 1em; }
+          .mdl-dialog > div .cont-top > div .btn-wrapper .error-msg {
+            display: none;
+            width: 100%;
+            height: 100%;
+            padding: 0 16px;
+            vertical-align: middle;
+            font-size: 18px;
+            color: #00a7e9; }
+        .mdl-dialog > div .cont-top > div > div {
+          color: rgba(0, 0, 0, 0.87);
+          padding-top: 1rem; }
+          .mdl-dialog > div .cont-top > div > div > p {
+            font-size: 16px;
+            line-height: 22px; }
+    .mdl-dialog > div .cont-middle {
+      padding: 32px 16px 0 16px; }
+      .mdl-dialog > div .cont-middle > div {
+        padding-bottom: 24px; }
+        .mdl-dialog > div .cont-middle > div a {
+          text-decoration: none;
+          color: rgba(0, 0, 0, 0.87); }
+          .mdl-dialog > div .cont-middle > div a:hover {
+            color: #00a7e9; }
+  .mdl-dialog .cancel-btn {
+    position: absolute;
+    height: 24px;
+    width: 24px;
+    top: 6px;
+    right: 11px;
+    background-color: #00a7e9;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer; }
+  .mdl-dialog .ui-helper-hidden-accessible {
+    display: none; }
+
+.mdl-layout__header {
+  background-color: #00a7e9; }
+
+.mdl-layout__drawer {
+  background: #00a7e9;
+  border-right: 1px solid #00a0df; }
+  .mdl-layout__drawer header {
+    height: 151px; }
+  .mdl-layout__drawer .mdl-navigation .mdl-navigation__link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0;
+    opacity: .87;
+    padding: 16px 40px;
+    vertical-align: middle; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link i {
+      font-size: 16px;
+      margin-right: 24px; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
+      background: white;
+      color: #00a7e9; }
+
+.mdl-layout__content {
+  padding-top: 24px;
+  background: #f2f2f2;
+  color: rgba(0, 0, 0, 0.87); }
+  .mdl-layout__content section {
+    width: 100%;
+    padding: 40px 72px;
+    margin: 0 auto; }
+    .mdl-layout__content section:nth-child(2n) {
+      background-color: #e2f4f9; }
+    .mdl-layout__content section .mdl-card {
+      width: unset;
+      max-width: 1000px;
+      padding: 28px 36px 36px;
+      margin: 32px auto;
+      min-height: unset; }
+    .mdl-layout__content section > h1 {
+      width: unset;
+      max-width: 1000px;
+      margin: 0 auto .5rem auto;
+      color: #00a7e9; }
+    .mdl-layout__content section > p {
+      width: unset;
+      max-width: 1000px;
+      margin: 0 auto 1rem auto; }
+  .mdl-layout__content #notice-radiko {
+    width: 100%;
+    padding: 40px 72px;
+    margin: 0 auto;
+    align-items: center; }
+    .mdl-layout__content #notice-radiko .mdl-card {
+      width: unset;
+      max-width: 1000px;
+      padding: 28px 36px 36px;
+      margin: 32px auto;
+      min-height: unset; }
+      .mdl-layout__content #notice-radiko .mdl-card .news-detail__date {
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.75);
+        margin-bottom: 6px; }
+      .mdl-layout__content #notice-radiko .mdl-card .news-detail__title {
+        margin-bottom: 24px;
+        color: #00a7e9; }
+  .mdl-layout__content #tos .mdl-card, .mdl-layout__content #notice .mdl-card, .mdl-layout__content #contact .mdl-card {
+    padding: 28px 36px; }
+    .mdl-layout__content #tos .mdl-card h4, .mdl-layout__content #notice .mdl-card h4, .mdl-layout__content #contact .mdl-card h4 {
+      margin-bottom: 20px; }
+    .mdl-layout__content #tos .mdl-card .date-btm, .mdl-layout__content #notice .mdl-card .date-btm, .mdl-layout__content #contact .mdl-card .date-btm {
+      text-align: right;
+      font-weight: bold;
+      color: rgba(0, 0, 0, 0.75);
+      margin: 12px 0 0 0; }
+  .mdl-layout__content #contact .mdl-card-w {
+    display: flex;
+    max-width: 1000px;
+    margin: 0 auto; }
+    .mdl-layout__content #contact .mdl-card-w .mdl-card {
+      flex-grow: 100;
+      width: unset; }
+      .mdl-layout__content #contact .mdl-card-w .mdl-card .card-in form {
+        flex-grow: 100; }
+        .mdl-layout__content #contact .mdl-card-w .mdl-card .card-in form .mdl-textfield {
+          width: 100%; }
+          .mdl-layout__content #contact .mdl-card-w .mdl-card .card-in form .mdl-textfield .mdl-textfield__input {
+            padding: 4px 0 0 0; }
+          .mdl-layout__content #contact .mdl-card-w .mdl-card .card-in form .mdl-textfield .mdl-textfield__label:after {
+            bottom: 12px; }
+    .mdl-layout__content #contact .mdl-card-w .mdl-button {
+      margin: auto 56px auto 108px;
+      background: #00a7e9;
+      color: white; }

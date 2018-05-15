@@ -1,0 +1,97 @@
+@import "../../scss/common";
+@import "../../scss/component";
+
+.mdl-layout__content {
+  section {
+    width: 100%;
+    padding: 40px 72px;
+    margin: 0 auto;
+    &:nth-child(2n){
+      background-color: #e2f4f9;
+    }
+    .mdl-card {
+      width: unset;
+      max-width: 1000px;
+      padding: 28px 36px 36px;
+      margin: 32px auto;
+      min-height: unset;
+    }
+    >h1 {
+      width: unset;
+      max-width: 1000px;
+      margin: 0 auto .5rem auto;
+      color: $primaryBlue;
+    }
+    >p {
+      width: unset;
+      max-width: 1000px;
+      margin: 0 auto 1rem auto;
+    }
+  }
+
+  padding-top: 24px;
+  background: $backGray;
+  color: $textBlack;
+  #notice-radiko {
+    width: 100%;
+    padding: 40px 72px;
+    margin: 0 auto;
+    align-items: center;
+    .mdl-card {
+      width: unset;
+      max-width: 1000px;
+      padding: 28px 36px 36px;
+      margin: 32px auto;
+      min-height: unset;
+      .news-detail__date {
+        font-weight: bold;
+        color: rgba(0,0,0,.75);
+        margin-bottom: 6px;
+      }
+      .news-detail__title {
+        margin-bottom: 24px;
+        color: $primaryBlue;
+      }
+    }
+  }
+  #tos, #notice, #contact {
+    .mdl-card {
+      padding: 28px 36px;
+      h4 {
+        margin-bottom: 20px;
+      }
+      .date-btm {
+        text-align: right;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.75);
+        margin: 12px 0 0 0;
+      }
+
+    }
+  }
+  #contact {
+    .mdl-card-w {
+      display: flex;
+      max-width: 1000px;
+      margin: 0 auto;
+      .mdl-card {
+        flex-grow: 100;
+        width: unset;
+        .card-in {
+          form {
+            flex-grow: 100;
+            .mdl-textfield {
+              width: 100%;
+              @include textField;
+            }
+          }
+        }
+      }
+      .mdl-button {
+        margin: auto 56px auto 108px;
+        background: $primaryBlue;
+        color: white;
+      }
+    }
+  }
+}

@@ -34,6 +34,15 @@ $columnWidth: 258px;
   }
 }
 
+@mixin textField {
+  .mdl-textfield__input {
+    padding: 4px 0 0 0;
+  }
+  .mdl-textfield__label:after {
+    bottom: 12px;
+  }
+}
+
 @mixin scrollbarStyle($size:5px) {
   &::-webkit-scrollbar {
     width: $size;

@@ -3,7 +3,7 @@
 <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
     <header class="mdl-layout__header">
         <div class="mdl-layout__header-row">
-            <span class="mdl-layout-title">お知らせ・アバウト</span>
+            <span class="mdl-layout-title">アバウト</span>
         </div>
     </header>
     <div class="mdl-layout__drawer">
@@ -20,7 +20,95 @@
     </div>
 
     <main class="mdl-layout__content">
-
+        <section id="notice">
+            <h1>お知らせ</h1>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>ベータ版配信</h4>
+                <div class="news-detail__content">
+                    ベータ版配信しました。よろしこよろしこ
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+        </section>
+        <section id="notice-radiko">
+            <h1>公式からのお知らせ</h1>
+            <p>以下のお知らせは公式HPからの引用です。必ず<a href="http://radiko.jp/">公式HP</a>をご確認ください。</p><!--todo a href対応-->
+            <div class="mdl-card mdl-shadow--2dp">
+                <p class="news-detail__date">2018年5月14日 (月）</p>
+                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
+                <div class="news-detail__content">
+                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
+                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
+                    下記時間帯に、メンテンナンスがございます。<br />
+                    <br />
+                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
+                    <br />
+                    当メンテナンス中は<br />
+                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
+                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
+                    メンテナンス終了をお待ちいただき再度お試しください。<br />
+                    <br />
+                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
+                    何卒よろしくお願い申し上げます。
+                </div>
+            </div>
+            <div class="mdl-card mdl-shadow--2dp">
+                <p class="news-detail__date">2018年5月14日 (月）</p>
+                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
+                <div class="news-detail__content">
+                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
+                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
+                    下記時間帯に、メンテンナンスがございます。<br />
+                    <br />
+                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
+                    <br />
+                    当メンテナンス中は<br />
+                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
+                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
+                    メンテナンス終了をお待ちいただき再度お試しください。<br />
+                    <br />
+                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
+                    何卒よろしくお願い申し上げます。
+                </div>
+            </div>
+        </section>
+        <section id="tos">
+            <h1>おことわり</h1>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>免責事項</h4>
+                <div class="news-detail__content">
+                    本アプリケーションを使用したことによる一切の損害について、開発者は責任を負いません。<br>
+                    本アプリケーションでは、第三者サービスを使用しています。本アプリケーションで使用している第三者サービスは以下のとおりです。
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>プライバシーポリシー</h4>
+                <div class="news-detail__content">
+                    本サービスではバグ情報の収集・広告配信のため第三者サービスに情報を提供しています。<br>
+                    なお、これらは全て個人の特定に繋がるものではありません。
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+        </section>
+        <section id="contact">
+            <h1>お問い合わせ</h1>
+            <div class="mdl-card-w">
+                <div class="mdl-card mdl-shadow--2dp">
+                    <div class="card-in">
+                        <form action="#">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <textarea class="mdl-textfield__input" type="text" rows= "3" id="sample5" ></textarea>
+                                <label class="mdl-textfield__label" for="sample5">Text...</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--fab">
+                    <i class="material-icons">send</i>
+                </button>
+            </div>
+        </section>
     </main>
 </div>
 <% include ../common/_foot_template.ejs %>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--mdlはnodeモジュール化するとうまくいかない？-->
+    <link rel="stylesheet" href="../../dist/material.min.css">
+    <script src="../../dist/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../../node_modules/bootstrap/dist/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <!--fontAwsomeもローカルに持ってくるのに失敗する-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../node_modules/animate.css/animate.min.css">
+</head>
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+    <header class="mdl-layout__header">
+        <div class="mdl-layout__header-row">
+            <span class="mdl-layout-title">お知らせ</span>
+        </div>
+    </header>
+    <div class="mdl-layout__drawer">
+        <header>
+
+        </header>
+        <nav class="mdl-navigation">
+            <a class="mdl-navigation__link" href=""><i class="fas fa-table"></i>&#x30BF;&#x30A4;&#x30E0;&#x30C6;&#x30FC;&#x30D6;&#x30EB;</a>
+            <a class="mdl-navigation__link" href=""><i class="fas fa-search"></i>&#x756A;&#x7D44;&#x691C;&#x7D22;</a>
+            <a class="mdl-navigation__link" href=""><i class="fas fa-star"></i>&#x304A;&#x6C17;&#x306B;&#x5165;&#x308A;</a>
+            <a class="mdl-navigation__link" href=""><i class="fas fa-cog"></i>&#x8A2D;&#x5B9A;</a>
+            <a class="mdl-navigation__link" href=""><i class="fas fa-info-circle"></i>&#x30A2;&#x30D0;&#x30A6;&#x30C8;</a>
+        </nav>
+    </div>
+
+    <main class="mdl-layout__content">
+        <section id="notice">
+            <h1>お知らせ</h1>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>ベータ版配信</h4>
+                <div class="news-detail__content">
+                    ベータ版配信しました。よろしこよろしこ
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+        </section>
+        <section id="notice-radiko">
+            <h1>公式からのお知らせ</h1>
+            <p>以下のお知らせは公式HPからの引用です。必ず<a href="http://radiko.jp/">公式HP</a>をご確認ください。</p><!--todo a href対応-->
+            <div class="mdl-card mdl-shadow--2dp">
+                <p class="news-detail__date">2018年5月14日 (月）</p>
+                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
+                <div class="news-detail__content">
+                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
+                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
+                    下記時間帯に、メンテンナンスがございます。<br />
+                    <br />
+                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
+                    <br />
+                    当メンテナンス中は<br />
+                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
+                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
+                    メンテナンス終了をお待ちいただき再度お試しください。<br />
+                    <br />
+                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
+                    何卒よろしくお願い申し上げます。
+                </div>
+            </div>
+            <div class="mdl-card mdl-shadow--2dp">
+                <p class="news-detail__date">2018年5月14日 (月）</p>
+                <h4 class="news-detail__title">radiko.jpをご利用の皆様へ</h4>
+                <div class="news-detail__content">
+                    いつもradiko.jpをご利用いただき、誠にありがとうございます。<br />
+                    『radiko.jpプレミアム』が利用しております決済システムにおいて、<br />
+                    下記時間帯に、メンテンナンスがございます。<br />
+                    <br />
+                    実施時間帯：2018年5月23日（水）AM0時～3時<br />
+                    <br />
+                    当メンテナンス中は<br />
+                    『radiko.jpプレミアム』への登録/解約ができない場合がございます。<br />
+                    登録/解約ができない場合は、大変お手数をおかけしますが、<br />
+                    メンテナンス終了をお待ちいただき再度お試しください。<br />
+                    <br />
+                    今後ともradiko.jpへのご愛顧を賜りますよう、<br />
+                    何卒よろしくお願い申し上げます。
+                </div>
+            </div>
+        </section>
+        <section id="tos">
+            <h1>おことわり</h1>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>免責事項</h4>
+                <div class="news-detail__content">
+                    本アプリケーションを使用したことによる一切の損害について、開発者は責任を負いません。<br>
+                    本アプリケーションでは、第三者サービスを使用しています。本アプリケーションで使用している第三者サービスは以下のとおりです。
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+            <div class="mdl-card mdl-shadow--2dp">
+                <h4>プライバシーポリシー</h4>
+                <div class="news-detail__content">
+                    本サービスではバグ情報の収集・広告配信のため第三者サービスに情報を提供しています。<br>
+                    なお、これらは全て個人の特定に繋がるものではありません。
+                </div>
+                <p class="date-btm">2018年5月14日</p>
+            </div>
+        </section>
+        <section id="contact">
+            <h1>お問い合わせ</h1>
+            <div class="mdl-card-w">
+                <div class="mdl-card mdl-shadow--2dp">
+                    <div class="card-in">
+                        <form action="#">
+                            <div class="mdl-textfield mdl-js-textfield">
+                                <textarea class="mdl-textfield__input" type="text" rows= "3" id="sample5" ></textarea>
+                                <label class="mdl-textfield__label" for="sample5">Text...</label>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-button--fab">
+                    <i class="material-icons">send</i>
+                </button>
+            </div>
+        </section>
+    </main>
+</div>
+<!--<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>-->
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>-->
+<!--<script src="../../dist/bootstrap-notify.min.js"></script>-->
+<script src="../../dist/md5.js"></script>
+<script src="../../modules/common.js"></script>
+<script src="app.js"></script>
+</body></html>
