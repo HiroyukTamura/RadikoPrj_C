@@ -31,9 +31,11 @@ $(function () {
             }).on('startDlChainError', (event, data) => {
                 this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
             }).on('pageReached', (event, data) => {
-                this.onGetPageReached(data);
+                console.log(data);
+                presenter.updateStage('pageReached', data.stationId, data.fl);
             }).on('ffmpegStart', (event, data) => {
-                this.onGetFfmpegStart(data);
+                console.log(data);
+                presenter.updateStage('FfmpegStart', data.stationId, data.fl);
             }).on('ffmpegError', (event, data) => {
                 this.onGetFfmpegError(data);
             }).on('ffmpegEnd', (event, data) => {
@@ -59,13 +61,16 @@ $(function () {
                 const task = dlTaskList.tasks[taskKeys[i]];
                 const startM = new moment(task.ft, 'YYYYMMDDhhmmss');
                 const dateVal = Util.getMDWithWeekDay(startM) +' '+ startM.format('hh:mm') +' - '+ moment(task.to, 'YYYYMMDDhhmmss').format('hh:mm');
-                const stationId = task.stationId;
-                const title = task.title;
-                const $dlItem = Presenter.createDlItem(title, dateVal);
+                const stage = DlNotification.getStageStr(task.stage);
+                const $dlItem = Presenter.createDlItem(taskKeys[i], task.title, dateVal, stage, task.img);
                 console.log(taskWorking, taskKeys[i]);
+
                 if (dlTaskList.working == taskKeys[i]) {
-                    if (taskWorking.status === 'ffmpegError' || taskWorking.status === 'ffmpegEnd') {
-                        //todo bootstrap-notify出す
+                    if (taskWorking.stage === 'ffmpegError') {
+                        Util.showFailedNtf('処理に失敗しました', task.title);
+                        continue;
+                    } else if (taskWorking.stage === 'ffmpegEnd') {
+                        Util.showSuccessNtf('ダウンロード完了', task.title);
                         continue;
                     }
                     presenter.$taskList.prepend($dlItem);
@@ -73,41 +78,27 @@ $(function () {
                 } else {
                     presenter.$taskList.append($dlItem);
                 }
+
                 Util.setElementAsMdl($dlItem);
                 const progress = $dlItem.find('.mdl-progress')[0];
+
                 if (dlTaskList.working == taskKeys[i]) {
-                    console.log('いいよいいよー');
-                    switch (taskWorking.status) {
-                        case 'UNSET':
-                            progress.MaterialProgress.setProgress(10);
-                            break;
-                        case 'pageReached':
-                            progress.MaterialProgress.setProgress(30);
-                            break;
-                        case 'ffmpegStart':
-                            progress.MaterialProgress.setProgress(50);
-                            break;
-                    }
+                    const num = DlNotification.getStageNum(task.stage);
+                    progress.MaterialProgress.setProgress(num);
                 } else {
                     progress.MaterialProgress.setBuffer(90);
                 }
             }
+
             Util.setElementAsMdl(presenter.$taskList);
+            presenter.setOnClickCansel();
         }
 
         onGetFfmpegError(data) {
             console.log(data);
         }
 
-        onGetPageReached (data) {
-            console.log(data);
-        }
-
         onGetFfmpegEnd (data) {
-            console.log(data);
-        }
-
-        onGetFfmpegStart (data) {
             console.log(data);
         }
     }
@@ -139,23 +130,41 @@ $(function () {
             });
         }
 
-        static createDlItem(title, date){
+        static createDlItem(timeStamp, title, date, stage, img){
             return $(
-                '<li>\n' +
+                '<li data-time-stamp="'+ timeStamp +'">\n' +
                     '<div class="wrapper">\n' +
-                        '<img src="https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg" alt="番組ロゴ" class="prg-logo">\n' +
+                        '<img src="'+ img +'" alt="番組ロゴ" class="prg-logo">\n' +
                         '<div class="main-row">\n' +
                             '<div class="main-row-in">\n' +
                                 '<p class="prg-title">'+ title +'</p>\n' +
                                 '<span class="prg-time">'+ date +'</span>\n' +
                                 '<div class="mdl-progress mdl-js-progress mdl-pre-upgrade"></div>\n' +
+                                '<span class="stage">'+ stage +'</span>\n' +
                             '</div>\n' +
-                            '<button class="mdl-button mdl-js-button mdl-button--icon cancel-btn mdl-pre-upgrade">\n' +
+                            '<button class="mdl-button mdl-js-button mdl-button--icon cancel-btn mdl-pre-upgrade cancel-btn">\n' +
                                 '<i class="material-icons">clear</i>\n' +
                             '</button>\n' +
                         '</div>\n' +
                     '</div>\n' +
                 '</li>');
+        }
+
+        setOnClickCansel(){
+            const btn = this.$taskList.find('.cancel-btn');
+            btn.on('click', () => {
+                const li = btn.parents('li');
+                const timeStamp = li.attr('data-time-stamp');
+                console.log('キャンセル timeStamp', timeStamp);
+            })
+        }
+
+        updateStage(command, timeStamp){
+            const stage = DlNotification.getStageStr(command);
+            const num = progress.getStageNum(command);
+            const $li = this.$taskList.find('li[data-time-stamp="'+ timeStamp +'"]');
+            $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);
+            $li.find('.stage').html(stage);
         }
     }
 

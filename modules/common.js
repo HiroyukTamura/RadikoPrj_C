@@ -192,6 +192,72 @@ class DlNotification {
             }
         });
     }
+
+    static showFailedNtf(title, message) {
+        $.notify({
+            icon: '../../img/exclamation-triangle.svg',
+            title: title,
+            message: message
+        },{
+            type: 'minimalist',
+            icon_type: 'image',
+            template:
+            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
+                '<div>' +
+                    '<div>'+
+                        '<span data-notify="title">{1}</span>' +
+                        '<span data-notify="message">{2}</span>' +
+                    '</div>'+
+                    '<img data-notify="icon" class="img-circle pull-right">' +
+                '</div>'+
+            '</div>'
+        });
+    }
+
+    static showSuccessNtf(title, message) {
+        $.notify({
+            icon: '../../img/check-circle.svg',
+            title: title,
+            message: message
+        },{
+            type: 'minimalist',
+            icon_type: 'image',
+            template:
+            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
+                '<div>' +
+                    '<div>'+
+                        '<span data-notify="title">{1}</span>' +
+                        '<span data-notify="message">{2}</span>' +
+                    '</div>'+
+                    '<img data-notify="icon" class="img-circle pull-right">' +
+                '</div>'+
+            '</div>'
+        });
+    }
+
+    static getStageStr(stage){
+        switch (stage) {
+            case 'UNSET':
+                return 'ダウンロードの開始を待っています...';
+            case 'pageReached':
+                return 'ダウンロードを開始します...';
+            case 'ffmpegStart':
+                return 'データを再構成しています...(これには時間がかかることがあります)';
+        }
+    }
+
+    static getStageNum(stage){
+        switch (stage) {
+            case 'UNSET':
+                return 0;
+            case 'pageReached':
+                return 20;
+            case 'ffmpegStart':
+                return 50;
+            case 'ダウンロード完了':
+                return 100;
+        }
+    }
 }
 
 class ProcessCommunicator{

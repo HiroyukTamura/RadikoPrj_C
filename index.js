@@ -117,8 +117,8 @@ class DlTaskList {
 
     constructor(){
         this.tasks = {
-            123456: new DlTask('TBS', '20170610094000', '20170610100000', 'サンプルタイトル'),
-            123470: new DlTask('TBS', '20170610094000', '20170610100000', '再生してない番組'),
+            123456: new DlTask('TBS', '20170610094000', '20170610100000', 'サンプルタイトル', 'https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg'),
+            123470: new DlTask('TBS', '20170610094000', '20170610100000', '再生してない番組', 'https://radiko.jp/res/program/DEFAULT_IMAGE/JORF/20170330042126.jpg'),
         };
         this.working = 123456;
     }
@@ -171,12 +171,13 @@ class DlTaskList {
 }
 
 class DlTask {
-    constructor(stationId, ft, to, title){
+    constructor(stationId, ft, to, title, img){
         this.stationId = stationId;
         this.ft = ft;
         this.to = to;
         this.title = title;
         this.chunkFileName = null;
+        this.img = img;
         this.stage = 'UNSET';
     }
 }
@@ -348,7 +349,7 @@ ipcMain.on('startDlWithFt', (event, arg) => {
     const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
     if (!isDuplicated) {
         const timeStamp = moment().valueOf();
-        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title);
+        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title, arg.img);
         if (!dlTaskList.working)
             dlTaskList.working = timeStamp;
         emitter.emit('setTask');
