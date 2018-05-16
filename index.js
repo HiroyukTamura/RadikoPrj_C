@@ -94,6 +94,7 @@ const cheerio = require('cheerio');
 const parseString = require('xml2js').parseString;
 const moment = require('moment');
 const events = require('events');
+const Store = require('electron-store');
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -108,6 +109,12 @@ const HTML_PATH = 'public/download/index.html';
 //     });
 // };
 //todo タイムアウトエラーを作成すること(特にffmpeg)
+!function () {
+    const store = new Store();
+    if(!store.get('output_path')) {
+        store.set('output_path', app.getPath('downloads'))
+    }
+}();
 
 class DlTaskList {
     // constructor(){
@@ -200,7 +207,7 @@ class PuppeteerOperator {
         this.URL = null;
         this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
-        this.chunkListDir = 'TempChunkList';
+        this.chunkListDir = new Store().get('output_path');
         this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
         this.errMsgSelector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan';
         this.userAgent = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';

@@ -1,10 +1,11 @@
 const $ = require('jquery');
+// const {BrowserWindow} = require('electron').remote;
 const remote = require('electron').remote;
 require('bootstrap-notify');
 const tippy = require('tippy.js');
+const Store = require('electron-store');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
-// const ipcRenderer = require('electron').ipcRenderer;
 
 $(function () {
     const moment = require('moment');
@@ -113,14 +114,16 @@ $(function () {
 
         init(){
             $('#dpdn').on('click', (e)=> {
-                const focusedWindow = BrowserWindow.getFocusedWindow();
+                const focusedWindow = remote.BrowserWindow.getFocusedWindow();
                 const option = {
-                    title: 'フォルダを選択',
-                    defaultPath: 'xxxx/yyyy/eee'
+                    properties: ['openDirectory'],
+                    title: 'ダウンロードフォルダ',
+                    defaultPath: '.'
                 };
 
-                remote.showSaveDialog(focusedWindow, option, filename => {
-                    console.log(filename);
+                remote.dialog.showOpenDialog(focusedWindow, option, filename => {
+                    new Store().set('output_path', filename);
+                    DlNotification.showCancelNtf('保存先を更新しました');
                 });
                 return false;
             });
@@ -128,7 +131,7 @@ $(function () {
                 console.log('focus');
                 $(this).blur();
                 return false;
-            });
+            }).val(new Store().get('output_path'));
         }
 
         static createDlItem(timeStamp, title, date, stage, img){
