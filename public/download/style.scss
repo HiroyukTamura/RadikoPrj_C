@@ -81,8 +81,10 @@ $vertPad:48px;
                 .stage {
                   position: absolute;
                   right: 0;
-                  bottom: 4px;
+                  bottom: 6px;
                   color: $textGray;
+                  text-align: right;
+                  line-height: 16px;
                 }
               }
               .cancel-btn {
@@ -99,7 +101,7 @@ $vertPad:48px;
     .mdl-card {
       flex-direction: row;
       align-items: center;
-      padding: 8px 72px;
+      padding: 8px 36px;
       h1 {
         width: fit-content;
         margin: 0 72px 0 0;
@@ -155,8 +157,10 @@ $vertPad:48px;
 
 .alert-minimalist.red {
   background: $secondaryRed;
+  color: $tintRed;
 }
 
 .alert-minimalist.blue {
   background: $secondaryBlue;
+  color: $primaryBlue;
 }

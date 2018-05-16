@@ -117,15 +117,22 @@ class DlTaskList {
 
     constructor(){
         this.tasks = {
-            123456: new DlTask('TBS', '20170610094000', '20170610100000', 'サンプルタイトル', 'https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg'),
-            123470: new DlTask('TBS', '20170610094000', '20170610100000', '再生してない番組', 'https://radiko.jp/res/program/DEFAULT_IMAGE/JORF/20170330042126.jpg'),
+            123456: new DlTask(123456, 'TBS', '20170610094000', '20170610100000', 'サンプルタイトル', 'https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg'),
+            123470: new DlTask(123470, 'TBS', '20170610094000', '20170610100000', '再生してない番組', 'https://radiko.jp/res/program/DEFAULT_IMAGE/JORF/20170330042126.jpg'),
         };
         this.working = 123456;
+
+        this.pendTime(20).then(()=>{
+            Sender.sendMiddleData('ffmpegError');
+            console.warn('sentFakeEvent');
+        }).catch(e=>{
+            console.warn('error sendFakeEvent', e);
+        })
     }
 
-    // getCurrentProgress(){
-    //     return this.working === 0 ? 0 : this.tasks[this.working]['progress']
-    // }
+    async pendTime(sec){
+        return new Promise(resolve => setTimeout(resolve, sec * 1000));
+    }
 
     isExistTask(stationId, ft){
         const dlTaskArr = Object.values(this.tasks);
@@ -153,12 +160,14 @@ class DlTaskList {
     getMiddleData(){
         const data = this.getSimpleData();
         data['title'] = this.getWorkingTask().title;
+        data['timeStamp'] = this.getWorkingTask().timeStamp;
         data['taskLength'] = Object.keys(this.tasks).length;
+        console.warn(data);
         return data;
     }
 
     switchToNext() {
-        dlTaskList.working = 0;
+        this.working = 0;
         const keyArr = Object.keys(this.tasks);
         if (!keyArr.length)
             return null;
@@ -171,7 +180,8 @@ class DlTaskList {
 }
 
 class DlTask {
-    constructor(stationId, ft, to, title, img){
+    constructor(timeStamp, stationId, ft, to, title, img){
+        this.timeStamp = timeStamp;
         this.stationId = stationId;
         this.ft = ft;
         this.to = to;
@@ -293,8 +303,8 @@ class PuppeteerOperator {
         await this.pageForDl.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
         await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
-        Sender.sendMiddleData('pageReached');
         task.stage = 'pageReached';
+        Sender.sendMiddleData('pageReached');
     }
 }
 
@@ -349,7 +359,7 @@ ipcMain.on('startDlWithFt', (event, arg) => {
     const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
     if (!isDuplicated) {
         const timeStamp = moment().valueOf();
-        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title, arg.img);
+        dlTaskList['tasks'][timeStamp] = new DlTask(timeStamp, arg.stationId, arg.ft, arg.to, arg.title, arg.img);
         if (!dlTaskList.working)
             dlTaskList.working = timeStamp;
         emitter.emit('setTask');
@@ -638,6 +648,12 @@ function getOutputPath() {
     return 'output/' + task.stationId +'/'+ task.title +'('+ ymd +').mp4';
 }
 
+/**
+ * @see {@link DlTask}
+ * Note: ここで、sendする際には{@link #sendDlStatus()}を除いて、DlTask.stageを送信しないことに注意してください。
+ * すなわち、renderer側ではコマンド名で進捗を判断し、DlTask.stageは用いません。
+ * DlTask.stageを用いた場合、必ずDlTask.stageに進捗を書き込んだのちsendしなければならない⇒前後を誤りやすい⇒バグ発生
+ */
 class Sender {
     static sendMiddleData(command){
         win.webContents.send(command, dlTaskList.getMiddleData());

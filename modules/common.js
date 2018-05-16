@@ -201,6 +201,8 @@ class DlNotification {
         },{
             type: 'minimalist',
             icon_type: 'image',
+            delay: 0,
+            allow_dismiss: true,
             template:
             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
                 '<div>' +
@@ -222,6 +224,7 @@ class DlNotification {
         },{
             type: 'minimalist',
             icon_type: 'image',
+            delay: 5000,
             template:
             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
                 '<div>' +
@@ -240,9 +243,11 @@ class DlNotification {
             case 'UNSET':
                 return 'ダウンロードの開始を待っています...';
             case 'pageReached':
-                return 'ダウンロードを開始します...';
+                return 'ダウンロード中...';
             case 'ffmpegStart':
-                return 'データを再構成しています...(これには時間がかかることがあります)';
+                return 'データをMP3に変換しています<br>(これには時間がかかることがあります)...';
+            default:
+                return'';
         }
     }
 
@@ -254,8 +259,10 @@ class DlNotification {
                 return 20;
             case 'ffmpegStart':
                 return 50;
-            case 'ダウンロード完了':
+            case 'ffmpegEnd':
                 return 100;
+            case 'ffmpegError':
+                return 0;
         }
     }
 }

@@ -1,6 +1,7 @@
 const $ = require('jquery');
 const remote = require('electron').remote;
 require('bootstrap-notify');
+const tippy = require('tippy.js');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 // const ipcRenderer = require('electron').ipcRenderer;
@@ -17,11 +18,11 @@ $(function () {
 
     class ProcessCommunicatorFromDL{
         constructor(){
-            this.statusList = [];
             this.setOnReceiveListeners();
         }
 
         static askStatus(){
+            console.log('askStatus()');
             ipcRenderer.send('dlStatus');
         }
 
@@ -32,14 +33,16 @@ $(function () {
                 this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
             }).on('pageReached', (event, data) => {
                 console.log(data);
-                presenter.updateStage('pageReached', data.stationId, data.fl);
+                presenter.updateStage('pageReached', data.timeStamp);
             }).on('ffmpegStart', (event, data) => {
                 console.log(data);
-                presenter.updateStage('FfmpegStart', data.stationId, data.fl);
+                presenter.updateStage('ffmpegStart', data.timeStamp);
             }).on('ffmpegError', (event, data) => {
-                this.onGetFfmpegError(data);
+                console.log(data);
+                presenter.onGetFfmpegError(data);
             }).on('ffmpegEnd', (event, data) => {
-                this.onGetFfmpegEnd(data);
+                console.log(data);
+                presenter.onGetFfmpegEnd(data);
             })
             //     .on('ffmpegPrg', (event, data) => {
             //     this.onGetFfmpegProgress(data);
@@ -80,6 +83,7 @@ $(function () {
                 }
 
                 Util.setElementAsMdl($dlItem);
+                tippy($dlItem.find('.mdl-button')[0]);
                 const progress = $dlItem.find('.mdl-progress')[0];
 
                 if (dlTaskList.working == taskKeys[i]) {
@@ -91,15 +95,7 @@ $(function () {
             }
 
             Util.setElementAsMdl(presenter.$taskList);
-            presenter.setOnClickCansel();
-        }
-
-        onGetFfmpegError(data) {
-            console.log(data);
-        }
-
-        onGetFfmpegEnd (data) {
-            console.log(data);
+            presenter.setOnClickCancel();
         }
     }
 
@@ -108,7 +104,6 @@ $(function () {
             this.$input = $('#file-location .mdl-textfield');
             this.$dpdn = $('#dpdn');
             this.$taskList = $('#task-list ul');
-            ProcessCommunicatorFromDL.askStatus();
         }
 
         init(){
@@ -142,7 +137,7 @@ $(function () {
                                 '<div class="mdl-progress mdl-js-progress mdl-pre-upgrade"></div>\n' +
                                 '<span class="stage">'+ stage +'</span>\n' +
                             '</div>\n' +
-                            '<button class="mdl-button mdl-js-button mdl-button--icon cancel-btn mdl-pre-upgrade cancel-btn">\n' +
+                            '<button class="mdl-button mdl-js-button mdl-button--icon cancel-btn mdl-pre-upgrade cancel-btn" title="ダウンロードをキャンセル">\n' +
                                 '<i class="material-icons">clear</i>\n' +
                             '</button>\n' +
                         '</div>\n' +
@@ -150,21 +145,50 @@ $(function () {
                 '</li>');
         }
 
-        setOnClickCansel(){
-            const btn = this.$taskList.find('.cancel-btn');
-            btn.on('click', () => {
-                const li = btn.parents('li');
+        setOnClickCancel(){
+            this.$taskList.find('.cancel-btn').on('click', function () {
+                const li = $(this).parents('li');
                 const timeStamp = li.attr('data-time-stamp');
                 console.log('キャンセル timeStamp', timeStamp);
-            })
+                Presenter.removeItem(li);
+
+                //todo キャンセル動作をメインプロセスへ
+            });
+        }
+
+        static removeItem(li){
+            li.animate({opacity: '0'}, 500, ()=>{
+                li.animate({height: '0'}, 500, ()=>{
+                    li.remove();
+                });
+            });
         }
 
         updateStage(command, timeStamp){
-            const stage = DlNotification.getStageStr(command);
-            const num = progress.getStageNum(command);
             const $li = this.$taskList.find('li[data-time-stamp="'+ timeStamp +'"]');
+            if (!$li) //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
+                return;
+            const stage = DlNotification.getStageStr(command);
+            const num = DlNotification.getStageNum(command);
             $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);
             $li.find('.stage').html(stage);
+        }
+
+        onGetFfmpegEnd(data) {
+            const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
+            presenter.updateStage('ffmpegEnd', data.timeStamp);
+            Presenter.removeItem($li);
+            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.fl, 'YYYYMMDDhhmmss'));
+            DlNotification.showSuccessNtf('ダウンロード完了', msg);
+        }
+
+        onGetFfmpegError(data) {
+            const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
+            presenter.updateStage('ffmpegError', data.timeStamp);
+            Presenter.removeItem($li);
+            console.log(data.fl);
+            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.fl, 'YYYYMMDDhhmmss'));
+            DlNotification.showFailedNtf('処理に失敗しました', msg);
         }
     }
 
