@@ -110,9 +110,17 @@ const HTML_PATH = 'public/download/index.html';
 //todo タイムアウトエラーを作成すること(特にffmpeg)
 
 class DlTaskList {
+    // constructor(){
+    //     this.tasks = {};
+    //     this.working = 0;
+    // }
+
     constructor(){
-        this.tasks = {};
-        this.working = 0;
+        this.tasks = {
+            123456: new DlTask('TBS', '20170610094000', '20170610100000', 'サンプルタイトル'),
+            123470: new DlTask('TBS', '20170610094000', '20170610100000', '再生してない番組'),
+        };
+        this.working = 123456;
     }
 
     // getCurrentProgress(){
@@ -325,24 +333,6 @@ function createWindow () {
         win = null;
     });
 
-    ipcMain.on('startDlWithFt', (event, arg) => {
-        console.log('startDlWithFt', arg);
-        const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
-        if (!isDuplicated) {
-            const timeStamp = moment().valueOf();
-            dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title);
-            if (!dlTaskList.working)
-                dlTaskList.working = timeStamp;
-            emitter.emit('setTask');
-        }
-        Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
-    });
-
-    ipcMain.on('dlStatus', (event, arg) => {
-        console.log('dlStatus');
-        Sender.sendDlStatus(dlTaskList);
-    });
-
     // operator.launchPuppeteer();//todo コメントアウト外すこと
 
     // new OpenVpn().init();
@@ -352,6 +342,24 @@ function createWindow () {
     // vpnJson.requestCsv();
     // new PuppeteerOperator().getRegionWithPuppeteer();
 }
+
+ipcMain.on('startDlWithFt', (event, arg) => {
+    console.log('startDlWithFt', arg);
+    const isDuplicated = dlTaskList.isExistTask(arg.stationId, arg.ft);
+    if (!isDuplicated) {
+        const timeStamp = moment().valueOf();
+        dlTaskList['tasks'][timeStamp] = new DlTask(arg.stationId, arg.ft, arg.to, arg.title);
+        if (!dlTaskList.working)
+            dlTaskList.working = timeStamp;
+        emitter.emit('setTask');
+    }
+    Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
+});
+
+ipcMain.on('dlStatus', (event, arg) => {
+    console.log('dlStatus');
+    Sender.sendDlStatus(dlTaskList);
+});
 
 app.on('ready', createWindow);
 
