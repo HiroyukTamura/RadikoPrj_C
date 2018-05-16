@@ -30,7 +30,7 @@ $(function () {
             ipcRenderer.on('dlStatus_REPLY', (event, arg) => {
                 ProcessCommunicatorFromDL.onGetDlStatusReply(arg);
             }).on('startDlChainError', (event, data) => {
-                this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
+                presenter.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
             }).on('pageReached', (event, data) => {
                 console.log(data);
                 presenter.updateStage('pageReached', data.timeStamp);
@@ -43,7 +43,10 @@ $(function () {
             }).on('ffmpegEnd', (event, data) => {
                 console.log(data);
                 presenter.onGetFfmpegEnd(data);
-            })
+            }).on('cancelError', (event, data) => {
+                const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
+                DlNotification.showFailedNtf('処理に失敗しました', msg);
+            });
             //     .on('ffmpegPrg', (event, data) => {
             //     this.onGetFfmpegProgress(data);
             // });
@@ -62,6 +65,9 @@ $(function () {
             for (let i = 0; i < taskKeys.length; i++) {
                 console.log(taskKeys[i]);
                 const task = dlTaskList.tasks[taskKeys[i]];
+                if (task.abortFlag)
+                    continue;
+
                 const startM = new moment(task.ft, 'YYYYMMDDhhmmss');
                 const dateVal = Util.getMDWithWeekDay(startM) +' '+ startM.format('hh:mm') +' - '+ moment(task.to, 'YYYYMMDDhhmmss').format('hh:mm');
                 const stage = DlNotification.getStageStr(task.stage);
@@ -102,13 +108,12 @@ $(function () {
     class Presenter{
         constructor(){
             this.$input = $('#file-location .mdl-textfield');
-            this.$dpdn = $('#dpdn');
             this.$taskList = $('#task-list ul');
         }
 
         init(){
             $('#dpdn').on('click', (e)=> {
-                const focusedWindow = remote.getFocusedWindow();
+                const focusedWindow = BrowserWindow.getFocusedWindow();
                 const option = {
                     title: 'フォルダを選択',
                     defaultPath: 'xxxx/yyyy/eee'
@@ -119,8 +124,9 @@ $(function () {
                 });
                 return false;
             });
-            $('#file-location .mdl-textfield').focusin((e) => {
-                $(e).focusout();
+            $('#path-input').focus(function () {
+                console.log('focus');
+                $(this).blur();
                 return false;
             });
         }
@@ -146,27 +152,33 @@ $(function () {
         }
 
         setOnClickCancel(){
+            const self = this;
             this.$taskList.find('.cancel-btn').on('click', function () {
-                const li = $(this).parents('li');
-                const timeStamp = li.attr('data-time-stamp');
+                const $li = $(this).parents('li');
+                const timeStamp = $li.attr('data-time-stamp');
                 console.log('キャンセル timeStamp', timeStamp);
-                Presenter.removeItem(li);
+                self.removeItem($li);
 
-                //todo キャンセル動作をメインプロセスへ
+                DlNotification.showCancelNtf('キャンセルしました');
+                ipcRenderer.send('cancelDl', timeStamp);
             });
         }
 
-        static removeItem(li){
+        removeItem(li){
             li.animate({opacity: '0'}, 500, ()=>{
                 li.animate({height: '0'}, 500, ()=>{
                     li.remove();
                 });
             });
+            const newLi = this.$taskList.find('li');
+            if (newLi.length) {
+                newLi.find('.mdl-progress')[0].MaterialProgress.setBuffer(100);
+            }
         }
 
         updateStage(command, timeStamp){
             const $li = this.$taskList.find('li[data-time-stamp="'+ timeStamp +'"]');
-            if (!$li) //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
+            if (!$li.length) //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
                 return;
             const stage = DlNotification.getStageStr(command);
             const num = DlNotification.getStageNum(command);
@@ -176,18 +188,18 @@ $(function () {
 
         onGetFfmpegEnd(data) {
             const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
-            presenter.updateStage('ffmpegEnd', data.timeStamp);
-            Presenter.removeItem($li);
-            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.fl, 'YYYYMMDDhhmmss'));
+            this.updateStage('ffmpegEnd', data.timeStamp);
+            this.removeItem($li);
+            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
             DlNotification.showSuccessNtf('ダウンロード完了', msg);
         }
 
         onGetFfmpegError(data) {
             const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
-            presenter.updateStage('ffmpegError', data.timeStamp);
-            Presenter.removeItem($li);
-            console.log(data.fl);
-            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.fl, 'YYYYMMDDhhmmss'));
+            this.updateStage('ffmpegError', data.timeStamp);
+            this.removeItem($li);
+            console.log(data.ft);
+            const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
             DlNotification.showFailedNtf('処理に失敗しました', msg);
         }
     }

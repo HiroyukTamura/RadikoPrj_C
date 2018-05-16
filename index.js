@@ -188,6 +188,7 @@ class DlTask {
         this.title = title;
         this.chunkFileName = null;
         this.img = img;
+        this.abortFlag = false;
         this.stage = 'UNSET';
     }
 }
@@ -265,6 +266,10 @@ class PuppeteerOperator {
     async startDlChain(){
         console.log('startDlChain');
         const task = dlTaskList.tasks[dlTaskList.working];
+        if (task.abortFlag) {
+            await connectEndToNext();
+            return;
+        }
         if (!this.pageForDl) {
             this.pageForDl = await this.browser.newPage();
             await this.pageForDl.setUserAgent(this.userAgent);
@@ -291,9 +296,18 @@ class PuppeteerOperator {
                 if (isDone)
                     return;
                 isDone = true;
+
+                if (task.abortFlag) {
+                    emitter.emit('onErrorHandler');
+                    return;
+                }
+
                 writeFile(pathE, response).then(() => {
                     console.log('書き込み完了');
-                    runFfmpeg(pathE);
+                    if (task.abortFlag)
+                        emitter.emit('onErrorHandler');
+                    else
+                        runFfmpeg(pathE);
                 }).catch(err => {
                     throw err;
                 });
@@ -370,6 +384,15 @@ ipcMain.on('startDlWithFt', (event, arg) => {
 ipcMain.on('dlStatus', (event, arg) => {
     console.log('dlStatus');
     Sender.sendDlStatus(dlTaskList);
+});
+
+ipcMain.on('cancelDl', (event, timeStamp) => {
+    console.log('cancelDl', timeStamp);
+    if (dlTaskList['tasks'][timeStamp]) {
+        dlTaskList['tasks'][timeStamp]['abortFlag'] = true;
+    } else {
+        Sender.sendMiddleData('cancelError');
+    }
 });
 
 app.on('ready', createWindow);
@@ -604,32 +627,46 @@ function runFfmpeg(pathE) {
         err = e;
     }
 
-    if (err) {
+    if (err || dlTaskList.getWorkingTask().abortFlag) {
         emitter.emit('onErrorHandler', err);
         return;
     }
 
-    ffmpeg(pathE)
+    const outputPath = getOutputPath();
+
+    const command = ffmpeg(pathE)
         .setFfmpegPath(ffmpeg_static.path)
         .audioCodec('copy')
         .videoCodec('copy')
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
-            Sender.sendMiddleData('ffmpegStart');
-            dlTaskList.getWorkingTask().stage = 'ffmpegStart';
+            if (!dlTaskList.getWorkingTask().abortFlag) {
+                Sender.sendMiddleData('ffmpegStart');
+                dlTaskList.getWorkingTask().stage = 'ffmpegStart';
+            }
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
-            Sender.sendMiddleData('ffmpegError');
+            if (dlTaskList.getWorkingTask().abortFlag)
+                deleteFileSync(getOutputPath());
+            else
+                Sender.sendMiddleData('ffmpegError');
             emitter.emit('onErrorHandler', err);
         })
         .on('end', function(stdout, stderr) {
             console.log('Transcoding s  ucceeded !');
-            Sender.sendMiddleData('ffmpegEnd');
-            dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
-            emitter.emit('connectEndToNext');
+            if (dlTaskList.getWorkingTask().abortFlag) {
+                emitter.emit('onErrorHandler', err);
+                deleteFileSync(getOutputPath());
+            } else {
+                Sender.sendMiddleData('ffmpegEnd');
+                dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
+                emitter.emit('connectEndToNext');
+            }
         }).on('progress', function(progress) {
             console.log('Processing: ' + progress.percent + '% done');
+            if (dlTaskList.getWorkingTask().abortFlag)
+                command.kill();
             // Sender.sendFfmpegPrg(progress.percent);
         })
         .inputOptions([
@@ -703,10 +740,7 @@ async function onError(e) {
 async function connectEndToNext() {
     const chunkFileName = dlTaskList.getWorkingTask().chunkFileName;
     if (chunkFileName) {
-        const path = operator.chunkListDir +'/'+ chunkFileName;
-        if (fs.existsSync(path)){
-            fs.unlinkSync(path);
-        }
+        deleteFileSync(operator.chunkListDir +'/'+ chunkFileName);
     }
     delete dlTaskList.tasks[dlTaskList.working];
     const taskNext = dlTaskList.switchToNext();
@@ -720,5 +754,11 @@ async function connectEndToNext() {
         });
     } else {
         await operator.closeBrowser();
+    }
+}
+
+function deleteFileSync(path) {
+    if (fs.existsSync(path)){
+        fs.unlinkSync(path);
     }
 }

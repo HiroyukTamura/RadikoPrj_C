@@ -203,8 +203,13 @@ class DlNotification {
             icon_type: 'image',
             delay: 0,
             allow_dismiss: true,
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
             template:
             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
+                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
                 '<div>' +
                     '<div>'+
                         '<span data-notify="title">{1}</span>' +
@@ -224,13 +229,46 @@ class DlNotification {
         },{
             type: 'minimalist',
             icon_type: 'image',
-            delay: 5000,
+            allow_dismiss: true,
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
+            template: this.getHtmlTemplate()
+        });
+    }
+
+    static getHtmlTemplate(){
+        return '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
+            '<div>' +
+                '<div>'+
+                    '<span data-notify="title">{1}</span>' +
+                    '<span data-notify="message">{2}</span>' +
+                '</div>'+
+                '<img data-notify="icon" class="img-circle pull-right">' +
+            '</div>'+
+        '</div>'
+    }
+
+    static showCancelNtf(title) {
+        $.notify({
+            icon: '../../img/check-circle.svg',
+            title: title
+        },{
+            type: 'minimalist',
+            icon_type: 'image',
+            delay: 0,
+            allow_dismiss: true,
+            placement: {
+                from: "bottom",
+                align: "right"
+            },
             template:
-            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
+            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue one-row" role="alert">' +
+                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
                 '<div>' +
                     '<div>'+
                         '<span data-notify="title">{1}</span>' +
-                        '<span data-notify="message">{2}</span>' +
                     '</div>'+
                     '<img data-notify="icon" class="img-circle pull-right">' +
                 '</div>'+

@@ -113,12 +113,21 @@ $vertPad:48px;
         .mdl-textfield {
           width: 100%;
           @include textField;
+          .mdl-textfield__input {
+            cursor: default;
+          }
         }
         .mdl-button {
           right: 0;
           top: 50%;
+          height: 28px;
+          width: 28px;
+          min-width: 28px;
           position: absolute;
           transform: translateY(-50%);
+          &:focus {
+            outline: 0;
+          }
         }
       }
     }
@@ -130,6 +139,10 @@ $vertPad:48px;
   border-radius: 3px;
   color: rgb(149, 149, 149);
   padding: 10px;
+
+  button:focus {
+    outline: 0;
+  }
 
   >div {
     width: 100%;
@@ -153,14 +166,24 @@ $vertPad:48px;
       }
     }
   }
-}
 
-.alert-minimalist.red {
-  background: $secondaryRed;
-  color: $tintRed;
-}
+  &.red {
+    background: $secondaryRed;
+    color: $tintRed;
+  }
 
-.alert-minimalist.blue {
-  background: $secondaryBlue;
-  color: $primaryBlue;
+  &.blue {
+    background: $secondaryBlue;
+    color: $primaryBlue;
+  }
+
+  &.one-row {
+    >div {
+      position: relative;
+      >div {
+        top: 24px;
+        position: absolute;
+      }
+    }
+  }
 }
