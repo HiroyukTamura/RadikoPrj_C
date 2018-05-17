@@ -219,8 +219,9 @@ button {
     }
   }
 }
-
-@include ntf;
+body {
+  @include ntf;
+}
 
 //.mdl-dialog {
 //  width: 780px;

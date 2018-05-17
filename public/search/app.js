@@ -44,7 +44,10 @@ const notify = require('bootstrap-notify');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('data-title');
                 const to = self.$dialog.attr('to');
-                ProcessCommunicator.callDL(ft, to, stationId, title);
+                const img = self.$dialog.attr('data-img');
+                console.log(to);
+                //todo imgも記載する
+                ProcessCommunicator.callDL(ft, to, stationId, title, img);
             });
         }
 
@@ -184,6 +187,8 @@ const notify = require('bootstrap-notify');
                     }
                     return false;
                 }
+                if (self.$suggestDiv.length)
+                    self.$suggestDiv.remove();
                 let startM = moment(startDropDown.getSelectedYmd(), 'YYYYMMDD');
                 let endM = moment(endDropDown.getSelectedYmd(), 'YYYYMMDD');
                 console.log(startM, endM);
@@ -191,6 +196,7 @@ const notify = require('bootstrap-notify');
                 requestOperator
                     .onPreRequest()
                     .requestJson();
+
                 return false;
             });
             return this;
@@ -512,7 +518,8 @@ const notify = require('bootstrap-notify');
                     conductor.$dialog.attr('ft', ft)
                         .attr('to', to)
                         .attr('station', self.stationId)
-                        .attr('data-title', self.title);
+                        .attr('data-title', self.title)
+                        .attr('data-img', self.imgUrl);
 
                     conductor.$dialog[0].showModal();
 

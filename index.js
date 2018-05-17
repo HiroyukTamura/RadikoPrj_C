@@ -200,6 +200,7 @@ class DlTask {
         this.chunkFileName = null;
         this.img = img;
         this.abortFlag = false;
+        this.progressSec = 0;
         this.stage = 'UNSET';
     }
 }
@@ -666,12 +667,14 @@ function isFileExists(filePath) {
 }
 
 function runFfmpeg(pathE) {
-    const path = 'output/'+ dlTaskList.getWorkingTask().stationId;
+    // const path = 'output/'+ dlTaskList.getWorkingTask().stationId;
     const totalPath = getOutputPath();
+    const dirName = path.dirname(totalPath);
+
     let err = null;
     try {
-        if (!fs.existsSync(path)){
-            fs.mkdirSync(path);
+        if (!fs.existsSync(dirName)){
+            fs.mkdirSync(dirName);
         }
         if (fs.existsSync(totalPath)) {
             fs.unlinkSync(totalPath);//既に同じmp3が存在しているなら削除
@@ -685,12 +688,35 @@ function runFfmpeg(pathE) {
         return;
     }
 
-    const outputPath = getOutputPath();
+    let bps = new Store().get('kbps');
+    bps = bps ? bps.substring(0, bps.length-4) : 128;
+    console.log('bps', bps);
+    let codecLib = null;
+    switch (totalPath.split('.')[1]) {
+        case 'aac':
+        case 'm4a':
+        case 'flac':
+        case 'wav':
+            codecLib = 'aac';
+            break;
+        case 'mp3':
+            codecLib = 'libmp3lame';
+            break;
+        default:
+            console.log(totalPath.split('.')[1]);
+            Sender.sendMiddleData('ffmpegError');
+            emitter.emit('onErrorHandler', '拡張子がおかしい');
+            return;
+    }
+
+    let progressCounter = 0;
+    let isKilled = false;
 
     const command = ffmpeg(pathE)
         .setFfmpegPath(ffmpeg_static.path)
-        .audioCodec('copy')
-        .videoCodec('copy')
+        .audioCodec(codecLib)
+        .audioBitrate(bps)
+        // .videoCodec('copy')
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
             if (!dlTaskList.getWorkingTask().abortFlag) {
@@ -700,42 +726,57 @@ function runFfmpeg(pathE) {
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
-            if (dlTaskList.getWorkingTask().abortFlag)
-                deleteFileSync(getOutputPath());
-            else
+            if (!dlTaskList.getWorkingTask().abortFlag)
                 Sender.sendMiddleData('ffmpegError');
+            deleteFileSync(totalPath);
             emitter.emit('onErrorHandler', err);
         })
         .on('end', function(stdout, stderr) {
             console.log('Transcoding s  ucceeded !');
             if (dlTaskList.getWorkingTask().abortFlag) {
                 emitter.emit('onErrorHandler', err);
-                deleteFileSync(getOutputPath());
+                deleteFileSync(totalPath);
             } else {
                 Sender.sendMiddleData('ffmpegEnd');
                 dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
                 emitter.emit('connectEndToNext');
             }
-        }).on('progress', function(progress) {
-            console.log('Processing: ' + progress.percent + '% done');
-            if (dlTaskList.getWorkingTask().abortFlag)
+        }).on('stderr', function(stderrLine) {
+            if (stderrLine.includes('time=')/* && progressCounter%3 === 0*/) {
+                const hms = stderrLine.substr(stderrLine.indexOf('time=')+5, 8)
+                    .split(':');
+                const sec = 60*60 * parseInt(hms[0]) + 60*parseInt(hms[1]) + parseInt(hms[2]);
+                console.log(sec);
+                Sender.sendFfmpegPrg(sec);
+                // progressCounter++;
+            }
+
+            if (dlTaskList.getWorkingTask().abortFlag && !isKilled) {
+                isKilled = true;
                 command.kill();
-            // Sender.sendFfmpegPrg(progress.percent);
+            }
         })
+        // .on('progress', function(progress) {
+        //     console.log('Processing: ' + progress.percent + '% done');
+        //     if (dlTaskList.getWorkingTask().abortFlag)
+        //         command.kill();
+        //     // Sender.sendFfmpegPrg(progress.percent);
+        // })
         .inputOptions([
             '-protocol_whitelist', 'file,http,https,tcp,tls,crypto'
         ])
-        .outputOptions([
-            '-bsf:a aac_adtstoasc'
-        ])
-        .output(getOutputPath())
-        .run();
+        // .outputOptions([
+        //     '-bsf:a aac_adtstoasc'
+        // ])
+        .output(totalPath);
+    command.run();
 }
 
 function getOutputPath() {
     const task = dlTaskList.getWorkingTask();
     const ymd = moment(task.ft, 'YYYYMMDDhhmmss').format('YYYY-MM-DD');
-    return new Store().get('output_path') +'/' + task.stationId +'/'+ task.title +'('+ ymd +').mp4';
+    const suf = new Store().get('suffix') || 'mp3';
+    return new Store().get('output_path') +'/' + task.stationId +'/'+ task.title +'('+ ymd +').' + suf;
 }
 
 /**
@@ -776,6 +817,7 @@ class Sender {
     static sendFfmpegPrg(percent){
         const data = dlTaskList.getSimpleData();
         data['ffmpegPrg'] = percent;
+        data['to'] =  dlTaskList.getWorkingTask().to;
         win.webContents.send('ffmpegPrg', data);
     }
 

@@ -22,6 +22,31 @@ $vertPad:48px;
     }
   }
 
+  @mixin btnInField{
+    .mdl-button {
+      right: 0;
+      top: 50%;
+      height: 28px;
+      width: 28px;
+      min-width: 28px;
+      position: absolute;
+      transform: translateY(-50%);
+      color: $primaryBlue;
+      &:focus {
+        outline: 0;
+      }
+    }
+  }
+
+  @mixin field {
+    .mdl-textfield__label:after {
+      display: none;
+    }
+    .mdl-textfield__input {
+      cursor: default;
+    }
+  }
+
   #task-list {
     button:focus{
       outline: 0;
@@ -111,6 +136,7 @@ $vertPad:48px;
         align-items: center;
         padding: 8px 36px;
         margin-right: 72px;
+        z-index: 0;
         h1 {
           width: fit-content;
           margin: 0 72px 0 32px;
@@ -119,29 +145,52 @@ $vertPad:48px;
           flex-grow: 100;
           margin-right: 36px;
           position: relative;
+          @include btnInField;
           .mdl-textfield {
             width: 100%;
             @include textField;
-            .mdl-textfield__input {
-              cursor: default;
-            }
-          }
-          .mdl-button {
-            right: 0;
-            top: 50%;
-            height: 28px;
-            width: 28px;
-            min-width: 28px;
-            position: absolute;
-            transform: translateY(-50%);
-            &:focus {
-              outline: 0;
-            }
+            @include field;
           }
         }
       }
       .mdl-button {
 
+      }
+    }
+  }
+  #config {
+    .mdl-card {
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 8px 36px;
+      overflow: visible;
+      >div {
+        flex-grow: 2;
+        display: flex;
+        align-items: center;
+        h1 {
+          font-size: 18px;
+          width: fit-content;
+          margin-bottom: 0;
+        }
+        form {
+          @include btnInField;
+          flex-grow: 10;
+          .mdl-textfield {
+            width: unset;
+            @include textField;
+            @include field;
+          }
+        }
+        >*:not(:last-child) {
+          margin-right: 32px;
+        }
+        .mdl-menu__item {
+          font-size: 16px;
+        }
+        .mdl-menu__item:disabled {
+          cursor: default;
+        }
       }
     }
   }

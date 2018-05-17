@@ -207,12 +207,12 @@ require('bootstrap-notify');
             Util.setDialogListeners(this.$dialog[0]);
             $('#dl-btm').on('click', function () {
                 self.$dialog[0].close();
-                //todo ダウンロード！！
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('data-title');
                 const to = self.$dialog.attr('to');
-                ProcessCommunicator.callDL(ft, to, stationId, title);
+                const img = self.$dialog.attr('data-img');
+                ProcessCommunicator.callDL(ft, to, stationId, title, img);
             });
         }
 
@@ -340,7 +340,8 @@ require('bootstrap-notify');
                 self.$dialog.attr('ft', ft)
                     .attr('station', $(this).attr('station'))
                     .attr('data-title', html)
-                    .attr('to', to);
+                    .attr('to', to)
+                    .attr('img', img);
 
                 if ($(this).hasClass('cant-dl')) {
                     self.$dialog.find('#dl-btm');

@@ -117,6 +117,16 @@ $(function () {
         constructor(){
             this.$input = $('#file-location .mdl-textfield');
             this.$taskList = $('#task-list ul');
+            this.$pathInput = $('#path-input');
+            this.$bpsInput = $('#bit-rate-input');
+            this.$sufInput =$('#suf-input');
+            this.store = new Store();
+            this.bpsArr = ['64kbps', '128kbps', '160kbps', '256kbps', '320kbps'];
+            this.sufArr = ['mp3', 'm4a', 'aac', 'wav', 'flac'];
+            this.$bitRateMenu = $('#bit-rate .mdl-menu');
+            this.$sufMenu = $('#suffix .mdl-menu');
+            this.suf = this.store.get('suffix') || 'mp3';
+            this.bps = this.store.get('kbps') || '128kbps';
         }
 
         init(){
@@ -130,27 +140,61 @@ $(function () {
 
                 remote.dialog.showOpenDialog(focusedWindow, option, filename => {
                     if (filename) {
-                        new Store().set('output_path', filename);
+                        this.store.set('output_path', filename);
                         DlNotification.showCancelNtf('保存先を更新しました');
-                        console.log(new Store().get('output_path'));
+                        console.log(this.store.get('output_path'));
                     }
                 });
                 return false;
             });
 
-            $('#path-input').focus(function () {
-                console.log('focus');
+            $('input').focus(function () {
                 $(this).blur();
                 return false;
-            }).val(new Store().get('output_path'));
-            
-            // if (remote.process.platform === 'win32' || remote.process.platform === 'darwin')
+            });
+
+            const suf = this.store.get('suffix') || 'mp3';
+            const bps = this.store.get('kbps') || '128kbps';
+            console.log(suf, bps);
+            this.$pathInput.val(this.store.get('output_path'));
+            this.$bpsInput.val(bps);
+            this.$sufInput.val(suf);
+            this.buildRateMenu();
+            this.buildSufMenu();
 
             tippy('#open-dir-btn');
             $('#open-dir-btn').on('click', ()=> {
                 ProcessCommunicatorFromDL.callOpenFile();
                 return false;
             });
+        }
+
+        buildSufMenu(){
+            for (let i = 0; i < this.sufArr.length; i++) {
+                const disabled = this.sufArr[i] === this.suf ? 'disabled' : '';
+                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.sufArr[i] +'</li>').on('click', (e)=> {
+                    this.$sufInput.val(this.sufArr[i]);
+                    this.suf = this.sufArr[i];
+                    this.store.set('suffix', this.sufArr[i]);
+                    this.$sufMenu.empty();
+                    this.buildSufMenu();
+                }).appendTo(this.$sufMenu);
+            }
+            Util.setElementAsMdl(this.$sufMenu);
+        }
+
+        buildRateMenu(){
+            for (let i = 0; i < this.bpsArr.length; i++) {
+                const disabled = this.bpsArr[i] === this.bps ? 'disabled' : '';
+                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.bpsArr[i] +'</li>').on('click', (e)=> {
+                    this.$bpsInput.val(this.bpsArr[i]);
+                    this.bps = this.bpsArr[i];
+                    this.store.set('kbps', this.bpsArr[i]);
+                    this.$bitRateMenu.empty();
+                    this.buildRateMenu();
+                }).appendTo(this.$bitRateMenu);
+            }
+            Util.setElementAsMdl(this.$bitRateMenu);
         }
 
         static createDlItem(timeStamp, title, date, stage, img){

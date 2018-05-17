@@ -193,6 +193,9 @@ a, button{
       float: right;
       margin: 0 22px 0 12px;//なぜならntfのpadding:10px
     }
+    >div>div {
+      width: calc(100% - 22px);
+    }
     .progress {
       margin-top: 10px;
       height: 10px;

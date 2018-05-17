@@ -160,10 +160,18 @@ class DlNotification {
         })
     }
 
-    updateAs4th(){
+    updateAsPrg(data){
+        const totalSec = moment(data.to, 'YYYYMMDDhhssmm').diff(moment(data.ft, 'YYYYMMDDhhssmm'), 'seconds');
         this.ntf.update({
             title: 'データを再構成しています...(これには時間がかかることがあります)',
-            progress: 50
+            progress: 30 + Math.round(70 * data.ffmpegPrg / totalSec)
+        })
+    }
+
+    updateAs4th(){
+        this.ntf.update({
+            title: 'メタデータを書き込んでいます...',
+            progress: 30
         })
     }
 
@@ -342,12 +350,13 @@ class ProcessCommunicator{
         return ntf;
     }
 
-    static callDL(ft, to, stationId, title){
+    static callDL(ft, to, stationId, title, img){
         const data = {
             ft: ft,
             to: to,
             stationId: stationId,
-            title: title
+            title: title,
+            img: img
         };
         ipcRenderer.send('startDlWithFt', data);
     }
@@ -367,10 +376,9 @@ class ProcessCommunicator{
             this.onGetFfmpegError(data);
         }).on('ffmpegEnd', (event, data) => {
             this.onGetFfmpegEnd(data);
-        })
-        //     .on('ffmpegPrg', (event, data) => {
-        //     this.onGetFfmpegProgress(data);
-        // });
+        }).on('ffmpegPrg', (event, data) => {
+            this.onGetFfmpegProgress(data);
+        });
     }
 
     onGetStartDlWithFtReply(arg){
@@ -431,6 +439,13 @@ class ProcessCommunicator{
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
             ntf.updateAs3rd();
+    }
+
+    onGetFfmpegProgress(data) {
+        const ntf = this.getNtf(data.stationId, data.ft);
+        if (ntf) {
+            ntf.updateAsPrg(data);
+        }
     }
 }
 

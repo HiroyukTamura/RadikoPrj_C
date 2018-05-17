@@ -30,6 +30,38 @@
                 </ul>
             </div>
         </section>
+        <section id="config">
+            <div class="mdl-card mdl-shadow--2dp">
+                <div id="bit-rate">
+                    <h1>ビットレート</h1>
+                    <form action="#" onsubmit="return false">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="bit-rate-input">
+                            <label class="mdl-textfield__label" for="bit-rate-input"></label>
+                            <button class="mdl-button mdl-js-button mdl-button--icon" id="btn-bit-rate">
+                                <i class="material-icons">arrow_drop_down</i>
+                            </button>
+                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="btn-bit-rate">
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+                <div id="suffix">
+                    <h1>ファイル形式</h1>
+                    <form action="#" onsubmit="return false">
+                        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                            <input class="mdl-textfield__input" type="text" id="suf-input">
+                            <label class="mdl-textfield__label" for="suf-input"></label>
+                            <button class="mdl-button mdl-js-button mdl-button--icon" id="btn-suf">
+                                <i class="material-icons">arrow_drop_down</i>
+                            </button>
+                            <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="btn-suf">
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
         <section id="file-location">
             <div class="card-w">
                 <div class="mdl-card mdl-shadow--2dp">
@@ -45,7 +77,7 @@
                     </form>
                 </div>
                 <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect" id="open-dir-btn" title="フォルダを開く">
-                    <i class="material-icons">folder</i>
+                    <i class="fas fa-folder-open"></i>
                 </button>
             </div>
         </section>

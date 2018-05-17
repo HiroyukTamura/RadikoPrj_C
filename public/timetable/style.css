@@ -477,3 +477,66 @@ button {
             flex-grow: 100; }
           .mdl-layout__content #mix-table #grid .cell .prg-card-w .info_group {
             display: none; }
+
+body .alert-minimalist.red {
+  background: #fdf2f2;
+  color: #e94f73; }
+
+body .alert-minimalist.blue {
+  background: #e2f4f9;
+  color: #00a7e9; }
+
+body .alert-progress-ntf {
+  background: #e2f4f9;
+  color: #00a7e9; }
+
+body .alert-progress-fail {
+  background: #fdf2f2;
+  color: #e94f73; }
+
+body .alert-progress-ntf img[data-notify="icon"], body .alert-progress-fail img[data-notify="icon"] {
+  height: 42px;
+  width: auto;
+  float: right;
+  margin: 0 22px 0 12px; }
+
+body .alert-progress-ntf > div > div, body .alert-progress-fail > div > div {
+  width: calc(100% - 22px); }
+
+body .alert-progress-ntf .progress, body .alert-progress-fail .progress {
+  margin-top: 10px;
+  height: 10px;
+  width: calc(100% - 22px);
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #00a7e9, #00a7e9); }
+  body .alert-progress-ntf .progress .progress-bar, body .alert-progress-fail .progress .progress-bar {
+    background-color: #00a7e9; }
+
+body .alert-minimalist img[data-notify="icon"] {
+  height: 36px;
+  width: auto;
+  margin: 5.5px 12px;
+  float: right; }
+
+body .alert-minimalist, body .progress-ntf, body .alert-progress-fail {
+  border-color: rgba(149, 149, 149, 0.3);
+  border-radius: 3px;
+  color: #959595;
+  padding: 10px; }
+  body .alert-minimalist button:focus, body .progress-ntf button:focus, body .alert-progress-fail button:focus {
+    outline: 0; }
+  body .alert-minimalist > div:not(.progress), body .progress-ntf > div:not(.progress), body .alert-progress-fail > div:not(.progress) {
+    width: 100%;
+    height: 100%; }
+    body .alert-minimalist > div:not(.progress) > div, body .progress-ntf > div:not(.progress) > div, body .alert-progress-fail > div:not(.progress) > div {
+      float: left; }
+      body .alert-minimalist > div:not(.progress) > div > span[data-notify="title"], body .progress-ntf > div:not(.progress) > div > span[data-notify="title"], body .alert-progress-fail > div:not(.progress) > div > span[data-notify="title"] {
+        color: #333333;
+        display: block;
+        font-weight: bold; }
+      body .alert-minimalist > div:not(.progress) > div > span[data-notify="message"], body .progress-ntf > div:not(.progress) > div > span[data-notify="message"], body .alert-progress-fail > div:not(.progress) > div > span[data-notify="message"] {
+        font-size: 80%; }
+  body .alert-minimalist.one-row > div, body .progress-ntf.one-row > div, body .alert-progress-fail.one-row > div {
+    position: relative; }
+    body .alert-minimalist.one-row > div > div, body .progress-ntf.one-row > div > div, body .alert-progress-fail.one-row > div > div {
+      top: 14px;
+      position: absolute; }
