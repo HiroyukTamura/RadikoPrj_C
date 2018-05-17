@@ -83,7 +83,7 @@ const ffmpeg_static = require('ffmpeg-static');
 const http = require('http');
 const httpProxy = require('http-proxy');
 const request = require('request');
-const {app, BrowserWindow, ipcMain} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu} = require('electron');
 const url = require('url');
 const rp = require('request-promise');
 const csv = require('csvtojson');
@@ -344,13 +344,18 @@ function createWindow () {
     // Create the browser window.
     console.log('createWindow');
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
         webPreferences: {
+            width: 800,
+            height: 600,
             // nodeIntegration: false,
-            webSecurity: false
-        }
+            webSecurity: false,
+            show: false
+        },
+        titleBarStyle: 'hiddenInset'
     });
+
+    win.maximize();
+    Menu.setApplicationMenu(null);
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -376,6 +381,10 @@ function createWindow () {
         }
         e.preventDefault();
         electron.shell.openExternal(url);
+    });
+
+    win.once('ready-to-show', () => {
+        win.show();
     });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと

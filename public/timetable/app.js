@@ -34,7 +34,7 @@ require('bootstrap-notify');
             } else {
                 const $clickedEle = searcher.$dropDown.find('.mouseover');
                 if ($clickedEle.length) {
-                    searcher.resetSuggestion($clickedEle.html());
+                    searcher.resetSuggestion($clickedEle.text());
                     e.stopPropagation();
                 }
             }

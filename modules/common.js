@@ -476,7 +476,7 @@ class ProgramSearcher {
                 //エンターキー
                 const $keyFocused = self.$dropDown.find('.key-focused');
                 if ($keyFocused.length) {
-                    self.resetSuggestion($keyFocused.html());
+                    self.resetSuggestion($keyFocused.text());
                     // self.$dropDown.hide();
                     // $keyFocused.removeClass('key-focused');
                 } else {

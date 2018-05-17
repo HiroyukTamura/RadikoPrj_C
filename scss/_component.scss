@@ -1,5 +1,30 @@
 @import "common";
 
+.title-bar {
+  display: none;//todo 画面遷移ごとにちらつくことになってしまう。ダウンロードの進捗を表すNTFも含めて、いち画面で管理すべきかもしれない。
+  width: 100%;
+  height: 24px;
+  padding: 0 4px;
+  background-color: $titleBarBlue;
+
+  >div {
+    float: right;
+    height: 100%;
+    width: fit-content;
+    padding: 5px;
+    float: right;
+    display: flex;
+    &:hover {
+      background-color: #003245;
+    }
+    >img {
+      height: 100%;
+      width: auto;
+      background-color: inherit;
+    }
+  }
+}
+
 .mdl-layout__header {
   background-color: $primaryBlue;
   .mdl-layout__drawer-button {

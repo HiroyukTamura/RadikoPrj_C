@@ -1,9 +1,6 @@
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -21,6 +18,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -103,9 +102,6 @@ a, button {
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -123,6 +119,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -202,8 +200,27 @@ a, button {
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
 
+.title-bar {
+  width: 100%;
+  height: 24px;
+  padding: 0 4px;
+  background-color: #0085ba; }
+  .title-bar > div {
+    float: right;
+    height: 100%;
+    width: fit-content;
+    padding: 5px 4px; }
+    .title-bar > div:hover {
+      background-color: #003245; }
+    .title-bar > div > img {
+      height: 100%;
+      width: auto;
+      background-color: inherit; }
+
 .mdl-layout__header {
   background-color: #00a7e9; }
+  .mdl-layout__header .mdl-layout__drawer-button {
+    outline: 0; }
 
 .mdl-layout__drawer {
   background: #00a7e9;
@@ -226,6 +243,8 @@ a, button {
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
       background: white;
       color: #00a7e9; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+      cursor: default; }
 
 .alert-minimalist.red {
   background: #fdf2f2;
@@ -323,6 +342,11 @@ a, button {
         background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
       .mdl-layout__content #first-row .mdl-card .mdl-menu__item[disabled], .mdl-layout__content #first-row .mdl-card .mdl-menu__item[data-mdl-disabled] {
         cursor: default; }
+      .mdl-layout__content #first-row .mdl-card .mdl-button--fab {
+        background: #00a7e9;
+        color: white; }
+        .mdl-layout__content #first-row .mdl-card .mdl-button--fab:focus {
+          outline: none; }
       .mdl-layout__content #first-row .mdl-card > form {
         margin-right: 48px;
         width: 7em; }
