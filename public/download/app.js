@@ -147,7 +147,10 @@ $(function () {
             // if (remote.process.platform === 'win32' || remote.process.platform === 'darwin')
 
             tippy('#open-dir-btn');
-            ProcessCommunicatorFromDL.callOpenFile();
+            $('#open-dir-btn').on('click', ()=> {
+                ProcessCommunicatorFromDL.callOpenFile();
+                return false;
+            });
         }
 
         static createDlItem(timeStamp, title, date, stage, img){

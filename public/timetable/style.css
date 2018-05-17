@@ -1,9 +1,6 @@
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -105,9 +102,6 @@ a, button {
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -206,8 +200,30 @@ a, button {
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
 
+.title-bar {
+  display: none;
+  width: 100%;
+  height: 24px;
+  padding: 0 4px;
+  background-color: #0085ba; }
+  .title-bar > div {
+    float: right;
+    height: 100%;
+    width: fit-content;
+    padding: 5px;
+    float: right;
+    display: flex; }
+    .title-bar > div:hover {
+      background-color: #003245; }
+    .title-bar > div > img {
+      height: 100%;
+      width: auto;
+      background-color: inherit; }
+
 .mdl-layout__header {
   background-color: #00a7e9; }
+  .mdl-layout__header .mdl-layout__drawer-button {
+    outline: 0; }
 
 .mdl-layout__drawer {
   background: #00a7e9;
@@ -230,6 +246,8 @@ a, button {
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
       background: white;
       color: #00a7e9; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+      cursor: default; }
 
 button {
   outline: 0; }
@@ -314,8 +332,7 @@ button {
     display: none; }
 
 .mdl-layout__content {
-  overflow: auto;
-  position: relative; }
+  overflow: auto; }
   .mdl-layout__content::-webkit-scrollbar {
     width: 8px;
     height: 8px; }
@@ -325,12 +342,14 @@ button {
   .mdl-layout__content::-webkit-scrollbar-thumb {
     background-color: #00a7e9;
     border-radius: 8px; }
+  .mdl-layout__content.shown-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center; }
+    .mdl-layout__content.shown-spinner .mdl-spinner {
+      display: block; }
   .mdl-layout__content .mdl-spinner {
-    position: absolute;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%); }
+    display: none; }
   .mdl-layout__content #mix-table {
     display: none;
     width: fit-content; }

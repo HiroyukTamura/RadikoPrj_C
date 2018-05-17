@@ -75,10 +75,16 @@ button {
 .mdl-layout__content {
   @include scrollbarStyle(8px);
   overflow: auto;
-  position: relative;
+  &.shown-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .mdl-spinner {
+      display: block;
+    }
+  }
   .mdl-spinner {
-    position: absolute;
-    @include centerAbs;
+    display: none;
   }
   #mix-table {
     display: none;

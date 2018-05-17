@@ -1,9 +1,6 @@
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -21,6 +18,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -103,9 +102,6 @@ a, button {
 a, button {
   outline: 0; }
 
-.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
-  cursor: default; }
-
 .mdl-dialog {
   width: 780px;
   height: 80%;
@@ -123,6 +119,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -202,8 +200,30 @@ a, button {
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
 
+.title-bar {
+  display: none;
+  width: 100%;
+  height: 24px;
+  padding: 0 4px;
+  background-color: #0085ba; }
+  .title-bar > div {
+    float: right;
+    height: 100%;
+    width: fit-content;
+    padding: 5px;
+    float: right;
+    display: flex; }
+    .title-bar > div:hover {
+      background-color: #003245; }
+    .title-bar > div > img {
+      height: 100%;
+      width: auto;
+      background-color: inherit; }
+
 .mdl-layout__header {
   background-color: #00a7e9; }
+  .mdl-layout__header .mdl-layout__drawer-button {
+    outline: 0; }
 
 .mdl-layout__drawer {
   background: #00a7e9;
@@ -226,6 +246,8 @@ a, button {
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
       background: white;
       color: #00a7e9; }
+    .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+      cursor: default; }
 
 .mdl-layout__content {
   padding-top: 24px;
@@ -247,10 +269,17 @@ a, button {
       color: #e73c64; }
     .mdl-layout__content section .mdl-progress > .progressbar {
       background: #e73c64; }
-    .mdl-layout__content section .mdl-progress > .bufferbar {
-      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
     .mdl-layout__content section .mdl-progress:not(.mdl-progress--indeterminate):not(.mdl-progress--indeterminate) > .auxbar, .mdl-layout__content section .mdl-progress:not(.mdl-progress__indeterminate):not(.mdl-progress__indeterminate) > .auxbar {
       background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
+    .mdl-layout__content section .mdl-progress > .bufferbar {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
+    .mdl-layout__content section .mdl-menu__item[disabled], .mdl-layout__content section .mdl-menu__item[data-mdl-disabled] {
+      cursor: default; }
+    .mdl-layout__content section .mdl-button--fab {
+      background: #00a7e9;
+      color: white; }
+      .mdl-layout__content section .mdl-button--fab:focus {
+        outline: none; }
     .mdl-layout__content section:nth-child(2n) {
       background-color: #e2f4f9; }
     .mdl-layout__content section .mdl-card {
@@ -332,8 +361,4 @@ a, button {
           .mdl-layout__content #contact .mdl-card-w .mdl-card .card-in form .mdl-textfield .mdl-textfield__label:after {
             bottom: 12px; }
     .mdl-layout__content #contact .mdl-card-w .mdl-button {
-      margin: auto 56px auto 108px;
-      background: #00a7e9;
-      color: white; }
-      .mdl-layout__content #contact .mdl-card-w .mdl-button:focus {
-        outline: none; }
+      margin: auto 56px auto 108px; }

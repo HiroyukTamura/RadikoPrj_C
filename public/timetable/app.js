@@ -149,7 +149,8 @@ require('bootstrap-notify');
         }
 
         show(){
-            this.$spinner.removeClass('is-active');
+            this.$root.removeClass('shown-spinner');
+            // this.$spinner.removeClass('is-active');
             this.$timeTable.show();
             $('.mdl-layout__tab').show();
             $('.optional-btn').removeAttr('disabled');
@@ -158,7 +159,8 @@ require('bootstrap-notify');
         setOnLoadingMode(){
             $('.mdl-layout__tab').hide();
             this.$timeTable.hide();
-            this.$spinner.addClass('is-active');
+            this.$root.addClass('shown-spinner');
+            // this.$spinner.addClass('is-active');
             $('.optional-btn').prop('disabled', true);
         }
 
@@ -172,7 +174,8 @@ require('bootstrap-notify');
         removeAllDoms(){
             this.$timeTable.hide();
             this.$grid.empty();
-            this.$spinner.addClass('is-active');
+            this.$root.addClass('shown-spinner');
+            // this.$spinner.addClass('is-active');
             $('.mdl-layout__tab').remove();
             this.$stationMenu.empty()
         }
