@@ -24,7 +24,7 @@ $(function(){
                 console.log('なぜだ？');
                 new InfoClient(areaId).request().then(data => {
                     Conductor.onGetInfoData(data);
-                }).cache(e => {
+                }).catch(e => {
                     //todo エラー送信
                     console.log(e);
                     $('#notice-radiko .error-big').show();

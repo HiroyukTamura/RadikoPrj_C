@@ -95,6 +95,7 @@ const parseString = require('xml2js').parseString;
 const moment = require('moment');
 const events = require('events');
 const Store = require('electron-store');
+const electron = require('electron');
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -249,7 +250,7 @@ class PuppeteerOperator {
         if (this.browser)
             return;
         this.browser = await puppeteer.launch({
-            headless: false,
+            // headless: false,
             // userDataDir: 'UserData',
             executablePath: 'Application/chrome.exe',
             args: [
@@ -366,6 +367,17 @@ function createWindow () {
         win = null;
     });
 
+    win.webContents.on('will-navigate', function(e, url) {
+        if (url.includes('public/timetable/index.html') ||
+            url.includes('public/download/index.html') ||
+            url.includes('public/search/index.html') ||
+            url.includes('public/about/index.html')) {
+            return;
+        }
+        e.preventDefault();
+        electron.shell.openExternal(url);
+    });
+
     // operator.launchPuppeteer();//todo コメントアウト外すこと
 
     // new OpenVpn().init();
@@ -401,6 +413,10 @@ ipcMain.on('cancelDl', (event, timeStamp) => {
     } else {
         Sender.sendMiddleData('cancelError');
     }
+});
+
+ipcMain.on('openFileExplore', (event, arg) => {
+   new FileExplorerOpener().open();
 });
 
 app.on('ready', createWindow);
@@ -494,6 +510,24 @@ class MasterJson {
                     new PostGotJsons();
                 }
             }
+        });
+    }
+}
+
+class FileExplorerOpener {
+    open(){
+        const cd = exec('explorer');
+        cd.on('error', function (err) {
+            Sender.sendExplorerErr();
+        });
+        cd.on('close', function (err) {
+            console.warn('close', err);
+        });
+        cd.stdout.on('data', data =>{
+           console.log(data);
+        });
+        cd.stderr.on('data', data => {
+            console.log(data);
         });
     }
 }
@@ -736,6 +770,10 @@ class Sender {
 
     static sendDlStatus(){
         win.webContents.send('dlStatus_REPLY', JSON.stringify(dlTaskList));
+    }
+
+    static sendExplorerErr(){
+        win.webContents.send('ExplorerErr', JSON.stringify(dlTaskList));
     }
 }
 

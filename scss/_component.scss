@@ -2,6 +2,9 @@
 
 .mdl-layout__header {
   background-color: $primaryBlue;
+  .mdl-layout__drawer-button {
+    outline: 0;
+  }
 }
 
 .mdl-layout__drawer {
@@ -28,6 +31,9 @@
       &:hover {
         background: white;
         color: $primaryBlue;
+      }
+      &.current {
+        cursor: default;
       }
     }
   }

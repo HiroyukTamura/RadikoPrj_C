@@ -1,6 +1,7 @@
 const $ = require('jquery');
 // const {BrowserWindow} = require('electron').remote;
 const remote = require('electron').remote;
+const exec = remote.require('child_process').exec;
 require('bootstrap-notify');
 const tippy = require('tippy.js');
 const Store = require('electron-store');
@@ -27,6 +28,10 @@ $(function () {
             ipcRenderer.send('dlStatus');
         }
 
+        static callOpenFile(){
+            ipcRenderer.send('openFileExplore');
+        }
+
         setOnReceiveListeners(){
             ipcRenderer.on('dlStatus_REPLY', (event, arg) => {
                 ProcessCommunicatorFromDL.onGetDlStatusReply(arg);
@@ -47,6 +52,8 @@ $(function () {
             }).on('cancelError', (event, data) => {
                 const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
                 DlNotification.showFailedNtf('処理に失敗しました', msg);
+            }).on('ExplorerErr', (event, data) => {
+                DlNotification.showCancelNtf('処理に失敗しました');
             });
             //     .on('ffmpegPrg', (event, data) => {
             //     this.onGetFfmpegProgress(data);
@@ -130,11 +137,17 @@ $(function () {
                 });
                 return false;
             });
+
             $('#path-input').focus(function () {
                 console.log('focus');
                 $(this).blur();
                 return false;
             }).val(new Store().get('output_path'));
+            
+            // if (remote.process.platform === 'win32' || remote.process.platform === 'darwin')
+
+            tippy('#open-dir-btn');
+            ProcessCommunicatorFromDL.callOpenFile();
         }
 
         static createDlItem(timeStamp, title, date, stage, img){

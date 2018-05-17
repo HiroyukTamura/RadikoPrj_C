@@ -21,6 +21,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -123,6 +125,8 @@ a, button {
     .mdl-dialog > div::-webkit-scrollbar-thumb {
       background-color: #00a7e9;
       border-radius: 5px; }
+    .mdl-dialog > div::-webkit-scrollbar-corner {
+      background-color: #e2f4f9; }
     .mdl-dialog > div .header {
       display: flex;
       margin-left: 16px; }
@@ -226,6 +230,9 @@ a, button {
     .mdl-layout__drawer .mdl-navigation .mdl-navigation__link:hover {
       background: white;
       color: #00a7e9; }
+
+button {
+  outline: 0; }
 
 .mdl-layout__header .mdl-layout__header-row #btn-date, .mdl-layout__header .mdl-layout__header-row #radio-menu {
   margin-left: 8px; }

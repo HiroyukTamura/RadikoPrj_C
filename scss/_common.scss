@@ -148,12 +148,13 @@ a, button{
   .mdl-menu__item[disabled], .mdl-menu__item[data-mdl-disabled] {
     cursor: default;
   }
-}
 
-.mdl-layout__drawer {
-  .mdl-navigation {
-    .mdl-navigation__link.current {
-      cursor: default;
+  //FAB
+  .mdl-button--fab {
+    background: $primaryBlue;
+    color: white;
+    &:focus {
+      outline: none;
     }
   }
 }

@@ -100,37 +100,48 @@ $vertPad:48px;
     }
   }
   #file-location {
-    .mdl-card {
-      flex-direction: row;
-      align-items: center;
-      padding: 8px 36px;
-      h1 {
-        width: fit-content;
-        margin: 0 72px 0 32px;
-      }
-      form {
+    .card-w {
+      display: flex;
+      justify-content: center;
+      max-width: 1000px;
+      margin: 0 auto;
+      .mdl-card {
         flex-grow: 100;
-        margin-right: 36px;
-        position: relative;
-        .mdl-textfield {
-          width: 100%;
-          @include textField;
-          .mdl-textfield__input {
-            cursor: default;
+        flex-direction: row;
+        align-items: center;
+        padding: 8px 36px;
+        margin-right: 72px;
+        h1 {
+          width: fit-content;
+          margin: 0 72px 0 32px;
+        }
+        form {
+          flex-grow: 100;
+          margin-right: 36px;
+          position: relative;
+          .mdl-textfield {
+            width: 100%;
+            @include textField;
+            .mdl-textfield__input {
+              cursor: default;
+            }
+          }
+          .mdl-button {
+            right: 0;
+            top: 50%;
+            height: 28px;
+            width: 28px;
+            min-width: 28px;
+            position: absolute;
+            transform: translateY(-50%);
+            &:focus {
+              outline: 0;
+            }
           }
         }
-        .mdl-button {
-          right: 0;
-          top: 50%;
-          height: 28px;
-          width: 28px;
-          min-width: 28px;
-          position: absolute;
-          transform: translateY(-50%);
-          &:focus {
-            outline: 0;
-          }
-        }
+      }
+      .mdl-button {
+
       }
     }
   }
