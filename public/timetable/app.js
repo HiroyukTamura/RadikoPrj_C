@@ -119,6 +119,7 @@ require('bootstrap-notify');
             if (this.currentM.hour() < 5) {
                 this.currentM.add(-1, 'd');/*!!!!!!!実際の日時と違うことに注意して!!!!!!!!!*/
             }
+            console.log(this.currentM);
             this.$dialog = $('.mdl-dialog');
             Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
         }
@@ -386,7 +387,7 @@ require('bootstrap-notify');
         }
 
         init(){
-            this.setColumnLen(7);
+            this.setColumnLen(8);
             DomFrame.setToolbarTitle(this.stationName, this.stationId);
             this.setGridCss();
             this.setGridCells();
@@ -397,13 +398,15 @@ require('bootstrap-notify');
         //これ本来はDomFrameに移譲するべきでは？
         inputTabs(){
             const opeM = this.currentM.clone();
+            console.log('inputTabs', opeM.format('YYYYMMDD'));
             const tabBar = $('.mdl-layout__tab-bar');
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
+                console.log(opeM.format('YYYYMMDD'));
                 const md = Util.getMDWithWeekDay(opeM);
                 const $item = $('<a href="javascript: void(0)" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>');
                 if (opeM.day() === 0)
                     $item.addClass('holiday');
-                tabBar.append($item);
+                tabBar.prepend($item);
                 opeM.add(-1, 'd');
             }
             tabBar.find('.mdl-layout__tab').on('click', (e)=>{
@@ -416,10 +419,10 @@ require('bootstrap-notify');
         inputCards(){
             const opeM = this.currentM.clone();
             opeM.add(-7, 'd');
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
                 const $prg = this.$prgs.find('date:contains('+ opeM.format('YYYYMMDD') +')')
                     .parent().find('prog');
-                this.inputEachCard($prg, 7-1-i, this.stationId);
+                this.inputEachCard($prg, i, this.stationId);
                 opeM.add(1, 'd');
             }
         }
@@ -452,8 +455,8 @@ require('bootstrap-notify');
                 const stationId = $(ele).attr('id');
                 const name = $(ele).find('name').html();
                 const progs = $(ele).find('progs');
-                const ymd = progs.find('date').html();
-                domFrame.currentM = moment(ymd, 'YYYYMMDD');
+                // const ymd = progs.find('date').html();
+                // domFrame.currentM = moment(ymd, 'YYYYMMDD');
                 // const canRec = $(ele).find('failed_record').html();
 
                 //Tabbarの画像をセット

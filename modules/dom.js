@@ -5,11 +5,13 @@ class DomUtil {
         this.columnLen = 0;
         this.$grid = $('#grid');
         this.currentM = moment($(this.data).find('srvtime'));
+        if (this.currentM.hour() < 5)
+            this.currentM.add(-1, 'd');
     }
 
     setGridCss() {
         let cells = '';
-        for (let i = 0; i < 6; i++)
+        for (let i = 0; i < this.columnLen; i++)
             cells += '.. ';
         const rowArea = "'"+ cells +"'";
         let str = '';
