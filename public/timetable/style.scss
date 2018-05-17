@@ -1,6 +1,10 @@
 @import "../../scss/common";
 @import "../../scss/component";
 
+button {
+  outline: 0;
+}
+
 .mdl-layout__header{
   .mdl-layout__header-row {
     #btn-date, #radio-menu {

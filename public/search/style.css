@@ -321,6 +321,8 @@ a, button {
         background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
       .mdl-layout__content #first-row .mdl-card .mdl-progress > .bufferbar {
         background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
+      .mdl-layout__content #first-row .mdl-card .mdl-menu__item[disabled], .mdl-layout__content #first-row .mdl-card .mdl-menu__item[data-mdl-disabled] {
+        cursor: default; }
       .mdl-layout__content #first-row .mdl-card > form {
         margin-right: 48px;
         width: 7em; }

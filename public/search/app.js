@@ -13,8 +13,8 @@ const notify = require('bootstrap-notify');
     let requestOperator;
     let suggester;
     let ipcComm;
-    localStorage.setItem('ereaId', 'JP13');//todo これ後で消すこと
-    window.onload = function () {
+
+    $(window).on('load', ()=> {
         ipcComm = new ProcessCommunicator();
         $('form').on('submit', function () {
             return false;
@@ -26,7 +26,7 @@ const notify = require('bootstrap-notify');
         searchDom.initializeSearchBar();
         conductor.setOnClickForWindow();
         Conductor.checkUrlParam();
-    };
+    });
 
     class Conductor {
         constructor(){

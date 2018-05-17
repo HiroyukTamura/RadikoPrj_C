@@ -1,5 +1,8 @@
-a:focus, button:focus {
-  outline: none; }
+a, button {
+  outline: 0; }
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+  cursor: default; }
 
 .mdl-dialog {
   width: 780px;
@@ -97,8 +100,11 @@ a:focus, button:focus {
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
 
-a:focus, button:focus {
-  outline: none; }
+a, button {
+  outline: 0; }
+
+.mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
+  cursor: default; }
 
 .mdl-dialog {
   width: 780px;

@@ -144,6 +144,10 @@ a, button{
   .mdl-progress>.bufferbar {
     background-image: $progressGrad
   }
+
+  .mdl-menu__item[disabled], .mdl-menu__item[data-mdl-disabled] {
+    cursor: default;
+  }
 }
 
 .mdl-layout__drawer {
@@ -261,6 +265,10 @@ a, button{
     &::-webkit-scrollbar-thumb {
       background-color: $primaryBlue;
       border-radius: 5px;
+    }
+
+    &::-webkit-scrollbar-corner {
+      background-color: $secondaryBlue;
     }
 
     padding: 36px;

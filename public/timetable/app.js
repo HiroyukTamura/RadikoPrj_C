@@ -1,12 +1,10 @@
 'use strict';
+require('bootstrap');
+const dialogPolyfill = require('dialog-polyfill');
+require('bootstrap-notify');
 
 !function(){
     window.jQuery = window.$= require("jquery");
-    require('bootstrap');
-    const ipcRenderer = require('electron').ipcRenderer;
-    const dialogPolyfill = require('dialog-polyfill');
-    const circleProgress = require('jquery-circle-progress');
-    const notify = require('bootstrap-notify');
     const moment = require('moment');/*グローバルに定義してはいけない??*/
     let ereaChecker;
     let domFrame;
@@ -14,7 +12,7 @@
     let searcher;
     let ipcConn;
 
-    window.onload = function() {
+    $(window).on('load', ()=> {
         console.log('onload');
         ipcConn = new ProcessCommunicator();
         ereaChecker = new EreaChecker();
@@ -23,7 +21,8 @@
         searcher = new ProgramSearcherCustom();
 
         conductor.initialOperate();
-        window.onclick = function (e) {
+
+        $(window).on('click', (e)=> {
             console.log('Im clicked' , e.clientX, e.clientY);
             // searcher.onClickWindow(event);
             if (domFrame.$dialog.prop('open')) {
@@ -39,13 +38,13 @@
                     e.stopPropagation();
                 }
             }
-        };
-    };
+        });
+    });
 
     class OperationConductor{
         initialOperate(){
             domFrame.init();
-            ereaChecker.check().then((ereaId => {//todo ereaId保存しておいて、ProgramListGetterエラー時にエリアチェッカーからやり直すべきでは？
+            ereaChecker.check().then((ereaId => {
                 return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
@@ -64,10 +63,10 @@
 
         changeDate(){
             domFrame.removeAllDoms();
-            domFrame.updateDateMenu();
+            domFrame.updateDateMenu(true);
             ereaChecker.check().then((ereaId => {
                 localStorage.setItem('ereaId', ereaId);
-                return new ProgramListGetter(domFrame.currentM).request();
+                return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
             })).then((data) => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
@@ -88,7 +87,11 @@
                 .then((data)=>{
                     new StationTableDom(data).init();
                     domFrame.setOnCardClickListener();
+                    domFrame.updateDateMenu(false);
                     domFrame.show();
+                    domFrame.scrolltMostRihgt();
+                    const $cont = $('.mdl-layout__content');
+                    $cont.scrollLeft($cont.width());
                 }).catch((e)=>{
                     console.log(e);
                     //todo エラー処理
@@ -125,6 +128,7 @@
             $(window).resize(function() {
                 self.centerHeadAndFoot(this.$root);
             });
+            this.centerHeadAndFoot();
         }
 
         centerHeadAndFoot() {
@@ -138,6 +142,10 @@
 
         scrollTopOffset(){
             this.$root.scrollTop(72);
+        }
+
+        scrolltMostRihgt(){
+            this.$root.scrollLeft(this.$root.width());
         }
 
         show(){
@@ -270,12 +278,14 @@
             }
         }
 
-        updateDateMenu(){
+        updateDateMenu(setFooterAndHeader){
             console.log(domFrame.currentM.format('YYYYMMDD'));
             this.$calendarMenu.find('.mdl-menu__item.current').removeAttr("disabled").removeClass('current');
             const currentLi = this.$calendarMenu.find('.mdl-menu__item[date="'+ domFrame.currentM.format('YYYYMMDD') +'"]')
                 .addClass('current')
                 .attr('disabled', true);
+            if (!setFooterAndHeader)
+                return;
             const index = currentLi.index();
             if (index === 0)
                 this.$header.hide();
@@ -384,12 +394,17 @@
             const tabBar = $('.mdl-layout__tab-bar');
             for (let i = 0; i < 7; i++) {
                 const md = Util.getMDWithWeekDay(opeM);
-                const $item = $('<a href="#" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>');
+                const $item = $('<a href="javascript: void(0)" class="mdl-layout__tab mdl-pre-upgrade" data-ymd="'+ opeM.format('YYYYMMDD') +'">'+ md +'</a>');
                 if (opeM.day() === 0)
                     $item.addClass('holiday');
                 tabBar.append($item);
                 opeM.add(-1, 'd');
             }
+            tabBar.find('.mdl-layout__tab').on('click', (e)=>{
+                self.currentM = moment($(e).attr('data-ymd'), 'YYYYMMDD');
+                conductor.changeDate();
+                return false;//target == a href
+            });
         }
 
         inputCards(){
@@ -398,7 +413,7 @@
             for (let i = 0; i < 7; i++) {
                 const $prg = this.$prgs.find('date:contains('+ opeM.format('YYYYMMDD') +')')
                     .parent().find('prog');
-                this.inputEachCard($prg, i, this.stationId);
+                this.inputEachCard($prg, 7-1-i, this.stationId);
                 opeM.add(1, 'd');
             }
         }
@@ -438,7 +453,7 @@
                 //Tabbarの画像をセット
                 const logoUrl = 'http://radiko.jp/station/logo/'+ stationId +'/logo_medium.png';
                 const html = $(
-                    '<a href="#" class="mdl-layout__tab mdl-pre-upgrade" id="'+ stationId +'" data-name="'+ name +'">\n' +
+                    '<a href="javascript: void(0)" class="mdl-layout__tab mdl-pre-upgrade" id="'+ stationId +'" data-name="'+ name +'">\n' +
                         '<img src="'+ logoUrl +'" alt="'+ name +'">\n' +
                     '</a>');
                 tabBar.append(html);
