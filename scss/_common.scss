@@ -106,33 +106,41 @@ $columnWidth: 258px;
   }
 }
 
-a:focus, button:focus{
+a, button{
   outline: 0;
 }
 
-////////////////MDL上書き////////////////
-//textfield
-.mdl-textfield__label:after {
-  background-color: $primaryBlue;
+//MDL上書き
+@mixin updateMdl{
+  //textfield
+  .mdl-textfield__label:after {
+    background-color: $primaryBlue;
+  }
+  .mdl-textfield.is-invalid .mdl-textfield__label:after {
+    background-color: $primaryRed;
+  }
+  .mdl-textfield--floating-label .mdl-textfield__label {
+    color: $primaryBlue;
+  }
+  .mdl-textfield--floating-label.is-invalid .mdl-textfield__label{
+    color: $primaryRed;
+  }
+  .mdl-textfield__error {
+    color: $primaryRed;
+  }
+
+  //progressbar
+  .mdl-progress>.progressbar {
+    background: $primaryRed;
+  }
+  $progressGrad: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,$primaryRed ,$primaryRed);
+  .mdl-progress>.bufferbar {
+    background-image: $progressGrad
+  }
+  .mdl-progress:not(.mdl-progress--indeterminate):not(.mdl-progress--indeterminate) >.auxbar, .mdl-progress:not(.mdl-progress__indeterminate):not(.mdl-progress__indeterminate) >.auxbar {
+    background-image:$progressGrad
+  }
 }
-.mdl-textfield--floating-label.is-focused .mdl-textfield__label {
-  color: $primaryBlue;
-}
-.mdl-textfield__error {
-  color: $primaryRed;
-}
-.mdl-progress>.progressbar {
-  background: $primaryRed;
-}
-//progressbar
-$progressGrad: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,$primaryRed ,$primaryRed);
-.mdl-progress>.bufferbar {
-  background-image: $progressGrad
-}
-.mdl-progress:not(.mdl-progress--indeterminate):not(.mdl-progress--indeterminate) >.auxbar, .mdl-progress:not(.mdl-progress__indeterminate):not(.mdl-progress__indeterminate) >.auxbar {
-  background-image:$progressGrad
-}
-/////////////MDL上書きここまで///////////
 
 .mdl-layout__drawer {
   .mdl-navigation {

@@ -99,7 +99,7 @@ let masterJson;
 let vpnJson;
 let postGotJsons;
 
-const HTML_PATH = 'public/download/index.html';
+const HTML_PATH = 'public/search/index.html';
 
 // console.log = function (...val) {
 //     const vals = val.join(' ') + '\n';

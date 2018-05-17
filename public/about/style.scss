@@ -3,6 +3,7 @@
 
 .mdl-layout__content {
   section {
+    @include updateMdl;
     width: 100%;
     padding: 40px 72px;
     margin: 0 auto;

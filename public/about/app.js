@@ -86,7 +86,7 @@ $(function(){
     class InfoClient{
         constructor(areaId){
             console.log(areaId);
-            this.URL ='http://radiko.jp/v2/information2/'+ areaId + 'eee.xml';//todo 元に戻すこと
+            this.URL ='http://radiko.jp/v2/information2/'+ areaId + '.xml';
         }
 
         request(){

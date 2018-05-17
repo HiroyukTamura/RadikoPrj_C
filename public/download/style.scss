@@ -6,6 +6,7 @@ $vertPad:48px;
 .mdl-layout__content {
   padding-top: 24px;
   section {
+    @include updateMdl;
     width: 100%;
     padding: $vertPad 72px;
     .mdl-card {

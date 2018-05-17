@@ -15,6 +15,7 @@
   #first-row {
     @include center72;
     .mdl-card {
+      @include updateMdl;
       $horizontalSmlMargin:24px;
       width: 80%;
       max-width: 1000px;
@@ -47,6 +48,9 @@
             position: relative;
             .mdl-textfield__input {
               cursor: pointer;
+            }
+            .mdl-textfield__label:after {
+              background-color: transparent;
             }
             .mdl-button {
               $size:28px;

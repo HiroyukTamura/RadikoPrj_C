@@ -1,5 +1,5 @@
-a:focus, button:focus {
-  outline: none; }
+a, button {
+  outline: 0; }
 
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
   cursor: default; }
@@ -100,8 +100,8 @@ a:focus, button:focus {
   .mdl-dialog .ui-helper-hidden-accessible {
     display: none; }
 
-a:focus, button:focus {
-  outline: none; }
+a, button {
+  outline: 0; }
 
 .mdl-layout__drawer .mdl-navigation .mdl-navigation__link.current {
   cursor: default; }
@@ -235,6 +235,22 @@ a:focus, button:focus {
     width: 100%;
     padding: 40px 72px;
     margin: 0 auto; }
+    .mdl-layout__content section .mdl-textfield__label:after {
+      background-color: #00a7e9; }
+    .mdl-layout__content section .mdl-textfield.is-invalid .mdl-textfield__label:after {
+      background-color: #e73c64; }
+    .mdl-layout__content section .mdl-textfield--floating-label .mdl-textfield__label {
+      color: #00a7e9; }
+    .mdl-layout__content section .mdl-textfield--floating-label.is-invalid .mdl-textfield__label {
+      color: #e73c64; }
+    .mdl-layout__content section .mdl-textfield__error {
+      color: #e73c64; }
+    .mdl-layout__content section .mdl-progress > .progressbar {
+      background: #e73c64; }
+    .mdl-layout__content section .mdl-progress > .bufferbar {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
+    .mdl-layout__content section .mdl-progress:not(.mdl-progress--indeterminate):not(.mdl-progress--indeterminate) > .auxbar, .mdl-layout__content section .mdl-progress:not(.mdl-progress__indeterminate):not(.mdl-progress__indeterminate) > .auxbar {
+      background-image: linear-gradient(to right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)), linear-gradient(to right, #e73c64, #e73c64); }
     .mdl-layout__content section:nth-child(2n) {
       background-color: #e2f4f9; }
     .mdl-layout__content section .mdl-card {
