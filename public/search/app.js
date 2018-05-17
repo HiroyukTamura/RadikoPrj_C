@@ -43,6 +43,7 @@ const notify = require('bootstrap-notify');
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
                 const title = self.$dialog.attr('data-title');
+                const to = self.$dialog.attr('to');
                 ProcessCommunicator.callDL(ft, to, stationId, title);
             });
         }
@@ -90,7 +91,7 @@ const notify = require('bootstrap-notify');
         }
 
         initializeSearchBar(){
-            this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
+            // this.initDateMenu('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn');
             startDropDown = new StartDropDown('#dp-ul .mdl-menu__item', '#date-form .mdl-menu__container', '#date-input', '#dp-btn', this.momentOpe)
                 .init()
                 .setOnDateSelected();
@@ -136,8 +137,8 @@ const notify = require('bootstrap-notify');
             const $dateInput =$(inputSel);
             const $dpBtn = $(btnSel);
 
-            this.momentOpe.add(-6, 'd');
-            for (let i = 0; i < 7; i++) {
+            this.momentOpe.add(-8, 'd');
+            for (let i = 0; i < 8; i++) {
                 const val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
                 if (i === 0)
                     $dateInput.val(val);
@@ -206,9 +207,9 @@ const notify = require('bootstrap-notify');
         }
         init(){
             const self = this;
-            this.momentOpe.add(-6, 'd');
+            this.momentOpe.add(-7, 'd');
             const index = this.$menuContainer.find('.is-selected').index();
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
                 const val = this.momentOpe.format('M/D') +'('+ Util.getWeekDays()[this.momentOpe.day()] +')';
                 if (i === index)
                     this.$dateInput.val(val);

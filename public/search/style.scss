@@ -1,5 +1,6 @@
 @import "../../scss/common";
 @import "../../scss/component";
+@include ntf;
 
 @mixin center72 {
   display: flex;

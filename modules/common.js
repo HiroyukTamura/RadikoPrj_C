@@ -128,22 +128,30 @@ class DlNotification {
             message: this.msg,
             progress: 0,
         },{
-            type: 'success',
+            type: 'progress-ntf',
             placement: {
                 from: "bottom",
                 align: "right"
             },
+            // icon_type: 'img',
             showProgressbar: true,
-            delay: 0
+            delay: 0,
+            template:
+            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} progress-ntf" role="alert">' +
+                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+                '<div>' +
+                    // '<img data-notify="icon" class="pull-right">' +
+                    '<div>'+
+                        '<span data-notify="title">{1}</span>' +
+                        '<span data-notify="message">{2}</span>' +
+                    '</div>'+
+                    '<div class="progress" data-notify="progressbar">' +
+                        '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+                    '</div>' +
+                '</div>'+
+            '</div>'
         });
     }
-
-    // updateAs2nd(){
-    //     this.ntf.update({
-    //         title: 'データを確認しています...',
-    //         progress: 20
-    //     })
-    // }
 
     updateAs3rd(){
         this.ntf.update({
@@ -174,9 +182,10 @@ class DlNotification {
         this.ntf.update({
             title: msg,
             progress: 0,
-            type: 'danger',
-            delay: 5000/*5000がデフォルト値*/,
-            allow_dismiss: false
+            type: 'progress-fail'
+            // type: 'danger',
+            // delay: 5000/*5000がデフォルト値*/,
+            // allow_dismiss: false
         });
     }
 

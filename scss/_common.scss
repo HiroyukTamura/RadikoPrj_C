@@ -6,7 +6,12 @@ $secondaryBlue:#e2f4f9;
 $primaryRed:#e73c64;
 $tintRed:#e94f73;
 $secondaryRed:#fdf2f2;
+
+$progressGrad: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,$primaryRed ,$primaryRed);
+$progressGradBlue: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,$primaryBlue ,$primaryBlue);
+
 $backGray:#f2f2f2;
+
 $columnWidth: 258px;
 
 @mixin buttonInterval {
@@ -133,12 +138,11 @@ a, button{
   .mdl-progress>.progressbar {
     background: $primaryRed;
   }
-  $progressGrad: linear-gradient(to right,rgba(255,255,255,.7),rgba(255,255,255,.7)),linear-gradient(to right,$primaryRed ,$primaryRed);
-  .mdl-progress>.bufferbar {
-    background-image: $progressGrad
-  }
   .mdl-progress:not(.mdl-progress--indeterminate):not(.mdl-progress--indeterminate) >.auxbar, .mdl-progress:not(.mdl-progress__indeterminate):not(.mdl-progress__indeterminate) >.auxbar {
     background-image:$progressGrad
+  }
+  .mdl-progress>.bufferbar {
+    background-image: $progressGrad
   }
 }
 
@@ -146,6 +150,96 @@ a, button{
   .mdl-navigation {
     .mdl-navigation__link.current {
       cursor: default;
+    }
+  }
+}
+
+//----------bootstrap-notify-------------//
+@mixin themeRed {
+  background: $secondaryRed;
+  color: $tintRed;
+}
+@mixin themeBlue {
+  background: $secondaryBlue;
+  color: $primaryBlue;
+}
+
+@mixin ntf {
+  .alert-minimalist {
+    &.red {
+      @include themeRed;
+    }
+
+    &.blue {
+      @include themeBlue;
+    }
+  }
+  .progress-ntf {
+    @include themeBlue
+  }
+  .alert-progress-fail {
+    @include themeRed;
+  }
+  .progress-ntf, .alert-progress-fail {
+    img[data-notify="icon"] {
+      height: 42px;
+      width: auto;
+      float: right;
+      margin: 0 22px 0 12px;//なぜならntfのpadding:10px
+    }
+    .progress {
+      margin-top: 10px;
+      height: 10px;
+      width: calc(100% - 22px);
+      background-image: $progressGradBlue;
+      .progress-bar {
+        background-color: $primaryBlue;
+      }
+    }
+  }
+  .alert-minimalist {
+    img[data-notify="icon"] {
+      height: 36px;
+      width: auto;
+      margin: 5.5px 12px;
+      float: right;
+    }
+  }
+  .alert-minimalist, .progress-ntf, .alert-progress-fail{
+    border-color: rgba(149, 149, 149, 0.3);
+    border-radius: 3px;
+    color: rgb(149, 149, 149);
+    padding: 10px;
+
+    button:focus {
+      outline: 0;
+    }
+
+    >div:not(.progress) {
+      width: 100%;
+      height: 100%;
+
+      >div {
+        float: left;
+        >span[data-notify="title"] {
+          color: rgb(51, 51, 51);
+          display: block;
+          font-weight: bold;
+        }
+        >span[data-notify="message"] {
+          font-size: 80%;
+        }
+      }
+    }
+
+    &.one-row {
+      >div {
+        position: relative;
+        >div {
+          top: 14px;
+          position: absolute;
+        }
+      }
     }
   }
 }
