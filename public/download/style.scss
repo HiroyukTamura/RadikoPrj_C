@@ -104,7 +104,7 @@ $vertPad:48px;
       padding: 8px 36px;
       h1 {
         width: fit-content;
-        margin: 0 72px 0 0;
+        margin: 0 72px 0 32px;
       }
       form {
         flex-grow: 100;
@@ -181,7 +181,7 @@ $vertPad:48px;
     >div {
       position: relative;
       >div {
-        top: 24px;
+        top: 14px;
         position: absolute;
       }
     }

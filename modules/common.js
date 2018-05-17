@@ -257,8 +257,8 @@ class DlNotification {
         },{
             type: 'minimalist',
             icon_type: 'image',
-            delay: 0,
-            allow_dismiss: true,
+            delay: 5000,
+            allow_dismiss: false,
             placement: {
                 from: "bottom",
                 align: "right"

@@ -112,7 +112,8 @@ const HTML_PATH = 'public/download/index.html';
 !function () {
     const store = new Store();
     if(!store.get('output_path')) {
-        store.set('output_path', app.getPath('downloads'))
+        const path = app.getPath('downloads') || './output';
+        store.set('output_path', path);
     }
 }();
 

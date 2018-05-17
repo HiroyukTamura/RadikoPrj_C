@@ -122,8 +122,11 @@ $(function () {
                 };
 
                 remote.dialog.showOpenDialog(focusedWindow, option, filename => {
-                    new Store().set('output_path', filename);
-                    DlNotification.showCancelNtf('保存先を更新しました');
+                    if (filename) {
+                        new Store().set('output_path', filename);
+                        DlNotification.showCancelNtf('保存先を更新しました');
+                        console.log(new Store().get('output_path'));
+                    }
                 });
                 return false;
             });
@@ -173,10 +176,9 @@ $(function () {
                     li.remove();
                 });
             });
-            const newLi = this.$taskList.find('li');
-            if (newLi.length) {
+            const newLi = this.$taskList.find('li:not(#non-list)');
+            if (newLi.length)
                 newLi.find('.mdl-progress')[0].MaterialProgress.setBuffer(100);
-            }
         }
 
         updateStage(command, timeStamp){
