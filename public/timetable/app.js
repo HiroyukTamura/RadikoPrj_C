@@ -116,6 +116,9 @@ require('bootstrap-notify');
             this.$stationMenu =$('#station-menu');
             this.$grid =$('#grid');
             this.currentM = moment();
+            if (this.currentM.hour() < 5) {
+                this.currentM.add(-1, 'd');/*!!!!!!!実際の日時と違うことに注意して!!!!!!!!!*/
+            }
             this.$dialog = $('.mdl-dialog');
             Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
         }
@@ -270,7 +273,7 @@ require('bootstrap-notify');
         initDateMenu(){
             const momentOpe = domFrame.currentM.clone();
 
-            for (let i = 0; i < 7; i++) {
+            for (let i = 0; i < 8; i++) {
                 let val = Util.getMDWithWeekDay(momentOpe);
                 const menuLi = $('<li class="mdl-menu__item mdl-pre-upgrade" date="'+ momentOpe.format('YYYYMMDD') +'">'+ val +'</li>');
                 if (i === 0)

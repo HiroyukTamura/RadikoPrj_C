@@ -180,13 +180,13 @@ a, button{
       @include themeBlue;
     }
   }
-  .progress-ntf {
+  .alert-progress-ntf {
     @include themeBlue
   }
   .alert-progress-fail {
     @include themeRed;
   }
-  .progress-ntf, .alert-progress-fail {
+  .alert-progress-ntf, .alert-progress-fail {
     img[data-notify="icon"] {
       height: 42px;
       width: auto;

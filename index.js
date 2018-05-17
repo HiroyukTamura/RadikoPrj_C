@@ -83,7 +83,7 @@ const ffmpeg_static = require('ffmpeg-static');
 const http = require('http');
 const httpProxy = require('http-proxy');
 const request = require('request');
-const {app, BrowserWindow, ipcMain, Menu} = require('electron');
+const {app, BrowserWindow, ipcMain, Menu, autoUpdater} = require('electron');
 const url = require('url');
 const rp = require('request-promise');
 const csv = require('csvtojson');
@@ -100,7 +100,7 @@ let masterJson;
 let vpnJson;
 let postGotJsons;
 
-const HTML_PATH = 'public/search/index.html';
+const HTML_PATH = 'public/timetable/index.html';
 
 // console.log = function (...val) {
 //     const vals = val.join(' ') + '\n';
@@ -116,6 +116,8 @@ const HTML_PATH = 'public/search/index.html';
         const path = app.getPath('downloads') || './output';
         store.set('output_path', path);
     }
+
+    // autoUpdater.setFeedURL(options);
 }();
 
 class DlTaskList {
@@ -733,7 +735,7 @@ function runFfmpeg(pathE) {
 function getOutputPath() {
     const task = dlTaskList.getWorkingTask();
     const ymd = moment(task.ft, 'YYYYMMDDhhmmss').format('YYYY-MM-DD');
-    return 'output/' + task.stationId +'/'+ task.title +'('+ ymd +').mp4';
+    return new Store().get('output_path') +'/' + task.stationId +'/'+ task.title +'('+ ymd +').mp4';
 }
 
 /**
