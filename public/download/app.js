@@ -5,6 +5,8 @@ const exec = remote.require('child_process').exec;
 require('bootstrap-notify');
 const tippy = require('tippy.js');
 const Store = require('electron-store');
+const FirebaseClient = require('../../modules/FirebaseClient');
+const IpcClient = require('../../modules/IpcClient');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 
@@ -290,5 +292,6 @@ $(function () {
 
     const presenter = new Presenter();
     const ipcComm = new ProcessCommunicatorFromDL();
+    new IpcClient();
     Conductor.init();
 });

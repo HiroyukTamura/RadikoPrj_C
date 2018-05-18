@@ -241,7 +241,7 @@ class PuppeteerOperator {
                         runFfmpeg(pathE);
                 }).catch(err => {
                     // sendError('writeFile', err);
-                    Sender.sendFatalError('FATAL_ERROR', err, 'writeFile', this.constructor.name);
+                    Sender.sendErrorLog('FATAL_ERROR', err, 'writeFile', this.constructor.name);
                     throw err;
                 });
             });
@@ -312,7 +312,7 @@ function createWindow () {
     });
 
     new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
-        Sender.sendFatalError('unhandledRejection', 'テストエラーでごんす');
+        Sender.sendErrorLog('unhandledRejection', 'テストエラーでごんす');
     });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
@@ -392,7 +392,7 @@ emitter.on('setTask', async() => {
         console.log(e);
         emitter.emit('onErrorHandler', err, 'launchPuppeteer');
         isFailed = true;
-        Sender.sendFatalError('FATAL_ERROR');
+        Sender.sendErrorLog('FATAL_ERROR');
         // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
@@ -401,7 +401,7 @@ emitter.on('setTask', async() => {
         console.log('startDlChain error');
         Sender.sendMiddleData('startDlChainError');
         emitter.emit('onErrorHandler', e);
-        Sender.sendFatalError('FATAL_ERROR', e, 'startDlChain');
+        Sender.sendErrorLog('FATAL_ERROR', e, 'startDlChain');
         // sendError('operator.startDlChain()', e);
     });
 });
@@ -421,12 +421,12 @@ emitter.on('closeBrowser', async ()=>{
 
 process.on('uncaughtException', e => {
     // Sender.sendMiddleData('uncaughtException');
-    Sender.sendFatalError('uncaughtException', e);
+    Sender.sendErrorLog('uncaughtException', e);
     // sendError('uncaughtException', e);
 });
 
 process.on('unhandledRejection', e => {
-    Sender.sendFatalError('unhandledRejection', e);
+    Sender.sendErrorLog('unhandledRejection', e);
     // sendError('unhandledRejection', e);
 });
 
@@ -722,7 +722,7 @@ class Sender {
     /**
      * @param command => 'unhandledRejection' or 'uncaughtException' or 'FATAL_ERROR'
      */
-    static sendFatalError(command, exception, funcName, className){
+    static sendErrorLog(command, exception, funcName, className){
         const data = {
             exception: exception,
             funcName: funcName,
@@ -751,7 +751,7 @@ async function connectEndToNext() {
             console.log('connectEndToNext()内 startDlChain エラー!');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
-            Sender.sendFatalError('FATAL_ERROR', e, connectEndToNext.name);
+            Sender.sendErrorLog('FATAL_ERROR', e, connectEndToNext.name);
             // sendError('connectEndToNext()', e);
         });
     } else {
