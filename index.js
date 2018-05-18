@@ -225,9 +225,9 @@ function createWindow () {
         win.show();
     });
 
-    new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
-        Sender.sendErrorLog('unhandledRejection', 'テストエラーでごんす');
-    });
+    // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
+    //     Sender.sendErrorLog('unhandledRejection', 'テストエラーでごんす');
+    // });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
 

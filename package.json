@@ -1,17 +1,20 @@
 {
-  "name": "radikoprj_c",
+  "name": "radicut",
   "version": "1.0.0",
-  "description": "project for radiko.jp as useful",
+  "description": "extract audio file from radiko.jp",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "package-mac": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=win32 --arch=ia32 --icon=assets/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"Electron Tutorial App\"",
-    "package-linux": "electron-packager . electron-tutorial-app --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/icons/png/1024x1024.png --prune=true --out=release-builds"
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
-  "author": "Hiroyuki Tamura",
+  "author": "Hiroyuki Tamura <hiroyuktamura@gmail.com> (https://github.com/HiroyukTamura)",
   "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HiroyukTamura/RadikoPrj_C/"
+  },
   "dependencies": {
     "animate.css": "^3.6.1",
     "bootstrap": "^4.1.1",
@@ -19,9 +22,10 @@
     "child_process": "^1.0.2",
     "csvtojson": "^1.1.12",
     "dialog-polyfill": "^0.4.9",
+    "electron-builder": "^20.13.4",
     "electron-json-storage": "^4.1.0",
     "electron-store": "^1.3.0",
-    "ffmpeg-static": "^2.2.1",
+    "ffmpeg-static": "^2.3.0",
     "firebase": "^5.0.3",
     "fluent-ffmpeg": "^2.1.2",
     "fs-extra": "^6.0.1",
@@ -51,6 +55,18 @@
     "gulp-ejs": "^3.1.3"
   },
   "build": {
-    "asar": false
+    "appId": "com.electron.radicut",
+    "copyright": "Copyright © 2018 HiroyukiTamura",
+    "directories": {
+      "output": "output-build"
+    },
+    "files": [
+      "modules/**/*",
+      "node_modules/**/*",
+      "package.json",
+      "dist/**/*",
+      "public/**/app.js",
+      "index.js"
+    ]
   }
 }
