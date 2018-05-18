@@ -352,11 +352,12 @@ ipcMain.on('openFileExplore', (event, arg) => {
 });
 
 ipcMain.on('sendContact', (event, message) => {
+    console.log('sendContact', message);
     const data = collectUserData();
     data['comment'] = message;
     new FirebaseClient().writeUserData(data).then(()=>{
         Sender.sendWriteFbResult(true);
-    }).catch((e)=>{
+    }).catch(e =>{
         Sender.sendWriteFbResult(false);
     });
 });
@@ -423,12 +424,13 @@ emitter.on('closeBrowser', async ()=>{
 });
 
 process.on('uncaughtException', e => {
-    Sender.sendMiddleData('uncaughtException');
+    // Sender.sendMiddleData('uncaughtException');
+    Sender.sendFaitalError('uncaughtException');
     sendError('uncaughtException', e);
 });
 
 process.on('unhandledRejection', e => {
-    Sender.sendMiddleData('unhandledRejection');
+    Sender.sendFaitalError('unhandledRejection');
     sendError('unhandledRejection', e);
 });
 
@@ -720,6 +722,10 @@ class Sender {
     static sendWriteFbResult(isSuccess){
         win.webContents.send('writeFbResult', isSuccess);
     }
+
+    static sendFaitalError(command){
+        win.webContents.send(command);
+    }
 }
 
 async function onError(e) {
@@ -760,7 +766,6 @@ function sendError(witch, e) {
         electron_version: process.versions.electron,
         chrome_version: process.versions.chrome,
         platform: process.platform,
-        user_agent: session.defaultSession.getUserAgent(),
         process_type: process.type,
         version: app.getVersion(),
         productName: (app.getName()),

@@ -116,7 +116,6 @@ $(function(){
         }
     }
 
-    const fbClient = new FirebaseClient();
     const presenter = new Presenter();
     const ipcClient = new ContactResultCatcher();
     new Conductor().init();

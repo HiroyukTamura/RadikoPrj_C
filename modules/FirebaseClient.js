@@ -1,5 +1,10 @@
+const firebase = require("firebase");
+require("firebase/firestore");
+const moment = require('moment');
+
 module.exports = class FirebaseClient{
     constructor(){
+        this.moment = moment;
         const config = {
             apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
             authDomain: "radiko-7e63e.firebaseapp.com",
