@@ -53,14 +53,14 @@ $(function () {
                 const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
                 DlNotification.showFailedNtf('処理に失敗しました', msg);
             }).on('ExplorerErr', (event, data) => {
-                DlNotification.showCancelNtf('処理に失敗しました');
+                DlNotification.showFailedNtf('処理に失敗しました');
             }).on('ffmpegPrg', (event, data) => {
                 console.log('ffmpegPrg');
                 presenter.onGetFfmpegProgress(data);
             }).on('unhandledRejection', (event, data) => {
-                DlNotification.showCancelNtf('処理に失敗しました');
+                DlNotification.showFailedNtf('処理に失敗しました');
             }).on('unhandledRejection', (efvent, data) => {
-                DlNotification.showCancelNtf('処理に失敗しました');
+                DlNotification.showFailedNtf('処理に失敗しました');
             });
         }
 

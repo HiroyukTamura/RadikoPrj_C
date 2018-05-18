@@ -2,6 +2,7 @@ const $ = require('jquery');
 const tippy = require('tippy.js');
 require('bootstrap-notify');
 const FirebaseClient = require('../../modules/FirebaseClient');
+const IpcClient = require('../../modules/IpcClient');
 
 $(function(){
     const moment = require('moment');
@@ -17,7 +18,7 @@ $(function(){
                 }).then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e =>{
-                    //todo エラー送信
+                    FirebaseClient.sendError(e, Conductor.init.name, this.constructor.name);
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
@@ -26,7 +27,7 @@ $(function(){
                 new InfoClient(areaId).request().then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e => {
-                    //todo エラー送信
+                    FirebaseClient.sendError(e, Conductor.init.name, this.constructor.name);
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
@@ -69,8 +70,16 @@ $(function(){
                     this.$input.parent().addClass('is-invalid');
                     return false;
                 }
-                // fbClient.writeUserData(val);
-                ipcRenderer.send('sendContact', val);
+                const fbClient = new FirebaseClient();
+                fbClient.setUserData();
+                fbClient['comment'] = val;
+
+                fbClient.writeData('contact-comment').then(()=>{
+                    DlNotification.showCancelNtf('送信しました');
+                }).catch((e)=> {
+                    console.log(e);
+                    DlNotification.showFailedNtf('処理に失敗しました');
+                });
                 return false;
             });
         }
@@ -99,24 +108,14 @@ $(function(){
                 }).done((data, textStatus, jqXHR) => {
                     resolve(data);
                 }).fail((jqXHR, textStatus, errorThrown) => {
-                    //todo エラー送信
                     console.log('fail', jqXHR.status, textStatus);
-                    $('#notice-radiko .error-big').show();
                     reject(errorThrown);
                 })
             })
         }
     }
 
-    class ContactResultCatcher{
-        constructor(){
-            ipcRenderer.on('sendContact', (event, args) => {
-                console.log('writeFbResult', args);
-            });
-        }
-    }
-
     const presenter = new Presenter();
-    const ipcClient = new ContactResultCatcher();
+    const ipcClient = new IpcClient();
     new Conductor().init();
 });

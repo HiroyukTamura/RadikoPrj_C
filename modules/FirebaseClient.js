@@ -1,10 +1,7 @@
-const firebase = require("firebase");
-require("firebase/firestore");
-const moment = require('moment');
-
-module.exports = class FirebaseClient{
+module.exports = class FirebaseClient {
     constructor(){
-        this.moment = moment;
+        this.moment = require('moment');
+        this.remote = require('electron').remote;
         const config = {
             apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
             authDomain: "radiko-7e63e.firebaseapp.com",
@@ -15,31 +12,48 @@ module.exports = class FirebaseClient{
         };
         firebase.initializeApp(config);
         this.db = firebase.firestore();
+        this.data = null;
     }
 
-    writeUserData(data) {
-        const time = moment().format('YYYYMMDDhhmmss');
+    /**
+     * @param command => "contact-comment" or "crash"
+     */
+    writeData(command) {
+        const time = this.moment().format('YYYYMMDDhhmmss');
         return new Promise((resolve, reject) =>{
-            this.db.collection("contact-comment").doc(time).set(data)
+            this.db.collection(command).doc(time).set(this.data)
                 .then(()=> {
                     resolve();
-                    // Util.dangerNotify('ご意見ありがとうございました！');
                 })
                 .catch(error => {
                     reject(error);
-                    // Util.dangerNotify('送信に失敗しました');
                 });
         });
     }
 
-    writeCrashRepo(obj){
-        const time = moment().format('YYYYMMDDhhmmss');
-        this.db.collection("crash").doc(time).set(obj)
-            .then(()=> {
-                console.log('writeCrashRepo');
-            })
-            .catch(error => {
-                console.log(error);
-            });
+    setUserData() {
+        this.data = {
+            application_version: this.remote.app.getVersion(),
+            electron_version: this.remote.process.versions.electron,
+            chrome_version: this.remote.process.versions.chrome,
+            platform: this.remote.process.platform,
+            process_type: this.remote.process.type,
+            version: this.remote.app.getVersion(),
+            productName: (this.remote.app.getName()),
+            prod: 'Electron',
+        };
+        return this;
+    }
+
+    static sendError(e, funcName, className){
+        const client = new FirebaseClient().setUserData();
+        client.data['exeption'] = e;
+        client.data['function'] = funcName ;
+        client.data['class'] = className;
+        client.writeData('crash', ()=>{
+            //do nothing
+        }).catch(e =>{
+            //do nothing
+        });
     }
 };

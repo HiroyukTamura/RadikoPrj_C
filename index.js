@@ -216,7 +216,7 @@ class PuppeteerOperator {
             if (response.url().indexOf('chunklist') === -1 || path.extname(url) !== '.m3u8')
                 return;
 
-            response.text().then(function (status) {
+            response.text().then(status => {
                 if (status.trim() === '') {
                     console.log('空ファイル', response.url());
                     return;
@@ -240,7 +240,8 @@ class PuppeteerOperator {
                     else
                         runFfmpeg(pathE);
                 }).catch(err => {
-                    sendError('writeFile', err);
+                    // sendError('writeFile', err);
+                    Sender.sendFatalError('FATAL_ERROR', err, 'writeFile', this.constructor.name);
                     throw err;
                 });
             });
@@ -310,6 +311,10 @@ function createWindow () {
         win.show();
     });
 
+    new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
+        Sender.sendFatalError('unhandledRejection', 'テストエラーでごんす');
+    });
+
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
 
     // new OpenVpn().init();
@@ -351,17 +356,6 @@ ipcMain.on('openFileExplore', (event, arg) => {
    new FileExplorerOpener().open();
 });
 
-ipcMain.on('sendContact', (event, message) => {
-    console.log('sendContact', message);
-    const data = collectUserData();
-    data['comment'] = message;
-    new FirebaseClient().writeUserData(data).then(()=>{
-        Sender.sendWriteFbResult(true);
-    }).catch(e =>{
-        Sender.sendWriteFbResult(false);
-    });
-});
-
 app.on('ready', createWindow);
 
 // Quit when all windows are closed.
@@ -396,9 +390,10 @@ emitter.on('setTask', async() => {
     let isFailed = false;
     await operator.launchPuppeteer().catch(err => {
         console.log(e);
-        emitter.emit('onErrorHandler', err);
+        emitter.emit('onErrorHandler', err, 'launchPuppeteer');
         isFailed = true;
-        sendError('launchPuppeteer()', e);
+        Sender.sendFatalError('FATAL_ERROR');
+        // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
@@ -406,7 +401,8 @@ emitter.on('setTask', async() => {
         console.log('startDlChain error');
         Sender.sendMiddleData('startDlChainError');
         emitter.emit('onErrorHandler', e);
-        sendError('operator.startDlChain()', e);
+        Sender.sendFatalError('FATAL_ERROR', e, 'startDlChain');
+        // sendError('operator.startDlChain()', e);
     });
 });
 
@@ -425,13 +421,13 @@ emitter.on('closeBrowser', async ()=>{
 
 process.on('uncaughtException', e => {
     // Sender.sendMiddleData('uncaughtException');
-    Sender.sendFaitalError('uncaughtException');
-    sendError('uncaughtException', e);
+    Sender.sendFatalError('uncaughtException', e);
+    // sendError('uncaughtException', e);
 });
 
 process.on('unhandledRejection', e => {
-    Sender.sendFaitalError('unhandledRejection');
-    sendError('unhandledRejection', e);
+    Sender.sendFatalError('unhandledRejection', e);
+    // sendError('unhandledRejection', e);
 });
 
 class MasterJson {
@@ -618,7 +614,7 @@ function runFfmpeg(pathE) {
             if (!dlTaskList.getWorkingTask().abortFlag)
                 Sender.sendMiddleData('ffmpegError');
             deleteFileSync(totalPath);
-            sendError('ffmpegError', err);
+            // sendError('ffmpegError', err);
             emitter.emit('onErrorHandler', err);
         })
         .on('end', function(stdout, stderr) {
@@ -723,8 +719,16 @@ class Sender {
         win.webContents.send('writeFbResult', isSuccess);
     }
 
-    static sendFaitalError(command){
-        win.webContents.send(command);
+    /**
+     * @param command => 'unhandledRejection' or 'uncaughtException' or 'FATAL_ERROR'
+     */
+    static sendFatalError(command, exception, funcName, className){
+        const data = {
+            exception: exception,
+            funcName: funcName,
+            className: className
+        };
+        win.webContents.send(command, data);
     }
 }
 
@@ -747,7 +751,8 @@ async function connectEndToNext() {
             console.log('connectEndToNext()内 startDlChain エラー!');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
-            sendError('connectEndToNext()', e);
+            Sender.sendFatalError('FATAL_ERROR', e, connectEndToNext.name);
+            // sendError('connectEndToNext()', e);
         });
     } else {
         await operator.closeBrowser();
@@ -758,34 +763,4 @@ function deleteFileSync(path) {
     if (fs.existsSync(path)){
         fs.unlinkSync(path);
     }
-}
-
-function sendError(witch, e) {
-    const reportObj = {
-        application_version: app.getVersion(),
-        electron_version: process.versions.electron,
-        chrome_version: process.versions.chrome,
-        platform: process.platform,
-        process_type: process.type,
-        version: app.getVersion(),
-        productName: (app.getName()),
-        prod: 'Electron',
-        exceptionStack: e,
-        witch: witch
-    };
-    new FirebaseClient().writeCrashRepo(reportObj);
-}
-
-function collectUserData() {
-    return {
-        application_version: app.getVersion(),
-        electron_version: process.versions.electron,
-        chrome_version: process.versions.chrome,
-        platform: process.platform,
-        user_agent: session.defaultSession.getUserAgent(),
-        process_type: process.type,
-        version: app.getVersion(),
-        productName: (app.getName()),
-        prod: 'Electron',
-    };
 }

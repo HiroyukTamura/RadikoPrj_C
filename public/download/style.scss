@@ -1,6 +1,9 @@
 @import "../../scss/common";
 @import "../../scss/component";
-@include ntf;
+
+body {
+  @include ntf;
+}
 
 $vertPad:48px;
 

@@ -89,7 +89,7 @@ class Util{
         return result;
     };
 
-    //todo Notifyまわり、色とかカスタムすべきじゃね？
+
     static dangerNotify(msg){
         $.notify({
             message: msg
@@ -215,31 +215,57 @@ class DlNotification {
     }
 
     static showFailedNtf(title, message) {
-        $.notify({
-            icon: '../../img/exclamation-triangle.svg',
-            title: title,
-            message: message
-        },{
-            type: 'minimalist',
-            icon_type: 'image',
-            delay: 0,
-            allow_dismiss: true,
-            placement: {
-                from: "bottom",
-                align: "right"
-            },
-            template:
-            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
+        if (message) {
+            $.notify({
+                icon: '../../img/exclamation-triangle.svg',
+                title: title,
+                message: message
+            },{
+                type: 'minimalist',
+                icon_type: 'image',
+                delay: 0,
+                allow_dismiss: true,
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                },
+                template:
+                '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
                 '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
                 '<div>' +
-                    '<div>'+
-                        '<span data-notify="title">{1}</span>' +
-                        '<span data-notify="message">{2}</span>' +
-                    '</div>'+
-                    '<img data-notify="icon" class="img-circle pull-right">' +
+                '<div>'+
+                '<span data-notify="title">{1}</span>' +
+                '<span data-notify="message">{2}</span>' +
                 '</div>'+
-            '</div>'
-        });
+                '<img data-notify="icon" class="img-circle pull-right">' +
+                '</div>'+
+                '</div>'
+            });
+        } else {
+            $.notify({
+                icon: '../../img/exclamation-triangle.svg',
+                title: title,
+            },{
+                type: 'minimalist',
+                icon_type: 'image',
+                delay: 0,
+                allow_dismiss: true,
+                placement: {
+                    from: "bottom",
+                    align: "right"
+                },
+                template:
+                '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red one-row" role="alert">' +
+                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+                    '<div>' +
+                        '<div>'+
+                            '<span data-notify="title">{1}</span>' +
+                        '</div>'+
+                        '<img data-notify="icon" class="img-circle pull-right">' +
+                    '</div>'+
+                '</div>'
+            });
+        }
     }
 
     static showSuccessNtf(title, message) {
