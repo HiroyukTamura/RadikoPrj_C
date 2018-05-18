@@ -14,7 +14,7 @@ const witchDir = ["timetable", "search", 'download', 'about'];
 let filePath = '';
 
 gulp.task('css', function () {
-    const index = 2;
+    const index = 0;
     return gulp.src(['./public/'+ witchDir[index] +'/style.scss'])
         .pipe(using())
         .pipe(plumber({
