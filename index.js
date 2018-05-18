@@ -1,78 +1,4 @@
 "use strict";
-// const geckodriver = require('geckodriver');
-// const {Builder, By, Key, until} = require('selenium-webdriver');
-// const webdriverio = require('webdriverio');
-
-// (async function example() {
-//     let driver = await new Builder().forBrowser('firefox').build();
-//     driver.manage().logs().getAvailableLogTypes().then((val)=>{
-//         console.log(val);
-//     }).catch((err)=>{
-//         console.log(err);
-//     });
-//     // driver.manage().logs().get(LogType.PERFORMANCE).getAll();
-//     try {
-//         await driver.get('http://radiko.jp/#!/ts/FMJ/20180415150000');
-//         await driver.findElement(By.css('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a')).click();
-//         await driver.findElement(By.css("#colorbox--term > p:nth-child(4) > a")).click();
-//         await driver.findElement(By.css("#colorbox--term > p.colorbox__btn > a")).click();
-//
-//         await new Promise(resolve => setTimeout(resolve, 10000));
-//     } finally {
-//         await driver.quit();
-//     }
-// })();
-
-// !function () {
-//     const options = {
-//         desiredCapabilities: {
-//             browserName: 'firefox'
-//         }
-//     };
-//
-//     webdriverio
-//         .remote(options)
-//         .init()
-//         .url('http://www.google.com')
-//         .getTitle().then(function(title) {
-//         console.log('Title was: ' + title);
-//     })
-//         .end()
-//         .catch(function(err) {
-//             console.log(err);
-//         });
-// }();
-
-
-
-
-// driver.get('http://radiko.jp/#!/ts/FMJ/20180415150000').then(function(){
-//     console.log('koko');
-//
-//     driver.quit();
-// });
-
-
-// const puppeteer = require('puppeteer');
-
-// const shadowSelectorFn = (el, selector) => el.shadowRoot.querySelector(selector);
-//
-// const queryDeep = async (page, ...selectors) => {
-//     if (!selectors || selectors.length === 0) {
-//         return;
-//     }
-//
-//     const [ firstSelector, ...restSelectors ] = selectors;
-//     let parentElement = await page.$(firstSelector);
-//     let count = 0;
-//     for (const selector of restSelectors) {
-//         parentElement = await page.evaluateHandle(shadowSelectorFn, parentElement, selector);
-//         console.log(count);
-//         count++;
-//     }
-//
-//     return parentElement;
-// };
 
 const puppeteer = require('puppeteer');
 const path = require('path');
@@ -80,23 +6,17 @@ const path = require('path');
 const fs = require('fs-extra');
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpeg_static = require('ffmpeg-static');
-const http = require('http');
-const httpProxy = require('http-proxy');
+// const http = require('http');
+// const httpProxy = require('http-proxy');
 const request = require('request');
 const {app, BrowserWindow, ipcMain, Menu, autoUpdater} = require('electron');
 const url = require('url');
-const rp = require('request-promise');
 const csv = require('csvtojson');
 const exec = require('child_process').exec;
-const iconv = require('iconv-lite');
-const Sudoer = require('electron-sudo').default;
-const cheerio = require('cheerio');
-const parseString = require('xml2js').parseString;
 const moment = require('moment');
 const events = require('events');
 const Store = require('electron-store');
 const electron = require('electron');
-const FirebaseClient = require('./modules/FirebaseClient');
 const FileExplorerOpener = require('./modules/FileOperator');
 const DlTaskList = require('./modules/DlTaskList');
 const DlTask = require('./modules/DlTask');
@@ -106,13 +26,7 @@ let postGotJsons;
 
 const HTML_PATH = 'public/timetable/index.html';
 
-// console.log = function (...val) {
-//     const vals = val.join(' ') + '\n';
-//     fs.appendFile('./debug.log', vals, function (err) {
-//         if (err)
-//             throw err;
-//     });
-// };
+
 //todo タイムアウトエラーを作成すること(特にffmpeg)
 !function () {
     const store = new Store();
