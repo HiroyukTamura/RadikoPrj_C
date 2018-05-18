@@ -54,10 +54,14 @@ $(function () {
                 DlNotification.showFailedNtf('処理に失敗しました', msg);
             }).on('ExplorerErr', (event, data) => {
                 DlNotification.showCancelNtf('処理に失敗しました');
+            }).on('ffmpegPrg', (event, data) => {
+                console.log('ffmpegPrg');
+                presenter.onGetFfmpegProgress(data);
+            }).on('unhandledRejection', (event, data) => {
+                DlNotification.showCancelNtf('処理に失敗しました');
+            }).on('unhandledRejection', (efvent, data) => {
+                DlNotification.showCancelNtf('処理に失敗しました');
             });
-            //     .on('ffmpegPrg', (event, data) => {
-            //     this.onGetFfmpegProgress(data);
-            // });
         }
 
         static onGetDlStatusReply(string){
@@ -266,6 +270,21 @@ $(function () {
             console.log(data.ft);
             const msg = data.title +' '+ Util.getMDWithWeekDay(moment(data.ft, 'YYYYMMDDhhmmss'));
             DlNotification.showFailedNtf('処理に失敗しました', msg);
+        }
+
+        onGetFfmpegProgress(data) {
+            console.log('timeStamp', data.timeStamp);
+            const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
+            if (!$li.length) {
+                console.log('てってれー');
+                return;
+            } //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
+
+            const num = DlNotification.calcProgressNum(data);
+            const stage = DlNotification.getStageStr('ffmpegPrg', num);
+            console.log('numnum', num);
+            $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);
+            $li.find('.stage').html(stage);
         }
     }
 

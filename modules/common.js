@@ -161,11 +161,15 @@ class DlNotification {
     }
 
     updateAsPrg(data){
-        const totalSec = moment(data.to, 'YYYYMMDDhhssmm').diff(moment(data.ft, 'YYYYMMDDhhssmm'), 'seconds');
         this.ntf.update({
             title: 'データを再構成しています...(これには時間がかかることがあります)',
-            progress: 30 + Math.round(70 * data.ffmpegPrg / totalSec)
+            progress: DlNotification.calcProgressNum(data)
         })
+    }
+
+    static calcProgressNum(data){
+        const totalSec = moment(data.to, 'YYYYMMDDhhmmss').diff(moment(data.ft, 'YYYYMMDDhhmmss'), 'seconds');
+        return 30 + Math.round(70 * data.ffmpegPrg / totalSec)
     }
 
     updateAs4th(){
@@ -293,14 +297,16 @@ class DlNotification {
         });
     }
 
-    static getStageStr(stage){
+    static getStageStr(stage, num){
         switch (stage) {
             case 'UNSET':
-                return 'ダウンロードの開始を待っています...';
+                return 'ダウンロードの開始を待っています...(0%)';
             case 'pageReached':
-                return 'ダウンロード中...';
+                return 'ダウンロード中...(20%)';
             case 'ffmpegStart':
-                return 'データをMP3に変換しています<br>(これには時間がかかることがあります)...';
+                return 'メタデータを書き込んでいます...(30%)';
+            case 'ffmpegPrg':
+                return 'データをMP3に変換しています('+ num +'%)<br>(これには時間がかかることがあります)...';
             default:
                 return'';
         }
@@ -313,7 +319,7 @@ class DlNotification {
             case 'pageReached':
                 return 20;
             case 'ffmpegStart':
-                return 50;
+                return 30;
             case 'ffmpegEnd':
                 return 100;
             case 'ffmpegError':
@@ -378,6 +384,10 @@ class ProcessCommunicator{
             this.onGetFfmpegEnd(data);
         }).on('ffmpegPrg', (event, data) => {
             this.onGetFfmpegProgress(data);
+        }).on('unhandledRejection', (event, data) => {
+            DlNotification.showCancelNtf('処理に失敗しました');
+        }).on('unhandledRejection', (efvent, data) => {
+            DlNotification.showCancelNtf('処理に失敗しました');
         });
     }
 

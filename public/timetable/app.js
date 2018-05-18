@@ -341,7 +341,7 @@ require('bootstrap-notify');
                     .attr('station', $(this).attr('station'))
                     .attr('data-title', html)
                     .attr('to', to)
-                    .attr('img', img);
+                    .attr('data-img', img);
 
                 if ($(this).hasClass('cant-dl')) {
                     self.$dialog.find('#dl-btm');

@@ -1,6 +1,7 @@
 const $ = require('jquery');
 const tippy = require('tippy.js');
 require('bootstrap-notify');
+const FirebaseClient = require('../../modules/FirebaseClient');
 
 $(function(){
     const moment = require('moment');
@@ -68,7 +69,8 @@ $(function(){
                     this.$input.parent().addClass('is-invalid');
                     return false;
                 }
-                fbClient.writeUserData(val);
+                // fbClient.writeUserData(val);
+                ipcRenderer.send('sendContact', val);
                 return false;
             });
         }
@@ -106,39 +108,16 @@ $(function(){
         }
     }
 
-    class FirebaseClient{
+    class ContactResultCatcher{
         constructor(){
-            const config = {
-                apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
-                authDomain: "radiko-7e63e.firebaseapp.com",
-                databaseURL: "https://radiko-7e63e.firebaseio.com",
-                projectId: "radiko-7e63e",
-                storageBucket: "radiko-7e63e.appspot.com",
-                messagingSenderId: "1032750813236"
-            };
-            firebase.initializeApp(config);
-            this.db = firebase.firestore();
-        }
-
-        writeUserData(comment) {
-            //todo ここでOSの種類などをメインプロセスから取得する
-            const time = moment().format('YYYYMMDDhhmmss');
-            this.db.collection("contact-comment").doc(time).set({
-                comment: comment,
-                ereaId: EreaChecker.getAreaIdFromStorage(),
-                type: 'DESK_TOP'
-            })
-            .then(()=> {
-                Util.dangerNotify('ご意見ありがとうございました！');
-            })
-            .catch(error => {
-                //todo エラー送信
-                Util.dangerNotify('送信に失敗しました');
+            ipcRenderer.on('sendContact', (event, args) => {
+                console.log('writeFbResult', args);
             });
         }
     }
 
     const fbClient = new FirebaseClient();
     const presenter = new Presenter();
+    const ipcClient = new ContactResultCatcher();
     new Conductor().init();
 });

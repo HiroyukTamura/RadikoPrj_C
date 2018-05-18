@@ -96,6 +96,10 @@ const moment = require('moment');
 const events = require('events');
 const Store = require('electron-store');
 const electron = require('electron');
+const FirebaseClient = require('./modules/FirebaseClient');
+const FileExplorerOpener = require('./modules/FileOperator');
+const DlTaskList = require('./modules/DlTaskList');
+const DlTask = require('./modules/DlTask');
 let masterJson;
 let vpnJson;
 let postGotJsons;
@@ -119,91 +123,6 @@ const HTML_PATH = 'public/timetable/index.html';
 
     // autoUpdater.setFeedURL(options);
 }();
-
-class DlTaskList {
-    constructor(){
-        this.tasks = {};
-        this.working = 0;
-    }
-
-    // constructor(){
-        // this.tasks = {
-        //     123456: new DlTask(123456, 'TBS', '20170610094000', '20170610100000', 'サンプルタイトル', 'https://radiko.jp/res/program/DEFAULT_IMAGE/TBS/cl_20180419102536_6552592.jpg'),
-        //     123470: new DlTask(123470, 'TBS', '20170610094000', '20170610100000', '再生してない番組', 'https://radiko.jp/res/program/DEFAULT_IMAGE/JORF/20170330042126.jpg'),
-        // };
-        // this.working = 123456;
-
-        // this.pendTime(20).then(()=>{
-        //     Sender.sendMiddleData('ffmpegError');
-        //     console.warn('sentFakeEvent');
-        // }).catch(e=>{
-        //     console.warn('error sendFakeEvent', e);
-        // })
-    // }
-
-    async pendTime(sec){
-        return new Promise(resolve => setTimeout(resolve, sec * 1000));
-    }
-
-    isExistTask(stationId, ft){
-        const dlTaskArr = Object.values(this.tasks);
-        let isExist = false;
-        for (let i = 0; i < dlTaskArr.length; i++) {
-            if (dlTaskArr[i]['stationId'] === stationId && dlTaskArr[i]['ft'] === ft) {
-                isExist = true;
-                break;
-            }
-        }
-        return isExist;
-    }
-
-    getWorkingTask(){
-        return this.tasks[this.working];
-    }
-
-    getSimpleData(){
-        return {
-            stationId: this.getWorkingTask().stationId,
-            ft: this.getWorkingTask().ft
-        }
-    }
-
-    getMiddleData(){
-        const data = this.getSimpleData();
-        data['title'] = this.getWorkingTask().title;
-        data['timeStamp'] = this.getWorkingTask().timeStamp;
-        data['taskLength'] = Object.keys(this.tasks).length;
-        console.warn(data);
-        return data;
-    }
-
-    switchToNext() {
-        this.working = 0;
-        const keyArr = Object.keys(this.tasks);
-        if (!keyArr.length)
-            return null;
-        keyArr.sort((a, b) => {
-            return b - a;
-        });
-        this.working = keyArr[0];
-        return this.tasks[keyArr[0]];
-    }
-}
-
-class DlTask {
-    constructor(timeStamp, stationId, ft, to, title, img){
-        this.timeStamp = timeStamp;
-        this.stationId = stationId;
-        this.ft = ft;
-        this.to = to;
-        this.title = title;
-        this.chunkFileName = null;
-        this.img = img;
-        this.abortFlag = false;
-        this.progressSec = 0;
-        this.stage = 'UNSET';
-    }
-}
 
 class PuppeteerOperator {
     constructor(){
@@ -321,6 +240,7 @@ class PuppeteerOperator {
                     else
                         runFfmpeg(pathE);
                 }).catch(err => {
+                    sendError('writeFile', err);
                     throw err;
                 });
             });
@@ -390,7 +310,7 @@ function createWindow () {
         win.show();
     });
 
-    // operator.launchPuppeteer();//todo コメントアウト外すこと
+    // operator.launchPuppeteer();//todo コメントアウト外すこと?
 
     // new OpenVpn().init();
     // masterJson = new MasterJson();
@@ -431,6 +351,16 @@ ipcMain.on('openFileExplore', (event, arg) => {
    new FileExplorerOpener().open();
 });
 
+ipcMain.on('sendContact', (event, message) => {
+    const data = collectUserData();
+    data['comment'] = message;
+    new FirebaseClient().writeUserData(data).then(()=>{
+        Sender.sendWriteFbResult(true);
+    }).catch((e)=>{
+        Sender.sendWriteFbResult(false);
+    });
+});
+
 app.on('ready', createWindow);
 
 // Quit when all windows are closed.
@@ -467,31 +397,16 @@ emitter.on('setTask', async() => {
         console.log(e);
         emitter.emit('onErrorHandler', err);
         isFailed = true;
+        sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
-
-    // let s = null;
-    // let status = await operator.isPossibleToDl().catch(e=>{
-    //     console.log(e);
-    //     s = 'UNKNOWN';
-    // });
-    // if (s !== null)
-    //     status = s;
-    //
-    // if (status === 'UNKNOWN') {
-    //     //todo サーバにエラー送信したい
-    // }
-    // Sender.sendIsDownloadable(status);
-    // if (status === 'SUCCESS') {
-        operator.startDlChain().catch(e => {
-            console.log('startDlChain error');
-            Sender.sendMiddleData('startDlChainError');
-            emitter.emit('onErrorHandler', e);
-        });
-    // } else {
-    //     await connectEndToNext();
-    // }
+    operator.startDlChain().catch(e => {
+        console.log('startDlChain error');
+        Sender.sendMiddleData('startDlChainError');
+        emitter.emit('onErrorHandler', e);
+        sendError('operator.startDlChain()', e);
+    });
 });
 
 emitter.on('onErrorHandler', async (e) => {
@@ -505,6 +420,16 @@ emitter.on('connectEndToNext', async _=> {
 emitter.on('closeBrowser', async ()=>{
     await operator.closeBrowser();
     app.quit();
+});
+
+process.on('uncaughtException', e => {
+    Sender.sendMiddleData('uncaughtException');
+    sendError('uncaughtException', e);
+});
+
+process.on('unhandledRejection', e => {
+    Sender.sendMiddleData('unhandledRejection');
+    sendError('unhandledRejection', e);
 });
 
 class MasterJson {
@@ -522,24 +447,6 @@ class MasterJson {
                     new PostGotJsons();
                 }
             }
-        });
-    }
-}
-
-class FileExplorerOpener {
-    open(){
-        const cd = exec('explorer');
-        cd.on('error', function (err) {
-            Sender.sendExplorerErr();
-        });
-        cd.on('close', function (err) {
-            console.warn('close', err);
-        });
-        cd.stdout.on('data', data =>{
-           console.log(data);
-        });
-        cd.stderr.on('data', data => {
-            console.log(data);
         });
     }
 }
@@ -633,26 +540,6 @@ class OpenVpn {
     }
 }
 
-// async function editConfig(page) {
-        // const url = response.url().split('?')[0];
-        // if (path.basename(url) === 'playlist.m3u8') {
-        //     response.text().then(function (status) {
-        //         if (status === '')
-        //             return;
-        //         const arr = status.split('\n');
-        //         for (let i = 0; i < arr.length; i++) {
-        //             if (isUrl(arr[i])) {
-        //                 console.log('キタゾー', value);
-        //                 break;
-        //             }
-        //         }
-        //     })
-        // }
-    // await page.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play > a");
-    // await page.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
-    // await page.click("#colorbox--term > p:nth-child(4) > a");
-// }
-
 async function writeFile(pathE, response) {
     await fs.outputFile(pathE, await response.buffer());
 }
@@ -709,7 +596,7 @@ function runFfmpeg(pathE) {
             return;
     }
 
-    let progressCounter = 0;
+    // let progressCounter = 0;
     let isKilled = false;
 
     const command = ffmpeg(pathE)
@@ -729,6 +616,7 @@ function runFfmpeg(pathE) {
             if (!dlTaskList.getWorkingTask().abortFlag)
                 Sender.sendMiddleData('ffmpegError');
             deleteFileSync(totalPath);
+            sendError('ffmpegError', err);
             emitter.emit('onErrorHandler', err);
         })
         .on('end', function(stdout, stderr) {
@@ -815,7 +703,7 @@ class Sender {
     }
 
     static sendFfmpegPrg(percent){
-        const data = dlTaskList.getSimpleData();
+        const data = dlTaskList.getMiddleData();
         data['ffmpegPrg'] = percent;
         data['to'] =  dlTaskList.getWorkingTask().to;
         win.webContents.send('ffmpegPrg', data);
@@ -828,11 +716,14 @@ class Sender {
     static sendExplorerErr(){
         win.webContents.send('ExplorerErr', JSON.stringify(dlTaskList));
     }
+
+    static sendWriteFbResult(isSuccess){
+        win.webContents.send('writeFbResult', isSuccess);
+    }
 }
 
 async function onError(e) {
     await connectEndToNext();
-    //todo エラー送信
     console.log(e);
 }
 
@@ -850,6 +741,7 @@ async function connectEndToNext() {
             console.log('connectEndToNext()内 startDlChain エラー!');
             Sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
+            sendError('connectEndToNext()', e);
         });
     } else {
         await operator.closeBrowser();
@@ -860,4 +752,35 @@ function deleteFileSync(path) {
     if (fs.existsSync(path)){
         fs.unlinkSync(path);
     }
+}
+
+function sendError(witch, e) {
+    const reportObj = {
+        application_version: app.getVersion(),
+        electron_version: process.versions.electron,
+        chrome_version: process.versions.chrome,
+        platform: process.platform,
+        user_agent: session.defaultSession.getUserAgent(),
+        process_type: process.type,
+        version: app.getVersion(),
+        productName: (app.getName()),
+        prod: 'Electron',
+        exceptionStack: e,
+        witch: witch
+    };
+    new FirebaseClient().writeCrashRepo(reportObj);
+}
+
+function collectUserData() {
+    return {
+        application_version: app.getVersion(),
+        electron_version: process.versions.electron,
+        chrome_version: process.versions.chrome,
+        platform: process.platform,
+        user_agent: session.defaultSession.getUserAgent(),
+        process_type: process.type,
+        version: app.getVersion(),
+        productName: (app.getName()),
+        prod: 'Electron',
+    };
 }
