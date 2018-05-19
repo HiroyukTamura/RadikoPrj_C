@@ -202,7 +202,7 @@ function createWindow () {
         slashes: true
     }));
 
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -267,7 +267,8 @@ ipcMain.on('cancelDl', (event, timeStamp) => {
 });
 
 ipcMain.on('openFileExplore', (event, arg) => {
-   new FileExplorerOpener().open();
+    console.log('openFileExplore');
+    new FileExplorerOpener().open();
 });
 
 app.on('ready', createWindow);

@@ -146,7 +146,7 @@ $(function () {
 
                 remote.dialog.showOpenDialog(focusedWindow, option, filename => {
                     if (filename) {
-                        this.store.set('output_path', filename);
+                        this.store.set('output_path', filename[0]);
                         DlNotification.showCancelNtf('保存先を更新しました');
                         console.log(this.store.get('output_path'));
                     }

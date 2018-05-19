@@ -51,7 +51,7 @@ module.exports = class DlTaskList {
         data['title'] = this.getWorkingTask().title;
         data['timeStamp'] = this.getWorkingTask().timeStamp;
         data['taskLength'] = Object.keys(this.tasks).length;
-        console.warn(data);
+        // console.warn(data);
         return data;
     }
 
