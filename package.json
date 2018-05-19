@@ -69,7 +69,11 @@
       "img/**/*"
     ],
     "win": {
-      "target": "nsis"
+      "target": "appx"
+    },
+    "appx": {
+      "backgroundColor": "#A6DAE8",
+      "languages": ["ja-JP"]
     }
   }
 }
