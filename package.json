@@ -1,5 +1,5 @@
 {
-  "name": "radicut",
+  "name": "RadiCut",
   "version": "1.0.0",
   "description": "extract audio file from radiko.jp",
   "main": "index.js",
