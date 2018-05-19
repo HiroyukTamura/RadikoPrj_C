@@ -20,11 +20,13 @@ const electron = require('electron');
 const FileExplorerOpener = require('./modules/FileOperator');
 const DlTaskList = require('./modules/DlTaskList');
 const DlTask = require('./modules/DlTask');
+const ChromeInitializer = require('./modules/ChromeInitializer');
 let masterJson;
 let vpnJson;
 let postGotJsons;
 
 const HTML_PATH = 'public/timetable/index.html';
+const HTML_PATH_INSTALL = 'public/install/index.html';
 
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
@@ -181,6 +183,16 @@ const operator = new PuppeteerOperator();
 function createWindow () {
     // Create the browser window.
     console.log('createWindow');
+
+    // const initializer = new ChromeInitializer();
+    // const loadUrl = initializer.isExistChrome() ?
+    //     HTML_PATH :
+    // if (initializer.isExistChrome()) {
+    //
+    // } else {
+    //
+    // }
+
     win = new BrowserWindow({
         webPreferences: {
             width: 800,
@@ -189,7 +201,7 @@ function createWindow () {
             webSecurity: false,
             show: false
         },
-        titleBarStyle: 'hiddenInset'
+        // titleBarStyle: 'hiddenInset'
     });
 
     win.maximize();
