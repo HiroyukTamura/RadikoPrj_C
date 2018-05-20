@@ -62,12 +62,12 @@
       "modules/**/*",
       "dist/**/*",
       "public/**/*",
-      "index.js"
+      "index.js",
+      "debug.log"
     ],
     "extraFiles": [
       "Application/**/*",
-      "img/**/*",
-      "UserData/**/*"
+      "img/**/*"
     ],
     "win": {
       "target": "nsis"

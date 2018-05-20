@@ -40,6 +40,14 @@ const HTML_PATH_INSTALL = 'public/install/index.html';
     // autoUpdater.setFeedURL(options);
 }();
 
+console.log = function (...val) {
+    const vals = val.join(' ') + '\n';
+    fs.appendFile('./debug.log', vals, function (err) {
+        if (err)
+            throw err;
+    });
+};
+
 class PuppeteerOperator {
     constructor(){
         this.ft = null;

@@ -410,11 +410,14 @@ class ProcessCommunicator{
             this.onGetFfmpegEnd(data);
         }).on('ffmpegPrg', (event, data) => {
             this.onGetFfmpegProgress(data);
-        }).on('unhandledRejection', (event, data) => {
-            DlNotification.showCancelNtf('処理に失敗しました');
-        }).on('unhandledRejection', (efvent, data) => {
-            DlNotification.showCancelNtf('処理に失敗しました');
         });
+        const IpcClient = require('IpcClient');
+        new IpcClient();
+        // .on('unhandledRejection', (event, data) => {
+        //     DlNotification.showCancelNtf('処理に失敗しました');
+        // }).on('unhandledRejection', (efvent, data) => {
+        //     DlNotification.showCancelNtf('処理に失敗しました');
+        // });
     }
 
     onGetStartDlWithFtReply(arg){
