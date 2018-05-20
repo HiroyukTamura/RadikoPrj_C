@@ -21,14 +21,15 @@ const FileExplorerOpener = require('./modules/FileOperator');
 const DlTaskList = require('./modules/DlTaskList');
 const DlTask = require('./modules/DlTask');
 const ChromeInitializer = require('./modules/ChromeInitializer');
+const MainToRenderMsger = require('./modules/MainToRenderMsger');
 let masterJson;
 let vpnJson;
 let postGotJsons;
 
 const HTML_PATH = 'public/timetable/index.html';
 const HTML_PATH_INSTALL = 'public/install/index.html';
+const LOG_PATH = './debug.log';
 const FLAG_RELEASE_BUILD = true;//todo リリースビルド時フラグを倒せ
-
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
 !function () {
@@ -38,14 +39,18 @@ const FLAG_RELEASE_BUILD = true;//todo リリースビルド時フラグを倒�
         store.set('output_path', path);
     }
 
+    fs.writeFile(LOG_PATH, '', (err)=>{
+        if (err) {
+            //どうしようもない
+        }
+    });
     // autoUpdater.setFeedURL(options);
 }();
 
 console.log = function (...val) {
     const vals = val.join(' ') + '\n';
-    fs.appendFile('./debug.log', vals, function (err) {
-        if (err)
-            throw err;
+    fs.appendFile(LOG_PATH, vals, (err) => {
+        //どうしようもない
     });
 };
 
@@ -166,7 +171,7 @@ class PuppeteerOperator {
                         runFfmpeg(pathE);
                 }).catch(err => {
                     // sendError('writeFile', err);
-                    Sender.sendErrorLog('FATAL_ERROR', err, 'writeFile', this.constructor.name);
+                    // Sender.sendErrorLog('FATAL_ERROR', err, 'writeFile', this.constructor.name);
                     throw err;
                 });
             });
@@ -176,7 +181,7 @@ class PuppeteerOperator {
         await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
         task.stage = 'pageReached';
-        Sender.sendMiddleData('pageReached');
+        sender.sendMiddleData('pageReached');
     }
 }
 
@@ -185,6 +190,7 @@ String.prototype.splice = function(start, delCount, newSubStr) {
 };
 
 let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
+let sender;
 let emitter = new events.EventEmitter();
 const dlTaskList = new DlTaskList();
 const operator = new PuppeteerOperator();
@@ -215,6 +221,7 @@ function createWindow () {
 
     win.maximize();
     Menu.setApplicationMenu(null);
+    sender = new MainToRenderMsger(win.webContents, dlTaskList);
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -247,7 +254,7 @@ function createWindow () {
     });
 
     new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
-        Sender.sendErrorLog('startDlChainError', 'テストエラーでごんす', 'こっちはえくすとらでごんす');
+        sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
     });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
@@ -270,12 +277,12 @@ ipcMain.on('startDlWithFt', (event, arg) => {
             dlTaskList.working = timeStamp;
         emitter.emit('setTask');
     }
-    Sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
+    sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
 });
 
 ipcMain.on('dlStatus', (event, arg) => {
     console.log('dlStatus');
-    Sender.sendDlStatus(dlTaskList);
+    sender.sendDlStatus(dlTaskList);
 });
 
 ipcMain.on('cancelDl', (event, timeStamp) => {
@@ -283,7 +290,8 @@ ipcMain.on('cancelDl', (event, timeStamp) => {
     if (dlTaskList['tasks'][timeStamp]) {
         dlTaskList['tasks'][timeStamp]['abortFlag'] = true;
     } else {
-        Sender.sendMiddleData('cancelError');
+        sender.sendMiddleData('cancelError');
+        sender.sendErrorLog('cancelError', 'ipcMain.on(cancelDl)');
     }
 });
 
@@ -328,16 +336,16 @@ emitter.on('setTask', async() => {
         console.log(err);
         emitter.emit('onErrorHandler', err/*, 'launchPuppeteer'*/);
         isFailed = true;
-        Sender.sendErrorLog('FATAL_ERROR', err);
+        sender.sendErrorLog(err, "emitter.on('setTask')");
         // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
     operator.startDlChain().catch(e => {
         console.log('startDlChain error', e);
-        Sender.sendMiddleData('startDlChainError', e);
+        sender.sendMiddleData('startDlChainError');
         emitter.emit('onErrorHandler', e);
-        Sender.sendErrorLog('FATAL_ERROR', e, 'startDlChain');
+        sender.sendErrorLog(e, 'startDlChain');
         // sendError('operator.startDlChain()', e);
     });
 });
@@ -346,7 +354,7 @@ emitter.on('onErrorHandler', async (e) => {
     await onError(e);
 });
 
-emitter.on('connectEndToNext', async _=> {
+emitter.on('connectEndToNext', async ()=> {
     await connectEndToNext();
 });
 
@@ -356,13 +364,14 @@ emitter.on('closeBrowser', async ()=>{
 });
 
 process.on('uncaughtException', e => {
-    // Sender.sendMiddleData('uncaughtException');
-    Sender.sendErrorLog('uncaughtException', e);
+    sender.sendMiddleData('uncaughtException');
+    sender.sendErrorLog(e, "process.on('uncaughtException')");
     // sendError('uncaughtException', e);
 });
 
 process.on('unhandledRejection', e => {
-    Sender.sendErrorLog('unhandledRejection', e);
+    sender.sendMiddleData('unhandledRejection');
+    sender.sendErrorLog("process.on('unhandledRejection')", e);
     // sendError('unhandledRejection', e);
 });
 
@@ -509,9 +518,9 @@ function runFfmpeg(pathE) {
         return;
     }
     if (err) {
-        //todo エラー送信するべき
-        Sender.sendMiddleData('ffmpegError', err);
+        sender.sendMiddleData('ffmpegError');
         emitter.emit('onErrorHandler', err);
+        sender.sendErrorLog(err, runFfmpeg.name);
         return;
     }
 
@@ -530,8 +539,8 @@ function runFfmpeg(pathE) {
             codecLib = 'libmp3lame';
             break;
         default:
-            console.log(totalPath.split('.')[1]);
-            Sender.sendMiddleData('ffmpegError', '拡張子がおかしい: '+ totalPath.split('.')[1]);
+            sender.sendMiddleData('ffmpegError');
+            sender.sendErrorLog('拡張子がおかしい: '+ totalPath.split('.')[1], runFfmpeg.name);
             emitter.emit('onErrorHandler', '拡張子がおかしい');
             return;
     }
@@ -552,16 +561,17 @@ function runFfmpeg(pathE) {
         .on('start', function(commandLine) {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
             if (!dlTaskList.getWorkingTask().abortFlag) {
-                Sender.sendMiddleData('ffmpegStart');
+                sender.sendMiddleData('ffmpegStart');
                 dlTaskList.getWorkingTask().stage = 'ffmpegStart';
             }
         })
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
-            if (!dlTaskList.getWorkingTask().abortFlag)
-                Sender.sendMiddleData('ffmpegError', err);
+            if (!dlTaskList.getWorkingTask().abortFlag) {
+                sender.sendMiddleData('ffmpegError', err);
+                sender.sendErrorLog(err, runFfmpeg.name + " .on('error')");
+            }
             deleteFileSync(totalPath);
-            // sendError('ffmpegError', err);
             emitter.emit('onErrorHandler', err);
         })
         .on('end', function(stdout, stderr) {
@@ -570,7 +580,7 @@ function runFfmpeg(pathE) {
                 emitter.emit('onErrorHandler', err);
                 deleteFileSync(totalPath);
             } else {
-                Sender.sendMiddleData('ffmpegEnd');
+                sender.sendMiddleData('ffmpegEnd');
                 dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
                 emitter.emit('connectEndToNext');
             }
@@ -580,7 +590,7 @@ function runFfmpeg(pathE) {
                     .split(':');
                 const sec = 60*60 * parseInt(hms[0]) + 60*parseInt(hms[1]) + parseInt(hms[2]);
                 console.log(sec);
-                Sender.sendFfmpegPrg(sec);
+                sender.sendFfmpegPrg(sec);
                 // progressCounter++;
             }
 
@@ -608,76 +618,79 @@ function runFfmpeg(pathE) {
 function getOutputPath() {
     const task = dlTaskList.getWorkingTask();
     const ymd = moment(task.ft, 'YYYYMMDDhhmmss').format('YYYY-MM-DD');
-    const suf = new Store().get('suffix') || 'mp3';
+    const suf = new Store().get('suffix') || 'mp3';//todo これまとめられる
     return new Store().get('output_path') +'/' + task.stationId +'/'+ task.title +'('+ ymd +').' + suf;
 }
 
-/**
- * @see {@link DlTask}
- * Note: ここで、sendする際には{@link #sendDlStatus()}を除いて、DlTask.stageを送信しないことに注意してください。
- * すなわち、renderer側ではコマンド名で進捗を判断し、DlTask.stageは用いません。
- * DlTask.stageを用いた場合、必ずDlTask.stageに進捗を書き込んだのちsendしなければならない⇒前後を誤りやすい⇒バグ発生
- */
-class Sender {
-    static sendMiddleData(command, e){
-        win.webContents.send(command, dlTaskList.getMiddleData(), e);
-    }
-
-    /**
-     * taskに書き込む前なので、taskは参照できない
-     */
-    static sendReply(stationId, ft, duplicated, title){
-        const data = {
-            stationId: stationId,
-            ft: ft,
-            duplicated: duplicated,
-            taskLength: Object.keys(dlTaskList.tasks).length,
-            title: title
-        };
-        win.webContents.send('startDlWithFt-REPLY', data);
-    }
-
-    static sendIsDownloadable(status){
-        console.log('sendIsDownloadable', status);
-        console.log(dlTaskList);
-        const data = dlTaskList.getMiddleData();
-        console.log(data);
-        data['status'] = status;
-        console.log('sendIsDownloadable', 'ここ');
-        win.webContents.send('isDownloadable', data);
-    }
-
-    static sendFfmpegPrg(percent){
-        const data = dlTaskList.getMiddleData();
-        data['ffmpegPrg'] = percent;
-        data['to'] =  dlTaskList.getWorkingTask().to;
-        win.webContents.send('ffmpegPrg', data);
-    }
-
-    static sendDlStatus(){
-        win.webContents.send('dlStatus_REPLY', JSON.stringify(dlTaskList));
-    }
-
-    static sendExplorerErr(){
-        win.webContents.send('ExplorerErr', JSON.stringify(dlTaskList));
-    }
-
-    static sendWriteFbResult(isSuccess){
-        win.webContents.send('writeFbResult', isSuccess);
-    }
-
-    /**
-     * @param command => 'unhandledRejection' or 'uncaughtException' or 'FATAL_ERROR'
-     */
-    static sendErrorLog(command, exception, funcName, className){
-        const data = {
-            exception: exception,
-            funcName: funcName,
-            className: className
-        };
-        win.webContents.send(command, data);
-    }
-}
+// /**
+//  * @see {@link DlTask}
+//  * Note: ここで、sendする際には{@link #sendDlStatus()}を除いて、DlTask.stageを送信しないことに注意してください。
+//  * すなわち、renderer側ではコマンド名で進捗を判断し、DlTask.stageは用いません。
+//  * DlTask.stageを用いた場合、必ずDlTask.stageに進捗を書き込んだのちsendしなければならない⇒前後を誤りやすい⇒バグ発生
+//  */
+// class Sender {
+//     static sendMiddleData(command){
+//         win.webContents.send(command, dlTaskList.getMiddleData(), e);
+//     }
+//
+//     /**
+//      * taskに書き込む前なので、taskは参照できない
+//      */
+//     static sendReply(stationId, ft, duplicated, title){
+//         const data = {
+//             stationId: stationId,
+//             ft: ft,
+//             duplicated: duplicated,
+//             taskLength: Object.keys(dlTaskList.tasks).length,
+//             title: title
+//         };
+//         win.webContents.send('startDlWithFt-REPLY', data);
+//     }
+//
+//     static sendIsDownloadable(status){
+//         console.log('sendIsDownloadable', status);
+//         console.log(dlTaskList);
+//         const data = dlTaskList.getMiddleData();
+//         console.log(data);
+//         data['status'] = status;
+//         console.log('sendIsDownloadable', 'ここ');
+//         win.webContents.send('isDownloadable', data);
+//     }
+//
+//     static sendFfmpegPrg(percent){
+//         const data = dlTaskList.getMiddleData();
+//         data['ffmpegPrg'] = percent;
+//         data['to'] =  dlTaskList.getWorkingTask().to;
+//         win.webContents.send('ffmpegPrg', data);
+//     }
+//
+//     static sendDlStatus(){
+//         win.webContents.send('dlStatus_REPLY', JSON.stringify(dlTaskList));
+//     }
+//
+//     static sendExplorerErr(){
+//         win.webContents.send('ExplorerErr', JSON.stringify(dlTaskList));
+//     }
+//
+//     static sendWriteFbResult(isSuccess){
+//         win.webContents.send('writeFbResult', isSuccess);
+//     }
+//
+//     /**
+//      * !!!!!{@link #sendMiddleData}などでエラーをレンダラ側に通知する動作には、絶対にログ送信を含めないこと。必ず本メソッドを通じてログ送信を行うこと。!!!!!!
+//      * @param exception エラー内容を代入。ただし、該当するものがなければなんでもOK
+//      * @param funcName メソッド名 ただし、該当するものがなければなんでもOK」
+//      * @param className クラス名 globalであれば省略可。
+//      */
+//     static sendErrorLog(exception, funcName, className){
+//         const data = {
+//             exception: exception,
+//             funcName: funcName,
+//             className: className
+//         };
+//         win.webContents.send('FATAL_ERROR', data);
+//     }
+// }
 
 async function onError(e) {
     await connectEndToNext();
@@ -696,9 +709,9 @@ async function connectEndToNext() {
     if (taskNext) {
         operator.startDlChain().catch(e => {
             console.log('connectEndToNext()内 startDlChain エラー!');
-            Sender.sendMiddleData('startDlChainError');
+            sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
-            Sender.sendErrorLog('FATAL_ERROR', e, connectEndToNext.name);
+            sender.sendErrorLog('FATAL_ERROR', e, connectEndToNext.name);
             // sendError('connectEndToNext()', e);
         });
     } else {

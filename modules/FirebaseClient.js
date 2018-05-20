@@ -2,6 +2,8 @@ module.exports = class FirebaseClient {
     constructor(){
         this.moment = require('moment');
         this.remote = require('electron').remote;
+        this.fs = require('fs-extra');
+        this.LOG_PATH = '../debug.log';
         const config = {
             apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
             authDomain: "radiko-7e63e.firebaseapp.com",
@@ -45,15 +47,24 @@ module.exports = class FirebaseClient {
         return this;
     }
 
-    static sendError(e, funcName, className){
+    sendError(e, funcName, className){
         const client = new FirebaseClient().setUserData();
         client.data['exeption'] = e;
         client.data['function'] = funcName ;
         client.data['class'] = className;
-        client.writeData('crash', ()=>{
-            //do nothing
-        }).catch(e =>{
-            //do nothing
+        this.fs.readFile(this.LOG_PATH, 'utf-8', (err, data) => {
+            if (err) //どうしようもない
+                return;
+            client.data['log'] = data;
+            client.writeData('crash', ()=>{
+                //do nothing
+            }).catch(e =>{
+                //do nothing
+            }).finally(()=>{
+                this.fs.writeFile(this.LOG_PATH, '', (err)=>{
+                    //どうしようもない
+                });
+            });
         });
     }
 };
