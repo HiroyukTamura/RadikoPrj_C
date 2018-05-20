@@ -52,11 +52,11 @@ module.exports = class DlNotification {
     updateAsPrg(data){
         this.ntf.update({
             title: 'データを再構成しています...(これには時間がかかることがあります)',
-            progress: DlNotification.calcProgressNum(data)
+            progress: this.calcProgressNum(data)
         })
     }
 
-    static calcProgressNum(data){
+    calcProgressNum(data){
         const totalSec = this.moment(data.to, 'YYYYMMDDhhmmss').diff(this.moment(data.ft, 'YYYYMMDDhhmmss'), 'seconds');
         return 30 + Math.round(70 * data.ffmpegPrg / totalSec)
     }

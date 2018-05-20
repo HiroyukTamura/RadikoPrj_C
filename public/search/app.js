@@ -3,32 +3,14 @@ window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
 const ProgramSearcher = require('../../modules/ProgramSearcher');
+const ProcessCommunicator = require('../../modules/ProcessCommunicator');
+const IpcClient = require('../../modules/IpcClient');
+const DlNotification = require('../../modules/DlNotification');
+const FirebaseClient = require('../../modules/FirebaseClient');
+
 require('bootstrap-notify');
 
-!function () {
-    const moment = require('moment');
-    let conductor;
-    let searchDom;
-    let startDropDown;
-    let endDropDown;
-    let requestOperator;
-    let suggester;
-    let ipcComm;
-
-    $(window).on('load', ()=> {
-        ipcComm = new ProcessCommunicator();
-        $('form').on('submit', function () {
-            return false;
-        });
-        conductor = new Conductor();
-        conductor.init();
-        searchDom = new SearchDom();
-        requestOperator = new RequestOperator();
-        searchDom.initializeSearchBar();
-        conductor.setOnClickForWindow();
-        Conductor.checkUrlParam();
-    });
-
+$(()=>{
     class Conductor {
         constructor(){
             this.currentM = moment();
@@ -47,8 +29,7 @@ require('bootstrap-notify');
                 const to = self.$dialog.attr('to');
                 const img = self.$dialog.attr('data-img');
                 console.log(to);
-                //todo imgも記載する
-                ProcessCommunicator.callDL(ft, to, stationId, title, img);
+                ipcComm.callDL(ft, to, stationId, title, img);
             });
         }
 
@@ -534,4 +515,22 @@ require('bootstrap-notify');
                 });
         }
     }
-}();
+
+
+    const moment = require('moment');
+    let startDropDown;
+    let endDropDown;
+    let suggester;
+    const ipcComm = new ProcessCommunicator(DlNotification);
+    new IpcClient(DlNotification, FirebaseClient);
+    $('form').on('submit', function () {
+        return false;
+    });
+    const conductor = new Conductor();
+    conductor.init();
+    const searchDom = new SearchDom();
+    const requestOperator = new RequestOperator();
+    searchDom.initializeSearchBar();
+    conductor.setOnClickForWindow();
+    Conductor.checkUrlParam();
+});

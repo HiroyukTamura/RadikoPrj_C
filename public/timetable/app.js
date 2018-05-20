@@ -456,7 +456,7 @@ $(()=>{
     }
 
     const ipcConn = new ProcessCommunicator(DlNotification);
-    const ipcClient = new IpcClient(DlNotification, FirebaseClient);
+    new IpcClient(DlNotification, FirebaseClient);
     const ereaChecker = new EreaChecker();
     const domFrame = new DomFrame();
     const conductor = new OperationConductor();

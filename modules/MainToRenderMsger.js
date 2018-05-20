@@ -11,7 +11,7 @@ module.exports = class MainToRenderMsger {
     }
 
     sendMiddleData(command){
-        this.webContents.send(command, this.dlTaskList.getMiddleData(), e);
+        this.webContents.send(command, this.dlTaskList.getMiddleData());
     }
 
     /**
@@ -55,6 +55,14 @@ module.exports = class MainToRenderMsger {
 
     sendWriteFbResult(isSuccess){
         this.webContents.send('writeFbResult', isSuccess);
+    }
+
+    sendUncaughtException() {
+        this.webContents.send('uncaughtException');
+    }
+
+    sendUnhandledRejection() {
+        this.webContents.send('unhandledRejection');
     }
 
     /**

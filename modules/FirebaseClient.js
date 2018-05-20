@@ -38,11 +38,16 @@ module.exports = class FirebaseClient {
         return this;
     }
 
+    /**
+     * Note: FireStoreでは、undefinedを値にセットした場合エラーが返されるの
+     * @param className undefinedでありうる
+     */
     sendError(e, funcName, className){
         this.setUserData();
         this.data['exception'] = e;
         this.data['function'] = funcName ;
-        this.data['class'] = className;
+        if (className)
+            this.data['class'] = className;
 
         this.fs.readFile(this.LOG_PATH, 'utf-8', (err, data) => {
             if (err) {
@@ -50,11 +55,12 @@ module.exports = class FirebaseClient {
                 return;
             }
             this.data['log'] = data;
+            console.log(this.data);
             this.writeData('crash').then(()=>{
                 console.log('書き込み完了!');
-            }).catch(e =>{
+            }).catch(e => {
                 console.log(e);
-            }).then(()=>{
+            }).then(() => {//finallyはサポートされていない
                 this.fs.writeFile(this.LOG_PATH, '', (err)=>{
                     if (err)
                         console.log(err);

@@ -29,7 +29,7 @@ let postGotJsons;
 const HTML_PATH = 'public/timetable/index.html';
 const HTML_PATH_INSTALL = 'public/install/index.html';
 const LOG_PATH = './debug.log';
-const FLAG_RELEASE_BUILD = true;//todo リリースビルド時フラグを倒せ
+const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒せ
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
 !function () {
@@ -253,9 +253,9 @@ function createWindow () {
         win.show();
     });
 
-    new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
-        sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
-    });
+    // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
+    //     sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
+    // });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
 
@@ -372,7 +372,7 @@ process.on('uncaughtException', e => {
     console.log(e);
     if (!sender)
         return;
-    sender.sendMiddleData('uncaughtException');
+    sender.sendUncaughtException('uncaughtException');
     sender.sendErrorLog(e, "process.on('uncaughtException')");
     // sendError('uncaughtException', e);
 });
@@ -381,7 +381,7 @@ process.on('unhandledRejection', e => {
     console.log(e);
     if (!sender)
         return;
-    sender.sendMiddleData('unhandledRejection');
+    sender.sendUnhandledRejection('unhandledRejection');
     sender.sendErrorLog("process.on('unhandledRejection')", e);
     // sendError('unhandledRejection', e);
 });
