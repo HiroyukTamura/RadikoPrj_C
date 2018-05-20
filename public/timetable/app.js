@@ -8,6 +8,8 @@ const ProcessCommunicator = require('../../modules/ProcessCommunicator');
 const IpcClient = require('../../modules/IpcClient');
 const DlNotification = require('../../modules/DlNotification');
 const FirebaseClient = require('../../modules/FirebaseClient');
+const Util = require('../../modules/Util');
+const {EreaChecker, ProgramListGetter} = require('../../modules/Network');
 
 $(()=>{
     const moment = require('moment');/*グローバルに定義してはいけない??*/

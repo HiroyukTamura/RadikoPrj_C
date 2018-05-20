@@ -9,6 +9,7 @@ const FirebaseClient = require('../../modules/FirebaseClient');
 const IpcClient = require('../../modules/IpcClient');
 const DlNotification = require('../../modules/DlNotification');
 const ipcRenderer = require('electron').ipcRenderer;
+const Util = require('../../modules/Util');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 

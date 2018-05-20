@@ -4,6 +4,8 @@ require('bootstrap-notify');
 const FirebaseClient = require('../../modules/FirebaseClient');
 const IpcClient = require('../../modules/IpcClient');
 const DlNotification = require('../../modules/DlNotification');
+const Util = require('../../modules/Util');
+const {EreaChecker} = require('../../modules/Network');
 
 $(()=>{
     const moment = require('moment');

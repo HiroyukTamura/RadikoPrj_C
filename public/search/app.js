@@ -8,6 +8,7 @@ const ProcessCommunicator = require('../../modules/ProcessCommunicator');
 const IpcClient = require('../../modules/IpcClient');
 const DlNotification = require('../../modules/DlNotification');
 const FirebaseClient = require('../../modules/FirebaseClient');
+const Util = require('../../modules/Util');
 
 require('bootstrap-notify');
 

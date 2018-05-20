@@ -1,5 +1,4 @@
 <script src="../../dist/md5.js"></script>
-<script src="../../modules/common.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.11.0/firebase-firestore.js"></script>
 <script>
@@ -12,4 +11,8 @@
         messagingSenderId: "1032750813236"
     };
     firebase.initializeApp(config);
+
+    String.prototype.splice = function(start, delCount, newSubStr) {
+        return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
+    };
 </script>

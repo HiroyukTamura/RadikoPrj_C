@@ -33,7 +33,7 @@ module.exports = class FirebaseClient {
             process_type: this.remote.process.type,
             version: this.remote.app.getVersion(),
             productName: (this.remote.app.getName()),
-            prod: 'Electron',
+            prod: 'Electron'
         };
         return this;
     }

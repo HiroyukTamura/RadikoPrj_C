@@ -1,5 +1,7 @@
 class ProgramListGetter {
     constructor(requestM){
+        window.$ = require('jquery');
+        window.moment = require('moment');
         this.ymd = requestM.format('YYYYMMDD');
         this.URL = null;
     }
@@ -63,3 +65,8 @@ class EreaChecker {
         localStorage.setItem('areaId', areaId);
     }
 }
+
+exports.module = {
+    ProgramListGetter: ProgramListGetter,
+    EreaChecker: EreaChecker
+};
