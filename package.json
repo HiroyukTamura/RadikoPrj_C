@@ -66,14 +66,11 @@
     ],
     "extraFiles": [
       "Application/**/*",
-      "img/**/*"
+      "img/**/*",
+      "UserData/**/*"
     ],
     "win": {
-      "target": "appx"
-    },
-    "appx": {
-      "backgroundColor": "#A6DAE8",
-      "languages": ["ja-JP"]
+      "target": "nsis"
     }
   }
 }

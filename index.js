@@ -198,7 +198,7 @@ function createWindow () {
             width: 800,
             height: 600,
             // nodeIntegration: false,
-            webSecurity: false,
+            // webSecurity: false,
             show: false
         },
         // titleBarStyle: 'hiddenInset'
@@ -325,7 +325,7 @@ emitter.on('setTask', async() => {
     if (isFailed)
         return;
     operator.startDlChain().catch(e => {
-        console.log('startDlChain error');
+        console.log('startDlChain error', e);
         Sender.sendMiddleData('startDlChainError');
         emitter.emit('onErrorHandler', e);
         Sender.sendErrorLog('FATAL_ERROR', e, 'startDlChain');
