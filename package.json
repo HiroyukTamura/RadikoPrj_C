@@ -44,12 +44,14 @@
     "electron": "^2.0.1",
     "electron-builder": "^20.13.4",
     "electron-packager": "^12.1.0",
+    "eslint": "^4.19.1",
     "gulp": "^3.9.1",
     "gulp-notify": "^3.2.0",
     "gulp-plumber": "^1.2.0",
     "gulp-rename": "^1.2.3",
     "gulp-sass": "^4.0.1",
     "gulp-using": "^0.1.1",
+    "standard": "^11.0.1",
     "stream": "0.0.2"
   },
   "build": {
