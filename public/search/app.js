@@ -1,4 +1,5 @@
 'use strict';
+const ipcRenderer = require('electron').ipcRenderer;
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');

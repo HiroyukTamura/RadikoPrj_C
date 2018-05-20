@@ -3,8 +3,9 @@ const tippy = require('tippy.js');
 require('bootstrap-notify');
 const FirebaseClient = require('../../modules/FirebaseClient');
 const IpcClient = require('../../modules/IpcClient');
+const DlNotification = require('../../modules/DlNotification');
 
-$(function(){
+$(()=>{
     const moment = require('moment');
 
     class Conductor {
@@ -18,16 +19,15 @@ $(function(){
                 }).then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e =>{
-                    FirebaseClient.sendError(e, Conductor.init.name, this.constructor.name);
+                    new FirebaseClient().sendError(e, Conductor.init.name, this.constructor.name);
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
             } else {
-                console.log('なぜだ？');
                 new InfoClient(areaId).request().then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e => {
-                    FirebaseClient.sendError(e, Conductor.init.name, this.constructor.name);
+                    new FirebaseClient().sendError(e, Conductor.init.name, this.constructor.name);
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
@@ -116,6 +116,6 @@ $(function(){
     }
 
     const presenter = new Presenter();
-    const ipcClient = new IpcClient();
+    new IpcClient(DlNotification, FirebaseClient);
     new Conductor().init();
 });

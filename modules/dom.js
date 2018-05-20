@@ -4,7 +4,8 @@ class DomUtil {
         this.columnWidth = 258;//px scssより引用
         this.columnLen = 0;
         this.$grid = $('#grid');
-        this.currentM = moment($(this.data).find('srvtime'));
+        this.moment = require('moment');
+        this.currentM = this.moment($(this.data).find('srvtime'));
         if (this.currentM.hour() < 5)
             this.currentM.add(-1, 'd');
     }
@@ -56,8 +57,8 @@ class DomUtil {
             const img = $(ele).find('img').html();
             const tsIn = $(ele).find('ts_in_ng').html();
 
-            const startM = moment(ft, 'YYYYMMDDHHmmss');
-            const endM = moment(to, 'YYYYMMDDHHmmss');
+            const startM = this.moment(ft, 'YYYYMMDDHHmmss');
+            const endM = this.moment(to, 'YYYYMMDDHHmmss');
             const startHour = startM.hour();
             // const endHour = endM.hour();
             const timeStr = startM.format('HH:mm') + ' - '+endM.format('HH:mm');
@@ -90,7 +91,7 @@ class DomUtil {
                 $cardOrgin.addClass('cant-dl');
             }
 
-            if (endM.diff(moment()) > 0) {
+            if (endM.diff(this.moment()) > 0) {
                 $cardOrgin.addClass('pre-start');
             }
 

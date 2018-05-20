@@ -299,7 +299,8 @@ ipcMain.on('cancelDl', (event, timeStamp) => {
 
 ipcMain.on('openFileExplore', (event, arg) => {
     console.log('openFileExplore');
-    new FileExplorerOpener().open();
+    if (sender)
+        new FileExplorerOpener(sender).open();
 });
 
 app.on('ready', createWindow);

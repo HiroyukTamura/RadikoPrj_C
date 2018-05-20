@@ -7,6 +7,8 @@ const tippy = require('tippy.js');
 const Store = require('electron-store');
 const FirebaseClient = require('../../modules/FirebaseClient');
 const IpcClient = require('../../modules/IpcClient');
+const DlNotification = require('../../modules/DlNotification');
+const ipcRenderer = require('electron').ipcRenderer;
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 
@@ -59,11 +61,12 @@ $(function () {
             }).on('ffmpegPrg', (event, data) => {
                 console.log('ffmpegPrg');
                 presenter.onGetFfmpegProgress(data);
-            }).on('unhandledRejection', (event, data) => {
-                DlNotification.showFailedNtf('処理に失敗しました');
-            }).on('unhandledRejection', (efvent, data) => {
-                DlNotification.showFailedNtf('処理に失敗しました');
             });
+            // .on('unhandledRejection', (event, data) => {
+            //     DlNotification.showFailedNtf('処理に失敗しました');
+            // }).on('unhandledRejection', (efvent, data) => {
+            //     DlNotification.showFailedNtf('処理に失敗しました');
+            // });
         }
 
         static onGetDlStatusReply(string){
@@ -282,7 +285,7 @@ $(function () {
                 return;
             } //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
 
-            const num = DlNotification.calcProgressNum(data);
+            const num = new DlNotification().calcProgressNum(data);
             const stage = DlNotification.getStageStr('ffmpegPrg', num);
             console.log('numnum', num);
             $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);
@@ -291,7 +294,6 @@ $(function () {
     }
 
     const presenter = new Presenter();
-    const ipcComm = new ProcessCommunicatorFromDL();
-    new IpcClient();
+    new IpcClient(DlNotification, FirebaseClient);
     Conductor.init();
 });

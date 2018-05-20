@@ -1,5 +1,6 @@
 module.exports = class FileExplorerOpener {
-    constructor() {
+    constructor(sender) {
+        this.sender = sender;
         const Store = require('electron-store');
         this.exec = require('child_process').exec;
         this.store = new Store();
@@ -8,10 +9,12 @@ module.exports = class FileExplorerOpener {
     open(){
         console.log(this.path);
         const cd = this.exec('start .', {cwd: this.path});
-        cd.on('error', function (err) {
+        cd.on('error', (err) => {
             console.log(err);
-            Sender.sendExplorerErr();
-            sendError('ExplorerErr', err);
+            if (!this.sender)
+                return;
+            this.sender.sendExplorerErr();
+            this.sender.sendErrorLog(err, open.name, this.constructor.name);
         });
         cd.on('close', function (err) {
             console.warn('close', err);
