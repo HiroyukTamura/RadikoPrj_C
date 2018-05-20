@@ -2,7 +2,8 @@
 window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
-const notify = require('bootstrap-notify');
+const ProgramSearcher = require('../../modules/ProgramSearcher');
+require('bootstrap-notify');
 
 !function () {
     const moment = require('moment');

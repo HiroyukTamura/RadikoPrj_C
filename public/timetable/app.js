@@ -1,10 +1,11 @@
 'use strict';
+window.jQuery = window.$= require("jquery");
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
 require('bootstrap-notify');
+const ProgramSearcher = require('../../modules/ProgramSearcher');
 
 !function(){
-    window.jQuery = window.$= require("jquery");
     const moment = require('moment');/*グローバルに定義してはいけない??*/
     let ereaChecker;
     let domFrame;

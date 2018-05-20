@@ -27,6 +27,7 @@ let postGotJsons;
 
 const HTML_PATH = 'public/timetable/index.html';
 const HTML_PATH_INSTALL = 'public/install/index.html';
+const FLAG_RELEASE_BUILD = true;//todo リリースビルド時フラグを倒せ
 
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
@@ -222,7 +223,7 @@ function createWindow () {
         slashes: true
     }));
 
-    // win.webContents.openDevTools();
+    win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -245,9 +246,9 @@ function createWindow () {
         win.show();
     });
 
-    // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
-    //     Sender.sendErrorLog('unhandledRejection', 'テストエラーでごんす');
-    // });
+    new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
+        Sender.sendErrorLog('startDlChainError', 'テストエラーでごんす', 'こっちはえくすとらでごんす');
+    });
 
     // operator.launchPuppeteer();//todo コメントアウト外すこと?
 
@@ -324,17 +325,17 @@ emitter.on('setTask', async() => {
     console.log('setTask');
     let isFailed = false;
     await operator.launchPuppeteer().catch(err => {
-        console.log(e);
-        emitter.emit('onErrorHandler', err, 'launchPuppeteer');
+        console.log(err);
+        emitter.emit('onErrorHandler', err/*, 'launchPuppeteer'*/);
         isFailed = true;
-        Sender.sendErrorLog('FATAL_ERROR');
+        Sender.sendErrorLog('FATAL_ERROR', err);
         // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
     operator.startDlChain().catch(e => {
         console.log('startDlChain error', e);
-        Sender.sendMiddleData('startDlChainError');
+        Sender.sendMiddleData('startDlChainError', e);
         emitter.emit('onErrorHandler', e);
         Sender.sendErrorLog('FATAL_ERROR', e, 'startDlChain');
         // sendError('operator.startDlChain()', e);
@@ -503,7 +504,13 @@ function runFfmpeg(pathE) {
         err = e;
     }
 
-    if (err || dlTaskList.getWorkingTask().abortFlag) {
+    if (dlTaskList.getWorkingTask().abortFlag) {
+        emitter.emit('onErrorHandler', err);
+        return;
+    }
+    if (err) {
+        //todo エラー送信するべき
+        Sender.sendMiddleData('ffmpegError', err);
         emitter.emit('onErrorHandler', err);
         return;
     }
@@ -524,16 +531,21 @@ function runFfmpeg(pathE) {
             break;
         default:
             console.log(totalPath.split('.')[1]);
-            Sender.sendMiddleData('ffmpegError');
+            Sender.sendMiddleData('ffmpegError', '拡張子がおかしい: '+ totalPath.split('.')[1]);
             emitter.emit('onErrorHandler', '拡張子がおかしい');
             return;
     }
 
     // let progressCounter = 0;
     let isKilled = false;
+    let ffmpegPath = ffmpeg_static.path;
+    if (FLAG_RELEASE_BUILD) {
+        const key = 'app.asar';
+        ffmpegPath = ffmpegPath.splice(ffmpegPath.indexOf(key)+ key.length, 0, '.unpacked');
+    }
 
     const command = ffmpeg(pathE)
-        .setFfmpegPath(ffmpeg_static.path)
+        .setFfmpegPath(ffmpegPath)
         .audioCodec(codecLib)
         .audioBitrate(bps)
         // .videoCodec('copy')
@@ -547,7 +559,7 @@ function runFfmpeg(pathE) {
         .on('error', function(err, stdout, stderr) {
             console.log('Cannot process video: ' + err.message);
             if (!dlTaskList.getWorkingTask().abortFlag)
-                Sender.sendMiddleData('ffmpegError');
+                Sender.sendMiddleData('ffmpegError', err);
             deleteFileSync(totalPath);
             // sendError('ffmpegError', err);
             emitter.emit('onErrorHandler', err);
@@ -607,8 +619,8 @@ function getOutputPath() {
  * DlTask.stageを用いた場合、必ずDlTask.stageに進捗を書き込んだのちsendしなければならない⇒前後を誤りやすい⇒バグ発生
  */
 class Sender {
-    static sendMiddleData(command){
-        win.webContents.send(command, dlTaskList.getMiddleData());
+    static sendMiddleData(command, e){
+        win.webContents.send(command, dlTaskList.getMiddleData(), e);
     }
 
     /**
