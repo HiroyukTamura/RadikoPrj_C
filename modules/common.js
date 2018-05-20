@@ -360,7 +360,7 @@ class ProcessCommunicator{
         this.ntfList = [];
     }
 
-    relaseNtf(stationId, ft){
+    releaseNtf(stationId, ft){
         for (let i = 0; i < this.ntfList.length; i++) {
             if (this.ntfList[i].stationId === stationId && this.ntfList[i].ft === ft) {
                 this.ntfList.splice(i, 1);
@@ -376,8 +376,7 @@ class ProcessCommunicator{
                 ntf = ele;
         });
         if (ntf === null) {
-            //todo エラー送信
-            console.warn('ntf==null');
+            console.log('ntf==null');
         }
         return ntf;
     }
@@ -466,14 +465,14 @@ class ProcessCommunicator{
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
             ntf.updateAsFailed();
-        this.relaseNtf(data.stationId, data.ft);
+        this.releaseNtf(data.stationId, data.ft);
     }
 
     onGetFfmpegEnd(data) {
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
             ntf.updateAsSuccess();
-        this.relaseNtf(data.stationId, data.ft);
+        this.releaseNtf(data.stationId, data.ft);
     }
 
     onGetPageReached(data) {

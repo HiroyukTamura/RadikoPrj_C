@@ -4,43 +4,10 @@ require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
 require('bootstrap-notify');
 const ProgramSearcher = require('../../modules/ProgramSearcher');
+const ProcessCommunicator = require('../../modules/ProcessCommunicator');
 
-!function(){
+$(()=>{
     const moment = require('moment');/*グローバルに定義してはいけない??*/
-    let ereaChecker;
-    let domFrame;
-    let conductor;
-    let searcher;
-    let ipcConn;
-
-    $(window).on('load', ()=> {
-        console.log('onload');
-        ipcConn = new ProcessCommunicator();
-        ereaChecker = new EreaChecker();
-        domFrame = new DomFrame();
-        conductor = new OperationConductor();
-        searcher = new ProgramSearcherCustom();
-
-        conductor.initialOperate();
-
-        $(window).on('click', (e)=> {
-            console.log('Im clicked' , e.clientX, e.clientY);
-            // searcher.onClickWindow(event);
-            if (domFrame.$dialog.prop('open')) {
-                const rect = domFrame.$dialog[0].getBoundingClientRect();
-                if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
-                    domFrame.$dialog[0].close();
-                    e.stopPropagation();
-                }
-            } else {
-                const $clickedEle = searcher.$dropDown.find('.mouseover');
-                if ($clickedEle.length) {
-                    searcher.resetSuggestion($clickedEle.text());
-                    e.stopPropagation();
-                }
-            }
-        });
-    });
 
     class OperationConductor{
         initialOperate(){
@@ -90,7 +57,7 @@ const ProgramSearcher = require('../../modules/ProgramSearcher');
                     domFrame.setOnCardClickListener();
                     domFrame.updateDateMenu(false);
                     domFrame.show();
-                    domFrame.scrolltMostRihgt();
+                    domFrame.scrollToMostRight();
                     const $cont = $('.mdl-layout__content');
                     $cont.scrollLeft($cont.width());
                 }).catch((e)=>{
@@ -149,7 +116,7 @@ const ProgramSearcher = require('../../modules/ProgramSearcher');
             this.$root.scrollTop(72);
         }
 
-        scrolltMostRihgt(){
+        scrollToMostRight(){
             this.$root.scrollLeft(this.$root.width());
         }
 
@@ -213,7 +180,7 @@ const ProgramSearcher = require('../../modules/ProgramSearcher');
                 const title = self.$dialog.attr('data-title');
                 const to = self.$dialog.attr('to');
                 const img = self.$dialog.attr('data-img');
-                ProcessCommunicator.callDL(ft, to, stationId, title, img);
+                ipcConn.callDL(ft, to, stationId, title, img);
             });
         }
 
@@ -484,7 +451,33 @@ const ProgramSearcher = require('../../modules/ProgramSearcher');
             window.location.href = '../search/index.html?key='+key;
         }
     }
-}();
+
+    const ipcConn = new ProcessCommunicator();
+    const ereaChecker = new EreaChecker();
+    const domFrame = new DomFrame();
+    const conductor = new OperationConductor();
+    const searcher = new ProgramSearcherCustom();
+
+    conductor.initialOperate();
+
+    $(window).on('click', (e)=> {
+        console.log('Im clicked' , e.clientX, e.clientY);
+        // searcher.onClickWindow(event);
+        if (domFrame.$dialog.prop('open')) {
+            const rect = domFrame.$dialog[0].getBoundingClientRect();
+            if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+                domFrame.$dialog[0].close();
+                e.stopPropagation();
+            }
+        } else {
+            const $clickedEle = searcher.$dropDown.find('.mouseover');
+            if ($clickedEle.length) {
+                searcher.resetSuggestion($clickedEle.text());
+                e.stopPropagation();
+            }
+        }
+    });
+});
 
 
 
