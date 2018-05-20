@@ -14,18 +14,18 @@ $(()=>{
         init(){
             const areaId = EreaChecker.getAreaIdFromStorage();
             console.log(areaId);
-            if (!areaId || areaId === 'undefined') {
+            if (!areaId || areaId === 'undefined')
                 new EreaChecker().check().then((areaId) => {
                     console.log('こっち', areaId);
                     return new InfoClient(areaId).request();
                 }).then(data => {
                     Conductor.onGetInfoData(data);
-                }).catch(e =>{
+                }).catch(e => {
                     new FirebaseClient().sendError(e, Conductor.init.name, this.constructor.name);
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
-            } else {
+            else
                 new InfoClient(areaId).request().then(data => {
                     Conductor.onGetInfoData(data);
                 }).catch(e => {
@@ -33,7 +33,6 @@ $(()=>{
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
-            }
         }
 
         static onGetInfoData(data){
@@ -56,7 +55,7 @@ $(()=>{
         }
     }
 
-    class Presenter{
+    class Presenter {
         constructor(){
             this.$rdkNtfW = $('#notice-radiko');
             this.$input = $('#comment');
@@ -78,7 +77,7 @@ $(()=>{
 
                 fbClient.writeData('contact-comment').then(()=>{
                     DlNotification.showCancelNtf('送信しました');
-                }).catch((e)=> {
+                }).catch(e => {
                     console.log(e);
                     DlNotification.showFailedNtf('処理に失敗しました');
                 });
@@ -106,7 +105,7 @@ $(()=>{
             return new Promise((resolve, reject) => {
                 $.ajax({
                     url: this.URL,
-                    cache: false,
+                    cache: false
                 }).done((data, textStatus, jqXHR) => {
                     resolve(data);
                 }).fail((jqXHR, textStatus, errorThrown) => {

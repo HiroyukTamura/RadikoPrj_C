@@ -1,5 +1,5 @@
 module.exports = class DlNotification {
-    constructor(stationId, ft, title) {
+    constructor(Util, stationId, ft, title) {
         this.moment = require('moment');
         require('bootstrap-notify');
         this.stationId = stationId;
@@ -16,11 +16,11 @@ module.exports = class DlNotification {
             title: 'データを取得しています...',
             message: this.msg,
             progress: 0,
-        },{
+        }, {
             type: 'progress-ntf',
             placement: {
-                from: "bottom",
-                align: "right"
+                from: 'bottom',
+                align: 'right'
             },
             // icon_type: 'img',
             showProgressbar: true,
@@ -49,14 +49,14 @@ module.exports = class DlNotification {
         })
     }
 
-    updateAsPrg(data){
+    updateAsPrg(data) {
         this.ntf.update({
             title: 'データを再構成しています...(これには時間がかかることがあります)',
             progress: this.calcProgressNum(data)
         })
     }
 
-    calcProgressNum(data){
+    calcProgressNum(data) {
         const totalSec = this.moment(data.to, 'YYYYMMDDhhmmss').diff(this.moment(data.ft, 'YYYYMMDDhhmmss'), 'seconds');
         return 30 + Math.round(70 * data.ffmpegPrg / totalSec)
     }
@@ -71,7 +71,7 @@ module.exports = class DlNotification {
     updateAsSuccess(){
         this.ntf.update({
             title: 'ダウンロード完了',
-            progress: 100,
+            progress: 100
         });
         this.ntf.update({
             delay: 5000/*5000がデフォルト値*/,
@@ -79,7 +79,7 @@ module.exports = class DlNotification {
         });
     }
 
-    updateAsFailed(msg = '処理に失敗しました'){
+    updateAsFailed(msg = '処理に失敗しました') {
         this.ntf.update({
             title: msg,
             progress: 0,
@@ -93,30 +93,30 @@ module.exports = class DlNotification {
     static showDuplicatedNtf(){
         $.notify({
             message: 'この番組は現在ダウンロード中です'
-        },{
+        }, {
             type: 'danger',
             allow_dismiss: false,
             placement: {
-                from: "bottom",
-                align: "right"
+                from: 'bottom',
+                align: 'right'
             }
         });
     }
 
     static showFailedNtf(title, message) {
-        if (message) {
+        if (message)
             $.notify({
                 icon: '../../img/exclamation-triangle.svg',
                 title: title,
                 message: message
-            },{
+            }, {
                 type: 'minimalist',
                 icon_type: 'image',
                 delay: 0,
                 allow_dismiss: true,
                 placement: {
-                    from: "bottom",
-                    align: "right"
+                    from: 'bottom',
+                    align: 'right'
                 },
                 template:
                 '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
@@ -130,18 +130,18 @@ module.exports = class DlNotification {
                 '</div>'+
                 '</div>'
             });
-        } else {
+        else
             $.notify({
                 icon: '../../img/exclamation-triangle.svg',
-                title: title,
-            },{
+                title: title
+            }, {
                 type: 'minimalist',
                 icon_type: 'image',
                 delay: 0,
                 allow_dismiss: true,
                 placement: {
-                    from: "bottom",
-                    align: "right"
+                    from: 'bottom',
+                    align: 'right'
                 },
                 template:
                 '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red one-row" role="alert">' +
@@ -154,7 +154,6 @@ module.exports = class DlNotification {
                 '</div>'+
                 '</div>'
             });
-        }
     }
 
     static showSuccessNtf(title, message) {
@@ -167,8 +166,8 @@ module.exports = class DlNotification {
             icon_type: 'image',
             allow_dismiss: true,
             placement: {
-                from: "bottom",
-                align: "right"
+                from: 'bottom',
+                align: 'right'
             },
             template: this.getHtmlTemplate()
         });
@@ -190,14 +189,14 @@ module.exports = class DlNotification {
         $.notify({
             icon: '../../img/check-circle.svg',
             title: title
-        },{
+        }, {
             type: 'minimalist',
             icon_type: 'image',
             delay: 5000,
             allow_dismiss: false,
             placement: {
-                from: "bottom",
-                align: "right"
+                from: 'bottom',
+                align: 'right'
             },
             template:
             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue one-row" role="alert">' +
@@ -212,7 +211,7 @@ module.exports = class DlNotification {
         });
     }
 
-    static getStageStr(stage, num){
+    static getStageStr(stage, num) {
         switch (stage) {
             case 'UNSET':
                 return 'ダウンロードの開始を待っています...(0%)';
@@ -223,7 +222,7 @@ module.exports = class DlNotification {
             case 'ffmpegPrg':
                 return 'データをMP3に変換しています('+ num +'%)<br>(これには時間がかかることがあります)...';
             default:
-                return'';
+                return '';
         }
     }
 

@@ -1,6 +1,6 @@
 'use strict';
-const ipcRenderer = require('electron').ipcRenderer;
-window.jQuery = window.$= require("jquery");
+// const ipcRenderer = require('electron').ipcRenderer;
+const $= require('jquery');
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
 const ProgramSearcher = require('../../modules/ProgramSearcher');
@@ -12,7 +12,7 @@ const Util = require('../../modules/Util');
 
 require('bootstrap-notify');
 
-$(()=>{
+$(() => {
     class Conductor {
         constructor(){
             this.currentM = moment();
@@ -23,7 +23,7 @@ $(()=>{
             const self = this;
             Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
             Util.setDialogListeners(this.$dialog[0]);
-            $('#dl-btm').on('click', function () {
+            $('#dl-btm').on('click', () => {
                 self.$dialog[0].close();
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
@@ -37,7 +37,7 @@ $(()=>{
 
         static checkUrlParam(){
             const key = SearchDom.getUrlParam('key');
-            if(key){
+            if (key) {
                 searchDom.$keyInput.val(SearchDom.getUrlParam('key'))
                     .parents('.mdl-textfield')
                     .addClass('is-dirty');
@@ -48,23 +48,22 @@ $(()=>{
 
         setOnClickForWindow(){
             const self = this;
-            window.onclick = function (e) {
-                //サジェスト以外をクリックしたらサジェストを非表示に
+            $(window).on('click', (e) => {
                 if (suggester.$dropDown.is(':visible')) {
                     const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+                    if (!Util.isInRect(rect, e)) {
                         suggester.$dropDown.hide();
                         return false;
                     }
                 } else if (self.$dialog.prop('open')) {
                     const rect = self.$dialog[0].getBoundingClientRect();
-                    if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+                    if (!Util.isInRect(rect, e)) {
                         self.$dialog[0].close();
                         return false;
                     }
                 }
                 return true;
-            }
+            });
         }
     }
 
@@ -96,15 +95,15 @@ $(()=>{
             suggester = new Suggester();
             suggester.init();
             const self = this;
-            this.$suggestDiv.on('click', function (e) {
+            this.$suggestDiv.on('click', (e) => {
                 e.preventDefault();
                 suggester.onClickWindow();//todo ここでinputにフォーカスを当てたいが当たらない
                 return false;
             });
 
-            window.onresize = function () {
+            $(window).on('resize', () => {
                 self.$suggestDiv.width(self.$keyInput.width());
-            };
+            });
 
             // //サジェスト以外をクリックしたらサジェストを非表示に
             // window.onclick = function (e) {
@@ -134,24 +133,23 @@ $(()=>{
                 this.momentOpe.add(1, 'd');
             }//この時点でmomentOpeは初期状態+1日となる
 
-            $dateInput.on('click', function () {
+            $dateInput.on('click', () => {
                 $dpBtn.click();
                 return false;
             })
         }
 
         initKeyInput(){
-            const self = this;
-            this.$keyInput.on('keyup', function(){
-                    if (self.noInput) {
-                        $(this).attr('required', 'required');
-                        self.noInput = false;
-                    }
-                    if (!$(this).val().length) {
-                        console.log('こっち');
-                        return false;
-                    }
-                });
+            this.$keyInput.on('keyup', e => {
+                if (this.noInput) {
+                    $(e).attr('required', 'required');
+                    this.noInput = false;
+                }
+                if (!$(e).val().length) {
+                    console.log('こっち');
+                    return false;
+                }
+            });
         }
 
         static getUrlParam(key){
@@ -160,19 +158,18 @@ $(()=>{
         }
 
         setOnClickBtnListener(){
-            const self = this;
-            this.$searchBtn.on('click', function() {
-                const keyInput = self.$keyInput;
+            this.$searchBtn.on('click', ()=>{
+                const keyInput = this.$keyInput;
                 if (!keyInput.val().length) {
-                    if (self.noInput) {
-                        self.$keyInput.attr('required', 'required');
-                        self.noInput = false;
+                    if (this.noInput) {
+                        this.$keyInput.attr('required', 'required');
+                        this.noInput = false;
                         keyInput.parents('.mdl-textfield').addClass('is-invalid');
                     }
                     return false;
                 }
-                if (self.$suggestDiv.length)
-                    self.$suggestDiv.remove();
+                if (this.$suggestDiv.length)
+                    this.$suggestDiv.remove();
                 let startM = moment(startDropDown.getSelectedYmd(), 'YYYYMMDD');
                 let endM = moment(endDropDown.getSelectedYmd(), 'YYYYMMDD');
                 console.log(startM, endM);
@@ -196,7 +193,6 @@ $(()=>{
             this.momentOpe = moment.clone()
         }
         init(){
-            const self = this;
             this.momentOpe.add(-7, 'd');
             const index = this.$menuContainer.find('.is-selected').index();
             for (let i = 0; i < 8; i++) {
@@ -208,17 +204,17 @@ $(()=>{
                 this.momentOpe.add(1, 'd');
             }//この時点でmomentOpeは初期状態+1日となる
 
-            this.$dateInput.on('click', function () {
-                self.$dpBtn.click();
+            this.$dateInput.on('click', ()=>{
+                this.$dpBtn.click();
                 return false;
-            }).focusin(function () {
-                $(this).blur();
+            }).focusin(e => {
+                $(e).blur();
             });
             return this;
         }
 
         setOnDateSelected(){
-            throw ('this method must override');
+            throw new Error('this method must override');
         }
 
         onDateSelectedAsDefault($selected){
@@ -243,20 +239,17 @@ $(()=>{
     class StartDropDown extends DropDown {
         setOnDateSelected(){
             const self = this;
-            this.getDateMenuItem().on('click', function () {
+            this.getDateMenuItem().on('click', function (){
                 self.onDateSelectedAsDefault($(this));
                 const index = $(this).index();
                 const selectedEnd = endDropDown.getDateMenuItem().parent().find('.is-selected');
-                if (index > selectedEnd.index()) {
+                if (index > selectedEnd.index())
                     endDropDown.getDateMenuItem().eq(index).click();
-                }
-                for (let i = 0; i < 7; i++) {
-                    if (i < index) {
+                for (let i = 0; i < 7; i++)
+                    if (i < index)
                         endDropDown.getDateMenuItem().eq(i).hide();
-                    } else {
+                    else
                         endDropDown.getDateMenuItem().eq(i).show();
-                    }
-                }
                 return false;
             });
             return this;
@@ -266,7 +259,7 @@ $(()=>{
     class EndDropDown extends DropDown {
         setOnDateSelected(){
             const self = this;
-            this.getDateMenuItem().on('click', function () {
+            this.getDateMenuItem().on('click', function (){
                 self.onDateSelectedAsDefault($(this));
                 return false;
             });
@@ -274,7 +267,7 @@ $(()=>{
         }
     }
 
-    class RequestOperator{
+    class RequestOperator {
         constructor(){
             this.$spinner = $('#spinner-1st');
             this.$resultGroup = $('.result');
@@ -291,17 +284,17 @@ $(()=>{
             this.init();
         }
 
-        init (){
-            this.$suggestA.on('click', function () {
-                const value = $(this).html();
+        init(){
+            this.$suggestA.on('click', e => {
+                const value = $(e).html();
                 searchDom.$keyInput.val(value);
                 return false;
             });
             const self = this;
-            const secondRow = $('#second-row');
+            // const secondRow = $('#second-row');
             const headerRow = $('.mdl-layout__header-row');
-            $('.mdl-layout__content').scroll(function (e) {
-                if (self.$btmSpinWrapper.is(":visible")
+            $('.mdl-layout__content').scroll(e => {
+                if (self.$btmSpinWrapper.is(':visible')
                     && $(this).height()+ headerRow.height() - self.$btmSpinWrapper.offset().top > 32 /*半分以上スピナーラッパーが表示されたら*/){
                     self.requestMeta.pageIndex++;
                     self.requestJson();
@@ -349,22 +342,21 @@ $(()=>{
         onGetJson(data){
             console.log(JSON.stringify(data));
             const self = this;
-            if (!data['meta']['result_count']) {
-                if (data['meta']['suisengo']) {
-                    this.noticeSuggest(data['meta']['suisengo'])
-                } else {
+            if (!data['meta']['result_count'])
+                if (data['meta']['suisengo'])
+                    this.noticeSuggest(data['meta']['suisengo']);
+                else
                     this.noticeNonResult();
-                }
-            } else {
-                $.each(data.data, function(i) {
-                    new Card(this).$card.appendTo(self.$cardGroupIn);
+            else {
+                $.each(data.data, (i, ele) => {
+                    new Card(ele).$card.appendTo(self.$cardGroupIn);
                 });
                 Util.setElementAsMdl(self.$cardGroupIn);
                 this.noticeCards();
 
-                if (data['meta']['row_limit'] * (data['meta']['page_idx']+1) < data['meta']['result_count']) {
+                if (data['meta']['row_limit'] * (data['meta']['page_idx']+1) < data['meta']['result_count'])
                     self.$btmSpinWrapper.css('display', 'flex');
-                } else {
+                else {
                     self.$btmSpinWrapper.css('display', 'none');
                     const groupWidth = self.$cardGroupIn.width();
                     const columnNum = Math.floor(groupWidth / (300+16*2/*カード幅+マージン*/));
@@ -386,7 +378,7 @@ $(()=>{
             this.$nonResult.show();
         }
 
-        noticeSuggest(word){
+        noticeSuggest(word) {
             this.hideAllResult();
             this.$suggestResult.show();
             this.$suggestA.html(word);
@@ -419,8 +411,8 @@ $(()=>{
         }
     }
 
-    class SearchRequestMeta{
-        constructor(startM, endM, key) {
+    class SearchRequestMeta {
+        constructor(startM, endM, key){
             this.startM = startM;
             this.endM = endM;
             this.key = key;
@@ -436,7 +428,7 @@ $(()=>{
     }
 
     class Card {
-        constructor(ele){
+        constructor(ele) {
             this.stationId = ele['station_id'];
             this.performer = ele['performer'];
             this.title = ele['title'];
@@ -452,7 +444,7 @@ $(()=>{
 
         createCardWithListener(){
             const self = this;
-            const timeVal = this.startTimeS.splice(2, 0, ':') +' - '+  this.endTimeS.splice(2, 0, ':');
+            const timeVal = this.startTimeS.splice(2, 0, ':') +' - '+ this.endTimeS.splice(2, 0, ':');
             const dateVal = RequestOperator.generateTimeVal(this.prgDate);
             const cantDl = this.tsNg == 2 ? 'cant-dl' : '';
 
@@ -468,7 +460,7 @@ $(()=>{
                         '<p class="prg-pfm mdl-pre-upgrade">'+ this.performer +'</p>\n' +
                     '</div>\n' +
                 '</div>')
-                .on('click', function () {
+                .on('click', function (){
                     if (conductor.$dialog.prop('open'))
                         return;
                     
@@ -508,12 +500,12 @@ $(()=>{
                     conductor.$dialog[0].showModal();
 
                     return false;
-                }).hover(function () {
+                }).hover(e => {
                     if (self.tsNg != 2)
-                        $(this).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
-                }, function () {
+                        $(e).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
+                }, e => {
                     if (self.tsNg != 2)
-                        $(this).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
+                        $(e).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
                 });
         }
     }
@@ -525,7 +517,7 @@ $(()=>{
     let suggester;
     const ipcComm = new ProcessCommunicator(DlNotification);
     new IpcClient(DlNotification, FirebaseClient);
-    $('form').on('submit', function () {
+    $('form').on('submit', () => {
         return false;
     });
     const conductor = new Conductor();

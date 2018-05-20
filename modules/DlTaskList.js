@@ -55,7 +55,7 @@ module.exports = class DlTaskList {
         return data;
     }
 
-    switchToNext() {
+    switchToNext(){
         this.working = 0;
         const keyArr = Object.keys(this.tasks);
         if (!keyArr.length)

@@ -72,9 +72,9 @@ module.exports = class ProgramSearcher {
                 self.$dropDown
                     .addClass('has-val')
                     .show();
-                self.$dropDown.find('div').hover(function () {
+                self.$dropDown.find('div').hover(function (){
                     $(this).addClass('mouseover');
-                }, function () {
+                }, function (){
                     $(this).removeClass('mouseover');
                 });
             })

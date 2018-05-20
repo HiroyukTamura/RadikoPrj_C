@@ -1,5 +1,5 @@
 'use strict';
-window.jQuery = window.$= require("jquery");
+const $ = require('jquery');
 require('bootstrap');
 const dialogPolyfill = require('dialog-polyfill');
 require('bootstrap-notify');
@@ -9,21 +9,23 @@ const IpcClient = require('../../modules/IpcClient');
 const DlNotification = require('../../modules/DlNotification');
 const FirebaseClient = require('../../modules/FirebaseClient');
 const Util = require('../../modules/Util');
+const DomUtil = require('../../modules/DomUtil');
 const {EreaChecker, ProgramListGetter} = require('../../modules/Network');
 
-$(()=>{
+$(() => {
     const moment = require('moment');/*グローバルに定義してはいけない??*/
 
-    class OperationConductor{
+    class OperationConductor {
         initialOperate(){
             domFrame.init();
-            ereaChecker.check().then((ereaId => {
+            ereaChecker.check().then(ereaId => {
                 return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
-            })).then((data) => {
+            }).then(data => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
                 domFrame.show();
             }).catch(err => {
+                new FirebaseClient().sendError(err, 'initialOperate', this.constructor.name);
                 //todo エラー処理
                 console.log(err);
             });
@@ -37,10 +39,10 @@ $(()=>{
         changeDate(){
             domFrame.removeAllDoms();
             domFrame.updateDateMenu(true);
-            ereaChecker.check().then((ereaId => {
+            ereaChecker.check().then(ereaId => {
                 localStorage.setItem('ereaId', ereaId);
                 return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
-            })).then((data) => {
+            }).then((data) => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
                 domFrame.show();
@@ -57,7 +59,7 @@ $(()=>{
             new ProgramListGetter(domFrame.currentM)
                 .setStationUrl(stationId)
                 .request()
-                .then((data)=>{
+                .then(data => {
                     new StationTableDom(data).init();
                     domFrame.setOnCardClickListener();
                     domFrame.updateDateMenu(false);
@@ -65,8 +67,9 @@ $(()=>{
                     domFrame.scrollToMostRight();
                     const $cont = $('.mdl-layout__content');
                     $cont.scrollLeft($cont.width());
-                }).catch((e)=>{
+                }).catch(e => {
                     console.log(e);
+                    new FirebaseClient().sendError(e, 'startChangeToStationTable', this.constructor.name);
                     //todo エラー処理
                 });
             domFrame.disableStMenuItem(stationId);
@@ -76,7 +79,7 @@ $(()=>{
     class DomFrame {
         constructor(){
             this.tabBar = $('.mdl-layout__tab-bar');
-            this.$root =  $('.mdl-layout__content');
+            this.$root = $('.mdl-layout__content');
             this.$header = $('#header-table-out');
             // this.$header = $('#header-table-out > span');
             this.headerWid = this.$header.find('span').width()/2;
@@ -89,26 +92,24 @@ $(()=>{
             this.$stationMenu =$('#station-menu');
             this.$grid =$('#grid');
             this.currentM = moment();
-            if (this.currentM.hour() < 5) {
+            if (this.currentM.hour() < 5)
                 this.currentM.add(-1, 'd');/*!!!!!!!実際の日時と違うことに注意して!!!!!!!!!*/
-            }
             console.log(this.currentM);
             this.$dialog = $('.mdl-dialog');
             Util.setUpDialog(dialogPolyfill, this.$dialog[0]);
         }
 
-        init() {
-            const self = this;
-            this.$root.scroll(function () {
-                self.centerHeadAndFoot(this.$root);
+        init(){
+            this.$root.scroll(()=> {
+                this.centerHeadAndFoot(this.$root);
             });
-            $(window).resize(function() {
-                self.centerHeadAndFoot(this.$root);
+            $(window).resize(()=> {
+                this.centerHeadAndFoot(this.$root);
             });
             this.centerHeadAndFoot();
         }
 
-        centerHeadAndFoot() {
+        centerHeadAndFoot(){
             console.log('スクロール発火');
             const left = this.$root.scrollLeft();
             this.tabBar.scrollLeft(left);
@@ -159,26 +160,26 @@ $(()=>{
 
         setOnClickListenersForFrame(){
             const self =this;
-            $('#header-table-out').on('click', function () {
-                self.currentM.add(-1, 'd');
+            $('#header-table-out').on('click', ()=> {
+                this.currentM.add(-1, 'd');
                 conductor.changeDate();
             });
-            $('#footer-table-out').on('click', function () {
-                self.currentM.add(1, 'd');
+            $('#footer-table-out').on('click', ()=> {
+                this.currentM.add(1, 'd');
                 conductor.changeDate();
             });
-            $('#calendar-menu .mdl-menu__item').on('click', function () {
-                console.log($(this).attr('id'));
-                if ($(this).prop('disabled'))
+            $('#calendar-menu .mdl-menu__item').on('click', e => {
+                console.log($(e).attr('id'));
+                if ($(e).prop('disabled'))
                     return false;
-                $(this).parents('.mdl-menu__container')
+                $(e).parents('.mdl-menu__container')
                     .removeClass('is-visible');
-                const ymd = $(this).attr('date');
+                const ymd = $(e).attr('date');
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
             });
             Util.setDialogListeners(this.$dialog[0]);
-            $('#dl-btm').on('click', function () {
+            $('#dl-btm').on('click', ()=> {
                 self.$dialog[0].close();
                 const ft = self.$dialog.attr('ft');
                 const stationId = self.$dialog.attr('station');
@@ -190,9 +191,9 @@ $(()=>{
         }
 
         setOnClickPostGetPrg(){
-            $('.mdl-layout__tab').on('click', function () {
-                const id = $(this).attr('id');
-                const name = $(this).attr('data-name');
+            $('.mdl-layout__tab').on('click', e => {
+                const id = $(e).attr('id');
+                const name = $(e).attr('data-name');
                 console.log(id);
                 // const menuItem = $('#station-menu .mdl-menu__item[station="'+ id +'"]');
                 // menuItem.prop('disabled', true);
@@ -203,15 +204,13 @@ $(()=>{
         }
 
         setOnStMenuItemClick(){
-            const self = this;
-            $('#station-menu .mdl-menu__item').on('click', function () {
-                const id = $(this).attr('station');
-                const name = $(this).attr('data-name');
+            $('#station-menu .mdl-menu__item').on('click', e => {
+                const id = $(e).attr('station');
+                const name = $(e).attr('data-name');
                 console.log(id);
                 //ここでliをdisabledにしても、なぜかリセットされてしまうので、後ほどdisabledする
-                if (!$(this).prop('disabled')) {
+                if (!$(this).prop('disabled'))
                     $(this).parents('.mdl-menu__container').removeClass('is-visible');
-                }
                 conductor.startChangeToStationTable(id, name);
             });
         }
@@ -220,7 +219,7 @@ $(()=>{
             let menuList = [];
             this.$stationMenu.children().each((i, ele) =>{
                 const stationId = $(ele).attr('station');
-                const name =  $(ele).attr('data-name');
+                const name = $(ele).attr('data-name');
                 const disabled = selectedId === stationId ? 'disabled' : '';
                 const html = '<li class="mdl-menu__item mdl-pre-upgrade" station="'+ stationId +'" data-name="'+ name +'" '+ disabled +'>'+ name +'</li>';
                 menuList.push(html);
@@ -260,7 +259,7 @@ $(()=>{
 
         updateDateMenu(setFooterAndHeader){
             console.log(domFrame.currentM.format('YYYYMMDD'));
-            this.$calendarMenu.find('.mdl-menu__item.current').removeAttr("disabled").removeClass('current');
+            this.$calendarMenu.find('.mdl-menu__item.current').removeAttr('disabled').removeClass('current');
             const currentLi = this.$calendarMenu.find('.mdl-menu__item[date="'+ domFrame.currentM.format('YYYYMMDD') +'"]')
                 .addClass('current')
                 .attr('disabled', true);
@@ -297,7 +296,7 @@ $(()=>{
                 const pfm = $(this).find('.info_group .pfm').html();
                 const img = $(this).find('.info_group .img').html();
                 const hp = $(this).find('.info_group .url').html();
-                const prgId = $(this).attr('prgid');
+                // const prgId = $(this).attr('prgid');
 
                 self.$dialog.find('.prg-logo').removeAttr('src').attr('src', img);
                 self.$dialog.find('.title').html(html);
@@ -316,9 +315,8 @@ $(()=>{
                     .attr('to', to)
                     .attr('data-img', img);
 
-                if ($(this).hasClass('cant-dl')) {
+                if ($(this).hasClass('cant-dl'))
                     self.$dialog.find('#dl-btm');
-                }
 
                 const dlBtn = self.$dialog.find('#dl-btm');
                 const errMsg = self.$dialog.find('.error-msg');
@@ -328,7 +326,7 @@ $(()=>{
                 } else if (moment(ft, 'YYYYMMDDhhmmss').diff(moment()) > 0) {
                     dlBtn.hide();
                     errMsg.html('この番組はまだ配信されていません').show();
-                } else if (moment(to, 'YYYYMMDDhhmmss').diff(moment()) > 0){
+                } else if (moment(to, 'YYYYMMDDhhmmss').diff(moment()) > 0) {
                     dlBtn.hide();
                     errMsg.html('放送中の番組はダウンロードできません').show();
                 } else {
@@ -351,13 +349,13 @@ $(()=>{
         }
     }
 
-    class StationTableDom extends DomUtil{
+    class StationTableDom extends DomUtil {
         constructor(data){
             super();
             const $station = $(data).find('station');
             this.stationId = $station.attr('id');
-            this.stationName =  $station.find('name').eq(0).html();
-            this.$prgs =  $station.find('progs');
+            this.stationName = $station.find('name').eq(0).html();
+            this.$prgs = $station.find('progs');
         }
 
         init(){
@@ -383,8 +381,8 @@ $(()=>{
                 tabBar.prepend($item);
                 opeM.add(-1, 'd');
             }
-            tabBar.find('.mdl-layout__tab').on('click', (e)=>{
-                self.currentM = moment($(e).attr('data-ymd'), 'YYYYMMDD');
+            tabBar.find('.mdl-layout__tab').on('click', e =>{
+                this.currentM = moment($(e).attr('data-ymd'), 'YYYYMMDD');
                 conductor.changeDate();
                 return false;//target == a href
             });
@@ -402,7 +400,7 @@ $(()=>{
         }
     }
 
-    class TimeTableDom extends DomUtil{
+    class TimeTableDom extends DomUtil {
         constructor(data){
             super();
             this.$stations = $(data).find('stations station');
@@ -420,7 +418,7 @@ $(()=>{
             Util.setElementAsMdl($(document));
         }
 
-        inputCards() {
+        inputCards(){
             console.log(this.$stations);
             const tabBar = $('.mdl-layout__tab-bar');
             const stationMenu = $('#station-menu');
@@ -466,8 +464,8 @@ $(()=>{
 
     conductor.initialOperate();
 
-    $(window).on('click', (e)=> {
-        console.log('Im clicked' , e.clientX, e.clientY);
+    $(window).on('click', e => {
+        console.log('Im clicked', e.clientX, e.clientY);
         // searcher.onClickWindow(event);
         if (domFrame.$dialog.prop('open')) {
             const rect = domFrame.$dialog[0].getBoundingClientRect();
@@ -484,20 +482,3 @@ $(()=>{
         }
     });
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

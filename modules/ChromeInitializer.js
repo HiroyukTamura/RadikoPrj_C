@@ -1,5 +1,5 @@
 module.exports = class ChromeInitializer {
-    constructor() {
+    constructor(){
         this.fs = require('fs-extra');
         this.request = require('request');
         this.PATH = 'Application/chrome.exe';
@@ -7,7 +7,7 @@ module.exports = class ChromeInitializer {
         this.INSTALLER_PATH = 'Installer/GoogleChromeEnterpriseBundle.zip';
     }
 
-    isExistChrome() {
+    isExistChrome(){
         // switch (process.platform) {
         //     case 'win32':
         //         break;
@@ -15,13 +15,13 @@ module.exports = class ChromeInitializer {
         return fs.existsSync(this.PATH);
     }
 
-    dlInstaller() {
+    dlInstaller(){
         this.request(this.URL)
             .pipe(this.fs.createWriteStream(this.INSTALLER_PATH))
             .on('error', function(err) {
                 console.log(err);
             })
-            .on('close', function () {
+            .on('close', function (){
                 console.log('File written!');
             });
     }

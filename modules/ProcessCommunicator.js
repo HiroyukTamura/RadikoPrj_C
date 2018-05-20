@@ -1,4 +1,4 @@
-module.exports = class ProcessCommunicator{
+module.exports = class ProcessCommunicator {
     constructor(DlNotification){
         this.ipcRenderer = require('electron').ipcRenderer;
         this.DlNotification = DlNotification;
@@ -7,12 +7,11 @@ module.exports = class ProcessCommunicator{
     }
 
     releaseNtf(stationId, ft){
-        for (let i = 0; i < this.ntfList.length; i++) {
+        for (let i = 0; i < this.ntfList.length; i++)
             if (this.ntfList[i].stationId === stationId && this.ntfList[i].ft === ft) {
                 this.ntfList.splice(i, 1);
                 return;
             }
-        }
     }
 
     getNtf(stationId, ft){
@@ -21,9 +20,8 @@ module.exports = class ProcessCommunicator{
             if (ele.stationId === stationId && ele.ft === ft)
                 ntf = ele;
         });
-        if (ntf === null) {
+        if (ntf === null)
             console.log('ntf==null');
-        }
         return ntf;
     }
 
@@ -69,9 +67,9 @@ module.exports = class ProcessCommunicator{
 
     onGetStartDlWithFtReply(arg){
         console.log(arg);
-        if (arg.duplicated) {
+        if (arg.duplicated)
             this.DlNotification.showDuplicatedNtf();
-        } else {
+        else {
             let ntf = new this.DlNotification(arg.stationId, arg.ft, arg.title);
             ntf.showNtf();
             this.ntfList.push(ntf);
@@ -106,7 +104,7 @@ module.exports = class ProcessCommunicator{
             ntf.updateAs4th();
     }
 
-    onGetFfmpegError(data) {
+    onGetFfmpegError(data){
         console.log(data);
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
@@ -114,20 +112,20 @@ module.exports = class ProcessCommunicator{
         this.releaseNtf(data.stationId, data.ft);
     }
 
-    onGetFfmpegEnd(data) {
+    onGetFfmpegEnd(data){
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
             ntf.updateAsSuccess();
         this.releaseNtf(data.stationId, data.ft);
     }
 
-    onGetPageReached(data) {
+    onGetPageReached(data){
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf)
             ntf.updateAs3rd();
     }
 
-    onGetFfmpegProgress(data) {
+    onGetFfmpegProgress(data){
         const ntf = this.getNtf(data.stationId, data.ft);
         if (ntf) {
             ntf.updateAsPrg(data);

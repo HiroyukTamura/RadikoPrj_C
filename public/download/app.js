@@ -1,7 +1,7 @@
 const $ = require('jquery');
 // const {BrowserWindow} = require('electron').remote;
 const remote = require('electron').remote;
-const exec = remote.require('child_process').exec;
+// const exec = remote.require('child_process').exec;
 require('bootstrap-notify');
 const tippy = require('tippy.js');
 const Store = require('electron-store');
@@ -13,17 +13,17 @@ const Util = require('../../modules/Util');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 
-$(function () {
+$(() => {
     const moment = require('moment');
 
-    class Conductor{
+    class Conductor {
         static init(){
             presenter.init();
             ProcessCommunicatorFromDL.askStatus();
         }
     }
 
-    class ProcessCommunicatorFromDL{
+    class ProcessCommunicatorFromDL {
         constructor(){
             this.setOnReceiveListeners();
         }
@@ -94,17 +94,16 @@ $(function () {
 
                 if (dlTaskList.working == taskKeys[i]) {
                     if (taskWorking.stage === 'ffmpegError') {
-                        Util.showFailedNtf('処理に失敗しました', task.title);
+                        DlNotification.showFailedNtf('処理に失敗しました', task.title);
                         continue;
                     } else if (taskWorking.stage === 'ffmpegEnd') {
-                        Util.showSuccessNtf('ダウンロード完了', task.title);
+                        DlNotification.showSuccessNtf('ダウンロード完了', task.title);
                         continue;
                     }
                     presenter.$taskList.prepend($dlItem);
                     Util.setElementAsMdl($dlItem);
-                } else {
+                } else
                     presenter.$taskList.append($dlItem);
-                }
 
                 Util.setElementAsMdl($dlItem);
                 tippy($dlItem.find('.mdl-button')[0]);
@@ -113,9 +112,8 @@ $(function () {
                 if (dlTaskList.working == taskKeys[i]) {
                     const num = DlNotification.getStageNum(task.stage);
                     progress.MaterialProgress.setProgress(num);
-                } else {
+                } else
                     progress.MaterialProgress.setBuffer(90);
-                }
             }
 
             Util.setElementAsMdl(presenter.$taskList);
@@ -123,7 +121,7 @@ $(function () {
         }
     }
 
-    class Presenter{
+    class Presenter {
         constructor(){
             this.$input = $('#file-location .mdl-textfield');
             this.$taskList = $('#task-list ul');
@@ -140,7 +138,7 @@ $(function () {
         }
 
         init(){
-            $('#dpdn').on('click', (e)=> {
+            $('#dpdn').on('click', e => {
                 const focusedWindow = remote.BrowserWindow.getFocusedWindow();
                 const option = {
                     properties: ['openDirectory'],
@@ -158,8 +156,8 @@ $(function () {
                 return false;
             });
 
-            $('input').focus(function () {
-                $(this).blur();
+            $('input').focus(e => {
+                $(e).blur();
                 return false;
             });
 
@@ -182,7 +180,7 @@ $(function () {
         buildSufMenu(){
             for (let i = 0; i < this.sufArr.length; i++) {
                 const disabled = this.sufArr[i] === this.suf ? 'disabled' : '';
-                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.sufArr[i] +'</li>').on('click', (e)=> {
+                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.sufArr[i] +'</li>').on('click', e => {
                     this.$sufInput.val(this.sufArr[i]);
                     this.suf = this.sufArr[i];
                     this.store.set('suffix', this.sufArr[i]);
@@ -229,8 +227,8 @@ $(function () {
 
         setOnClickCancel(){
             const self = this;
-            this.$taskList.find('.cancel-btn').on('click', function () {
-                const $li = $(this).parents('li');
+            this.$taskList.find('.cancel-btn').on('click', e =>{
+                const $li = $(e).parents('li');
                 const timeStamp = $li.attr('data-time-stamp');
                 console.log('キャンセル timeStamp', timeStamp);
                 self.removeItem($li);
@@ -241,8 +239,8 @@ $(function () {
         }
 
         removeItem(li){
-            li.animate({opacity: '0'}, 500, ()=>{
-                li.animate({height: '0'}, 500, ()=>{
+            li.animate({opacity: '0'}, 500, ()=> {
+                li.animate({height: '0'}, 500, ()=> {
                     li.remove();
                 });
             });
@@ -261,7 +259,7 @@ $(function () {
             $li.find('.stage').html(stage);
         }
 
-        onGetFfmpegEnd(data) {
+        onGetFfmpegEnd(data){
             const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
             this.updateStage('ffmpegEnd', data.timeStamp);
             this.removeItem($li);
@@ -269,7 +267,7 @@ $(function () {
             DlNotification.showSuccessNtf('ダウンロード完了', msg);
         }
 
-        onGetFfmpegError(data) {
+        onGetFfmpegError(data){
             const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
             this.updateStage('ffmpegError', data.timeStamp);
             this.removeItem($li);
@@ -278,7 +276,7 @@ $(function () {
             DlNotification.showFailedNtf('処理に失敗しました', msg);
         }
 
-        onGetFfmpegProgress(data) {
+        onGetFfmpegProgress(data){
             console.log('timeStamp', data.timeStamp);
             const $li = this.$taskList.find('li[data-time-stamp="'+ data.timeStamp +'"]');
             if (!$li.length) {
@@ -286,7 +284,7 @@ $(function () {
                 return;
             } //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
 
-            const num = new DlNotification().calcProgressNum(data);
+            const num = new DlNotification(Util).calcProgressNum(data);
             const stage = DlNotification.getStageStr('ffmpegPrg', num);
             console.log('numnum', num);
             $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);

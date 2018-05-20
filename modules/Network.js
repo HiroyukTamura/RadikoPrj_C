@@ -1,6 +1,6 @@
 class ProgramListGetter {
     constructor(requestM){
-        window.$ = require('jquery');
+        this.$ = require('jquery');
         window.moment = require('moment');
         this.ymd = requestM.format('YYYYMMDD');
         this.URL = null;
@@ -18,8 +18,8 @@ class ProgramListGetter {
 
     request(){
         return new Promise((resolve, reject) => {
-            $.ajax({
-                url: this.URL,
+            this.$.ajax({
+                url: this.URL
             }).done((data, textStatus, jqXHR) => {
                 resolve(data);
             }).fail((jqXHR, textStatus, errorThrown) => {
@@ -37,12 +37,12 @@ class EreaChecker {
 
     check(){
         return new Promise((resolve, reject) => {
-            $.ajax({
+            this.$.ajax({
                 url: this.URL,
-                cache: false,
+                cache: false
             }).done((data, textStatus, jqXHR) => {
                 try {
-                    const html = $(data.split("'")[1]);
+                    const html = this.$(data.split("'")[1]);
                     const area = html.attr('class');
                     console.log(html, area);
                     EreaChecker.setAreaIdToStorage(area);

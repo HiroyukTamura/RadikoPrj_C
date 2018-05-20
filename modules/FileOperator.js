@@ -6,6 +6,7 @@ module.exports = class FileExplorerOpener {
         this.store = new Store();
         this.path = this.store.get('output_path');
     }
+
     open(){
         console.log(this.path);
         const cd = this.exec('start .', {cwd: this.path});
@@ -14,12 +15,12 @@ module.exports = class FileExplorerOpener {
             if (!this.sender)
                 return;
             this.sender.sendExplorerErr();
-            this.sender.sendErrorLog(err, open.name, this.constructor.name);
+            this.sender.sendErrorLog(err, 'open', this.constructor.name);
         });
-        cd.on('close', function (err) {
+        cd.on('close', err => {
             console.warn('close', err);
         });
-        cd.stdout.on('data', data =>{
+        cd.stdout.on('data', data => {
             console.log(data);
         });
         cd.stderr.on('data', data => {

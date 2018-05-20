@@ -24,7 +24,7 @@ module.exports = class FirebaseClient {
         });
     }
 
-    setUserData() {
+    setUserData(){
         this.data = {
             application_version: this.remote.app.getVersion(),
             electron_version: this.remote.process.versions.electron,
@@ -45,7 +45,7 @@ module.exports = class FirebaseClient {
     sendError(e, funcName, className){
         this.setUserData();
         this.data['exception'] = e;
-        this.data['function'] = funcName ;
+        this.data['function'] = funcName;
         if (className)
             this.data['class'] = className;
 
@@ -61,7 +61,7 @@ module.exports = class FirebaseClient {
             }).catch(e => {
                 console.log(e);
             }).then(() => {//finallyはサポートされていない
-                this.fs.writeFile(this.LOG_PATH, '', (err)=>{
+                this.fs.writeFile(this.LOG_PATH, '', err =>{
                     if (err)
                         console.log(err);
                 });

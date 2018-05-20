@@ -57,11 +57,11 @@ module.exports = class MainToRenderMsger {
         this.webContents.send('writeFbResult', isSuccess);
     }
 
-    sendUncaughtException() {
+    sendUncaughtException(){
         this.webContents.send('uncaughtException');
     }
 
-    sendUnhandledRejection() {
+    sendUnhandledRejection(){
         this.webContents.send('unhandledRejection');
     }
 

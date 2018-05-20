@@ -1,31 +1,29 @@
-module.exports = class Util{
+module.exports = class Util {
     static getWeekDays(){
         return ['日', '月', '火', '水', '木', '金', '土']
     }
 
     static setElementAsMdl($clone) {
-        let ele = $clone.find(".mdl-pre-upgrade");
-        for (let i = 0; i < ele.length; i++) {
+        let ele = $clone.find('.mdl-pre-upgrade');
+        for (let i = 0; i < ele.length; i++)
             componentHandler.upgradeElement(ele.eq(i)[0]);
-        }
     }
 
     static generateUid(){
-        let rnd = Math.floor(Math.random() * 1000000000) + "" + (new Date()).getTime();
+        let rnd = Math.floor(Math.random() * 1000000000) +''+ (new Date()).getTime();
         return MD5_hexhash(rnd);
     }
 
     static setUpDialog(dialogPolyfill, dialog){
-        if (!dialog.showModal) {
+        if (!dialog.showModal)
             dialogPolyfill.registerDialog(dialog);
-        }
     }
 
-    static setDialogListeners(dialog){
-        dialog.addEventListener('close', function(e) {
+    static setDialogListeners(dialog) {
+        dialog.addEventListener('close', (e) => {
 
         });
-        $('.cancel-btn').on('click', function () {
+        $('.cancel-btn').on('click', () => {
             dialog.close();
         });
     }
@@ -55,7 +53,7 @@ module.exports = class Util{
     /**
      * @returns {number} 1=>DLボタン発見 0=>エラーボタン発見 -1=>エラー(ページの構造が変わったか??)
      */
-    static isCanAvialble($dom){
+    static isCanAvialble($dom) {
         if ($dom.find('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a').length)
             return 1;
         if ($dom.find('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan').length)
@@ -64,11 +62,11 @@ module.exports = class Util{
     }
 
     static unEscapeHTML(str) {
-        let s = this.replaceAll(str, "&gt;", '>');
-        s = this.replaceAll(s, "&lt;", '<');
+        let s = this.replaceAll(str, '&gt;', '>');
+        s = this.replaceAll(s, '&lt;', '<');
         s = this.replaceAll(s, '&nbsp;', ' ');
-        s = this.replaceAll(s, "&#13;", '\r');
-        s = this.replaceAll(s, "&#10;", '\n');
+        s = this.replaceAll(s, '&#13;', '\r');
+        s = this.replaceAll(s, '&#10;', '\n');
 
         return s;
     }
@@ -86,11 +84,10 @@ module.exports = class Util{
         return result;
     };
 
-
     static dangerNotify(msg){
         $.notify({
             message: msg
-        },{
+        }, {
             type: 'danger'
         });
     }
@@ -98,12 +95,16 @@ module.exports = class Util{
     static successNotify(msg) {
         $.notify({
             message: msg
-        },{
+        }, {
             type: 'success'
         });
     }
 
-    static getMDWithWeekDay(momentOpe){
+    static isInRect(rect, e){
+        return rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top
+    }
+
+    static getMDWithWeekDay(momentOpe) {
         return momentOpe.format('M/D') +'('+ Util.getWeekDays()[momentOpe.day()] +')';
     }
 };

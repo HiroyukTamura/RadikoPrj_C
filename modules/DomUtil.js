@@ -10,7 +10,7 @@ class DomUtil {
             this.currentM.add(-1, 'd');
     }
 
-    setGridCss() {
+    setGridCss(){
         let cells = '';
         for (let i = 0; i < this.columnLen; i++)
             cells += '.. ';
@@ -25,7 +25,7 @@ class DomUtil {
             .css('grid-template-columns', columnsStr);
     }
 
-    setGridCells() {
+    setGridCells(){
         //セル作成
         for (let i = 1; i < 25; i++) {
             for (let j = 1; j < this.columnLen+2/*時間軸の分*/; j++) {
@@ -115,9 +115,9 @@ class DomUtil {
                     $card.find('.mdl-list__item-sub-title').hide();
                 }
 
-                $card.hover(function () {
+                $card.hover(function (){
                     $('.prg-card-w[prgid="'+ id +'"]').addClass("mouseover");
-                }, function () {
+                }, function (){
                     $('.prg-card-w[prgid="'+ id +'"]').removeClass("mouseover");
                 });
 

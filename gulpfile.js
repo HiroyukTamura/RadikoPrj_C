@@ -13,7 +13,7 @@ gulp.task('default', ['css']);
 const witchDir = ["timetable", "search", 'download', 'about'];
 let filePath = '';
 
-gulp.task('css', function () {
+gulp.task('css', function (){
     const index = 0;
     return gulp.src(['./public/'+ witchDir[index] +'/style.scss'])
         .pipe(using())
@@ -32,7 +32,7 @@ gulp.task('css', function () {
         .pipe(gulp.dest('./public/'));
 });
 
-gulp.task("ejs", function() {
+gulp.task("ejs", function(){
     const json = JSON.parse(fs.readFileSync('ejs/gulpconf.json'));
     return gulp.src(
         ["ejs/origin/*.ejs"] //参照するディレクトリ、出力を除外するファイル
@@ -55,7 +55,7 @@ gulp.task("ejs", function() {
         .pipe(gulp.dest("./public/"));
 });
 
-function getFileName() {
+function getFileName(){
     let stream = new Stream.Transform({ objectMode: true });
     stream._transform = function(file, unused, callback) {
         filePath = file.path;

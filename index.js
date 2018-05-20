@@ -32,7 +32,7 @@ const LOG_PATH = './debug.log';
 const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒せ
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
-!function () {
+!function (){
     const store = new Store();
     if(!store.get('output_path')) {
         const path = app.getPath('downloads') || './output';
@@ -98,7 +98,7 @@ class PuppeteerOperator {
         this.pageForDl = null;
     }
 
-    async launchPuppeteer() {
+    async launchPuppeteer(){
         if (this.browser)
             return;
         this.browser = await puppeteer.launch({
@@ -195,7 +195,7 @@ let emitter = new events.EventEmitter();
 const dlTaskList = new DlTaskList();
 const operator = new PuppeteerOperator();
 
-function createWindow () {
+function createWindow (){
     // Create the browser window.
     console.log('createWindow');
 
@@ -413,7 +413,7 @@ class GateVpnCsv {
         this.isComplete = false;
     }
 
-    requestCsv() {
+    requestCsv(){
         const self = this;
         csv()
             .fromStream(request.get(this.GATE_VPN_URL))
@@ -434,7 +434,7 @@ class GateVpnCsv {
 }
 
 class PostGotJsons {
-    constructor() {
+    constructor(){
         this.extractedIps = {
             "hokkaido-tohoku": null,
             "kanto": null,
@@ -627,7 +627,7 @@ function runFfmpeg(pathE) {
     command.run();
 }
 
-function getOutputPath() {
+function getOutputPath(){
     const task = dlTaskList.getWorkingTask();
     const ymd = moment(task.ft, 'YYYYMMDDhhmmss').format('YYYY-MM-DD');
     const suf = new Store().get('suffix') || 'mp3';//todo これまとめられる
@@ -709,7 +709,7 @@ async function onError(e) {
     console.log(e);
 }
 
-async function connectEndToNext() {
+async function connectEndToNext(){
     const chunkFileName = dlTaskList.getWorkingTask().chunkFileName;
     if (chunkFileName) {
         deleteFileSync(operator.chunkListDir +'/'+ chunkFileName);
