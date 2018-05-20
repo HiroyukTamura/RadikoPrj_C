@@ -277,19 +277,21 @@ ipcMain.on('startDlWithFt', (event, arg) => {
             dlTaskList.working = timeStamp;
         emitter.emit('setTask');
     }
-    sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
+    if (sender)
+        sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
 });
 
 ipcMain.on('dlStatus', (event, arg) => {
     console.log('dlStatus');
-    sender.sendDlStatus(dlTaskList);
+    if (sender)
+        sender.sendDlStatus(dlTaskList);
 });
 
 ipcMain.on('cancelDl', (event, timeStamp) => {
     console.log('cancelDl', timeStamp);
     if (dlTaskList['tasks'][timeStamp]) {
         dlTaskList['tasks'][timeStamp]['abortFlag'] = true;
-    } else {
+    } else if (sender) {
         sender.sendMiddleData('cancelError');
         sender.sendErrorLog('cancelError', 'ipcMain.on(cancelDl)');
     }
@@ -336,16 +338,19 @@ emitter.on('setTask', async() => {
         console.log(err);
         emitter.emit('onErrorHandler', err/*, 'launchPuppeteer'*/);
         isFailed = true;
-        sender.sendErrorLog(err, "emitter.on('setTask')");
+        if (sender)
+            sender.sendErrorLog(err, "emitter.on('setTask')");
         // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
     operator.startDlChain().catch(e => {
         console.log('startDlChain error', e);
-        sender.sendMiddleData('startDlChainError');
         emitter.emit('onErrorHandler', e);
-        sender.sendErrorLog(e, 'startDlChain');
+        if (sender) {
+            sender.sendMiddleData('startDlChainError');
+            sender.sendErrorLog(e, 'operator.startDlChain()');
+        }
         // sendError('operator.startDlChain()', e);
     });
 });
@@ -364,12 +369,18 @@ emitter.on('closeBrowser', async ()=>{
 });
 
 process.on('uncaughtException', e => {
+    console.log(e);
+    if (!sender)
+        return;
     sender.sendMiddleData('uncaughtException');
     sender.sendErrorLog(e, "process.on('uncaughtException')");
     // sendError('uncaughtException', e);
 });
 
 process.on('unhandledRejection', e => {
+    console.log(e);
+    if (!sender)
+        return;
     sender.sendMiddleData('unhandledRejection');
     sender.sendErrorLog("process.on('unhandledRejection')", e);
     // sendError('unhandledRejection', e);

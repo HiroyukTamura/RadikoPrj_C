@@ -1,11 +1,11 @@
 module.exports = class DlNotification {
     constructor(stationId, ft, title) {
-        const moment = require('moment');
+        this.moment = require('moment');
         require('bootstrap-notify');
         this.stationId = stationId;
         this.ft = ft;
         this.title = title;
-        const momentM = moment(ft, 'YYYYMMDDhhmmss');
+        const momentM = this.moment(ft, 'YYYYMMDDhhmmss');
         this.dateVal = momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
         this.msg = this.dateVal +'  '+ title;
         this.ntf = null;

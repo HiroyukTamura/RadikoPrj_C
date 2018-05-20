@@ -3,16 +3,7 @@ module.exports = class FirebaseClient {
         this.moment = require('moment');
         this.remote = require('electron').remote;
         this.fs = require('fs-extra');
-        this.LOG_PATH = '../debug.log';
-        const config = {
-            apiKey: "AIzaSyC3PLY3nwjXPxWAUB10wvIoWAxO_Fn5R7I",
-            authDomain: "radiko-7e63e.firebaseapp.com",
-            databaseURL: "https://radiko-7e63e.firebaseio.com",
-            projectId: "radiko-7e63e",
-            storageBucket: "radiko-7e63e.appspot.com",
-            messagingSenderId: "1032750813236"
-        };
-        firebase.initializeApp(config);
+        this.LOG_PATH = 'debug.log';
         this.db = firebase.firestore();
         this.data = null;
     }
@@ -48,21 +39,25 @@ module.exports = class FirebaseClient {
     }
 
     sendError(e, funcName, className){
-        const client = new FirebaseClient().setUserData();
-        client.data['exeption'] = e;
-        client.data['function'] = funcName ;
-        client.data['class'] = className;
+        this.setUserData();
+        this.data['exception'] = e;
+        this.data['function'] = funcName ;
+        this.data['class'] = className;
+
         this.fs.readFile(this.LOG_PATH, 'utf-8', (err, data) => {
-            if (err) //どうしようもない
+            if (err) {
+                console.log(err);
                 return;
-            client.data['log'] = data;
-            client.writeData('crash', ()=>{
-                //do nothing
+            }
+            this.data['log'] = data;
+            this.writeData('crash').then(()=>{
+                console.log('書き込み完了!');
             }).catch(e =>{
-                //do nothing
-            }).finally(()=>{
+                console.log(e);
+            }).then(()=>{
                 this.fs.writeFile(this.LOG_PATH, '', (err)=>{
-                    //どうしようもない
+                    if (err)
+                        console.log(err);
                 });
             });
         });

@@ -5,6 +5,9 @@ const dialogPolyfill = require('dialog-polyfill');
 require('bootstrap-notify');
 const ProgramSearcher = require('../../modules/ProgramSearcher');
 const ProcessCommunicator = require('../../modules/ProcessCommunicator');
+const IpcClient = require('../../modules/IpcClient');
+const DlNotification = require('../../modules/DlNotification');
+const FirebaseClient = require('../../modules/FirebaseClient');
 
 $(()=>{
     const moment = require('moment');/*グローバルに定義してはいけない??*/
@@ -452,7 +455,8 @@ $(()=>{
         }
     }
 
-    const ipcConn = new ProcessCommunicator();
+    const ipcConn = new ProcessCommunicator(DlNotification);
+    const ipcClient = new IpcClient(DlNotification, FirebaseClient);
     const ereaChecker = new EreaChecker();
     const domFrame = new DomFrame();
     const conductor = new OperationConductor();

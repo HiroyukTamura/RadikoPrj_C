@@ -1,7 +1,7 @@
 module.exports = class ProcessCommunicator{
-    constructor(){
+    constructor(DlNotification){
         this.ipcRenderer = require('electron').ipcRenderer;
-        this.DlNotification = require('DlNotification');
+        this.DlNotification = DlNotification;
         this.setOnReceiveListeners();
         this.ntfList = [];
     }
@@ -58,13 +58,13 @@ module.exports = class ProcessCommunicator{
         }).on('ffmpegPrg', (event, data) => {
             this.onGetFfmpegProgress(data);
         })
-            .on('unhandledRejection', (event, data) => {
-                this.DlNotification.showCancelNtf('処理に失敗しました');
-            }).on('unhandledRejection', (efvent, data) => {
-            this.DlNotification.showCancelNtf('処理に失敗しました');
-        }).on('FATAL_ERROR', (event, args) => {
-            console.log(args);
-        });
+        //     .on('unhandledRejection', (event, data) => {
+        //         this.DlNotification.showCancelNtf('処理に失敗しました');
+        //     }).on('unhandledRejection', (efvent, data) => {
+        //     this.DlNotification.showCancelNtf('処理に失敗しました');
+        // }).on('FATAL_ERROR', (event, args) => {
+        //     console.log(args);
+        // });
     }
 
     onGetStartDlWithFtReply(arg){

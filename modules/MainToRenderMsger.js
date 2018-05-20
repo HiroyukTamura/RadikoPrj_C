@@ -4,7 +4,7 @@
  * すなわち、renderer側ではコマンド名で進捗を判断し、DlTask.stageは用いません。
  * DlTask.stageを用いた場合、必ずDlTask.stageに進捗を書き込んだのちsendしなければならない⇒前後を誤りやすい⇒バグ発生
  */
-class MainToRenderMsger {
+module.exports = class MainToRenderMsger {
     constructor(webContents, dlTaskList){
         this.webContents = webContents;
         this.dlTaskList = dlTaskList;

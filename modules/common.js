@@ -111,383 +111,383 @@ class Util{
     }
 }
 
-class DlNotification {
-    constructor(stationId, ft, title) {
-        this.stationId = stationId;
-        this.ft = ft;
-        this.title = title;
-        const momentM = moment(ft, 'YYYYMMDDhhmmss');
-        this.dateVal = momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
-        this.msg = this.dateVal +'  '+ title;
-        this.ntf = null;
-    }
+// class DlNotification {
+//     constructor(stationId, ft, title) {
+//         this.stationId = stationId;
+//         this.ft = ft;
+//         this.title = title;
+//         const momentM = moment(ft, 'YYYYMMDDhhmmss');
+//         this.dateVal = momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
+//         this.msg = this.dateVal +'  '+ title;
+//         this.ntf = null;
+//     }
+//
+//     showNtf(){
+//         this.ntf = $.notify({
+//             title: 'データを取得しています...',
+//             message: this.msg,
+//             progress: 0,
+//         },{
+//             type: 'progress-ntf',
+//             placement: {
+//                 from: "bottom",
+//                 align: "right"
+//             },
+//             // icon_type: 'img',
+//             showProgressbar: true,
+//             delay: 0,
+//             template:
+//             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} progress-ntf" role="alert">' +
+//                 '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+//                 '<div>' +
+//                     // '<img data-notify="icon" class="pull-right">' +
+//                     '<div>'+
+//                         '<span data-notify="title">{1}</span>' +
+//                         '<span data-notify="message">{2}</span>' +
+//                     '</div>'+
+//                     '<div class="progress" data-notify="progressbar">' +
+//                         '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
+//                     '</div>' +
+//                 '</div>'+
+//             '</div>'
+//         });
+//     }
+//
+//     updateAs3rd(){
+//         this.ntf.update({
+//             title: 'ダウンロードを開始します...',
+//             progress: 20
+//         })
+//     }
+//
+//     updateAsPrg(data){
+//         this.ntf.update({
+//             title: 'データを再構成しています...(これには時間がかかることがあります)',
+//             progress: DlNotification.calcProgressNum(data)
+//         })
+//     }
+//
+//     static calcProgressNum(data){
+//         const totalSec = moment(data.to, 'YYYYMMDDhhmmss').diff(moment(data.ft, 'YYYYMMDDhhmmss'), 'seconds');
+//         return 30 + Math.round(70 * data.ffmpegPrg / totalSec)
+//     }
+//
+//     updateAs4th(){
+//         this.ntf.update({
+//             title: 'メタデータを書き込んでいます...',
+//             progress: 30
+//         })
+//     }
+//
+//     updateAsSuccess(){
+//         this.ntf.update({
+//             title: 'ダウンロード完了',
+//             progress: 100,
+//         });
+//         this.ntf.update({
+//             delay: 5000/*5000がデフォルト値*/,
+//             allow_dismiss: false
+//         });
+//     }
+//
+//     updateAsFailed(msg = '処理に失敗しました'){
+//         this.ntf.update({
+//             title: msg,
+//             progress: 0,
+//             type: 'progress-fail'
+//             // type: 'danger',
+//             // delay: 5000/*5000がデフォルト値*/,
+//             // allow_dismiss: false
+//         });
+//     }
+//
+//     static showDuplicatedNtf(){
+//         $.notify({
+//             message: 'この番組は現在ダウンロード中です'
+//         },{
+//             type: 'danger',
+//             allow_dismiss: false,
+//             placement: {
+//                 from: "bottom",
+//                 align: "right"
+//             }
+//         });
+//     }
+//
+//     static showFailedNtf(title, message) {
+//         if (message) {
+//             $.notify({
+//                 icon: '../../img/exclamation-triangle.svg',
+//                 title: title,
+//                 message: message
+//             },{
+//                 type: 'minimalist',
+//                 icon_type: 'image',
+//                 delay: 0,
+//                 allow_dismiss: true,
+//                 placement: {
+//                     from: "bottom",
+//                     align: "right"
+//                 },
+//                 template:
+//                 '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
+//                 '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+//                 '<div>' +
+//                 '<div>'+
+//                 '<span data-notify="title">{1}</span>' +
+//                 '<span data-notify="message">{2}</span>' +
+//                 '</div>'+
+//                 '<img data-notify="icon" class="img-circle pull-right">' +
+//                 '</div>'+
+//                 '</div>'
+//             });
+//         } else {
+//             $.notify({
+//                 icon: '../../img/exclamation-triangle.svg',
+//                 title: title,
+//             },{
+//                 type: 'minimalist',
+//                 icon_type: 'image',
+//                 delay: 0,
+//                 allow_dismiss: true,
+//                 placement: {
+//                     from: "bottom",
+//                     align: "right"
+//                 },
+//                 template:
+//                 '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red one-row" role="alert">' +
+//                     '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+//                     '<div>' +
+//                         '<div>'+
+//                             '<span data-notify="title">{1}</span>' +
+//                         '</div>'+
+//                         '<img data-notify="icon" class="img-circle pull-right">' +
+//                     '</div>'+
+//                 '</div>'
+//             });
+//         }
+//     }
+//
+//     static showSuccessNtf(title, message) {
+//         $.notify({
+//             icon: '../../img/check-circle.svg',
+//             title: title,
+//             message: message
+//         },{
+//             type: 'minimalist',
+//             icon_type: 'image',
+//             allow_dismiss: true,
+//             placement: {
+//                 from: "bottom",
+//                 align: "right"
+//             },
+//             template: this.getHtmlTemplate()
+//         });
+//     }
+//
+//     static getHtmlTemplate(){
+//         return '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
+//             '<div>' +
+//                 '<div>'+
+//                     '<span data-notify="title">{1}</span>' +
+//                     '<span data-notify="message">{2}</span>' +
+//                 '</div>'+
+//                 '<img data-notify="icon" class="img-circle pull-right">' +
+//             '</div>'+
+//         '</div>'
+//     }
+//
+//     static showCancelNtf(title) {
+//         $.notify({
+//             icon: '../../img/check-circle.svg',
+//             title: title
+//         },{
+//             type: 'minimalist',
+//             icon_type: 'image',
+//             delay: 5000,
+//             allow_dismiss: false,
+//             placement: {
+//                 from: "bottom",
+//                 align: "right"
+//             },
+//             template:
+//             '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue one-row" role="alert">' +
+//                 '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
+//                 '<div>' +
+//                     '<div>'+
+//                         '<span data-notify="title">{1}</span>' +
+//                     '</div>'+
+//                     '<img data-notify="icon" class="img-circle pull-right">' +
+//                 '</div>'+
+//             '</div>'
+//         });
+//     }
+//
+//     static getStageStr(stage, num){
+//         switch (stage) {
+//             case 'UNSET':
+//                 return 'ダウンロードの開始を待っています...(0%)';
+//             case 'pageReached':
+//                 return 'ダウンロード中...(20%)';
+//             case 'ffmpegStart':
+//                 return 'メタデータを書き込んでいます...(30%)';
+//             case 'ffmpegPrg':
+//                 return 'データをMP3に変換しています('+ num +'%)<br>(これには時間がかかることがあります)...';
+//             default:
+//                 return'';
+//         }
+//     }
+//
+//     static getStageNum(stage){
+//         switch (stage) {
+//             case 'UNSET':
+//                 return 0;
+//             case 'pageReached':
+//                 return 20;
+//             case 'ffmpegStart':
+//                 return 30;
+//             case 'ffmpegEnd':
+//                 return 100;
+//             case 'ffmpegError':
+//                 return 0;
+//         }
+//     }
+// }
 
-    showNtf(){
-        this.ntf = $.notify({
-            title: 'データを取得しています...',
-            message: this.msg,
-            progress: 0,
-        },{
-            type: 'progress-ntf',
-            placement: {
-                from: "bottom",
-                align: "right"
-            },
-            // icon_type: 'img',
-            showProgressbar: true,
-            delay: 0,
-            template:
-            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} progress-ntf" role="alert">' +
-                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                '<div>' +
-                    // '<img data-notify="icon" class="pull-right">' +
-                    '<div>'+
-                        '<span data-notify="title">{1}</span>' +
-                        '<span data-notify="message">{2}</span>' +
-                    '</div>'+
-                    '<div class="progress" data-notify="progressbar">' +
-                        '<div class="progress-bar progress-bar-{0}" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>' +
-                    '</div>' +
-                '</div>'+
-            '</div>'
-        });
-    }
-
-    updateAs3rd(){
-        this.ntf.update({
-            title: 'ダウンロードを開始します...',
-            progress: 20
-        })
-    }
-
-    updateAsPrg(data){
-        this.ntf.update({
-            title: 'データを再構成しています...(これには時間がかかることがあります)',
-            progress: DlNotification.calcProgressNum(data)
-        })
-    }
-
-    static calcProgressNum(data){
-        const totalSec = moment(data.to, 'YYYYMMDDhhmmss').diff(moment(data.ft, 'YYYYMMDDhhmmss'), 'seconds');
-        return 30 + Math.round(70 * data.ffmpegPrg / totalSec)
-    }
-
-    updateAs4th(){
-        this.ntf.update({
-            title: 'メタデータを書き込んでいます...',
-            progress: 30
-        })
-    }
-
-    updateAsSuccess(){
-        this.ntf.update({
-            title: 'ダウンロード完了',
-            progress: 100,
-        });
-        this.ntf.update({
-            delay: 5000/*5000がデフォルト値*/,
-            allow_dismiss: false
-        });
-    }
-
-    updateAsFailed(msg = '処理に失敗しました'){
-        this.ntf.update({
-            title: msg,
-            progress: 0,
-            type: 'progress-fail'
-            // type: 'danger',
-            // delay: 5000/*5000がデフォルト値*/,
-            // allow_dismiss: false
-        });
-    }
-
-    static showDuplicatedNtf(){
-        $.notify({
-            message: 'この番組は現在ダウンロード中です'
-        },{
-            type: 'danger',
-            allow_dismiss: false,
-            placement: {
-                from: "bottom",
-                align: "right"
-            }
-        });
-    }
-
-    static showFailedNtf(title, message) {
-        if (message) {
-            $.notify({
-                icon: '../../img/exclamation-triangle.svg',
-                title: title,
-                message: message
-            },{
-                type: 'minimalist',
-                icon_type: 'image',
-                delay: 0,
-                allow_dismiss: true,
-                placement: {
-                    from: "bottom",
-                    align: "right"
-                },
-                template:
-                '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red" role="alert">' +
-                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                '<div>' +
-                '<div>'+
-                '<span data-notify="title">{1}</span>' +
-                '<span data-notify="message">{2}</span>' +
-                '</div>'+
-                '<img data-notify="icon" class="img-circle pull-right">' +
-                '</div>'+
-                '</div>'
-            });
-        } else {
-            $.notify({
-                icon: '../../img/exclamation-triangle.svg',
-                title: title,
-            },{
-                type: 'minimalist',
-                icon_type: 'image',
-                delay: 0,
-                allow_dismiss: true,
-                placement: {
-                    from: "bottom",
-                    align: "right"
-                },
-                template:
-                '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} red one-row" role="alert">' +
-                    '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                    '<div>' +
-                        '<div>'+
-                            '<span data-notify="title">{1}</span>' +
-                        '</div>'+
-                        '<img data-notify="icon" class="img-circle pull-right">' +
-                    '</div>'+
-                '</div>'
-            });
-        }
-    }
-
-    static showSuccessNtf(title, message) {
-        $.notify({
-            icon: '../../img/check-circle.svg',
-            title: title,
-            message: message
-        },{
-            type: 'minimalist',
-            icon_type: 'image',
-            allow_dismiss: true,
-            placement: {
-                from: "bottom",
-                align: "right"
-            },
-            template: this.getHtmlTemplate()
-        });
-    }
-
-    static getHtmlTemplate(){
-        return '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue" role="alert">' +
-            '<div>' +
-                '<div>'+
-                    '<span data-notify="title">{1}</span>' +
-                    '<span data-notify="message">{2}</span>' +
-                '</div>'+
-                '<img data-notify="icon" class="img-circle pull-right">' +
-            '</div>'+
-        '</div>'
-    }
-
-    static showCancelNtf(title) {
-        $.notify({
-            icon: '../../img/check-circle.svg',
-            title: title
-        },{
-            type: 'minimalist',
-            icon_type: 'image',
-            delay: 5000,
-            allow_dismiss: false,
-            placement: {
-                from: "bottom",
-                align: "right"
-            },
-            template:
-            '<div data-notify="container" class="col-xs-12 col-sm-4 alert alert-{0} blue one-row" role="alert">' +
-                '<button type="button" aria-hidden="true" class="close" data-notify="dismiss">×</button>' +
-                '<div>' +
-                    '<div>'+
-                        '<span data-notify="title">{1}</span>' +
-                    '</div>'+
-                    '<img data-notify="icon" class="img-circle pull-right">' +
-                '</div>'+
-            '</div>'
-        });
-    }
-
-    static getStageStr(stage, num){
-        switch (stage) {
-            case 'UNSET':
-                return 'ダウンロードの開始を待っています...(0%)';
-            case 'pageReached':
-                return 'ダウンロード中...(20%)';
-            case 'ffmpegStart':
-                return 'メタデータを書き込んでいます...(30%)';
-            case 'ffmpegPrg':
-                return 'データをMP3に変換しています('+ num +'%)<br>(これには時間がかかることがあります)...';
-            default:
-                return'';
-        }
-    }
-
-    static getStageNum(stage){
-        switch (stage) {
-            case 'UNSET':
-                return 0;
-            case 'pageReached':
-                return 20;
-            case 'ffmpegStart':
-                return 30;
-            case 'ffmpegEnd':
-                return 100;
-            case 'ffmpegError':
-                return 0;
-        }
-    }
-}
-
-class ProcessCommunicator{
-    constructor(){
-        this.setOnReceiveListeners();
-        this.ntfList = [];
-    }
-
-    releaseNtf(stationId, ft){
-        for (let i = 0; i < this.ntfList.length; i++) {
-            if (this.ntfList[i].stationId === stationId && this.ntfList[i].ft === ft) {
-                this.ntfList.splice(i, 1);
-                return;
-            }
-        }
-    }
-
-    getNtf(stationId, ft){
-        let ntf = null;
-        this.ntfList.forEach(function (ele) {
-            if (ele.stationId === stationId && ele.ft === ft)
-                ntf = ele;
-        });
-        if (ntf === null) {
-            console.log('ntf==null');
-        }
-        return ntf;
-    }
-
-    static callDL(ft, to, stationId, title, img){
-        const data = {
-            ft: ft,
-            to: to,
-            stationId: stationId,
-            title: title,
-            img: img
-        };
-        ipcRenderer.send('startDlWithFt', data);
-    }
-
-    setOnReceiveListeners(){
-        ipcRenderer.on('startDlWithFt-REPLY', (event, arg) => {
-            this.onGetStartDlWithFtReply(arg);
-            // }).on('isDownloadable', (event, data) => {
-            //     this.onGetIsDownloadable(data);
-        }).on('startDlChainError', (event, data, e) => {
-            console.log(e);
-            this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
-        }).on('pageReached', (event, data) => {
-            this.onGetPageReached(data);
-        }).on('ffmpegStart', (event, data) => {
-            this.onGetFfmpegStart(data);
-        }).on('ffmpegError', (event, data, e) => {
-            console.log(e);
-            this.onGetFfmpegError(data);
-        }).on('ffmpegEnd', (event, data) => {
-            this.onGetFfmpegEnd(data);
-        }).on('ffmpegPrg', (event, data) => {
-            this.onGetFfmpegProgress(data);
-        })
-        .on('unhandledRejection', (event, data) => {
-            DlNotification.showCancelNtf('処理に失敗しました');
-        }).on('unhandledRejection', (efvent, data) => {
-            DlNotification.showCancelNtf('処理に失敗しました');
-        }).on('FATAL_ERROR', (event, args) => {
-            console.log(args);
-        });
-    }
-
-    onGetStartDlWithFtReply(arg){
-        console.log(arg);
-        if (arg.duplicated) {
-            DlNotification.showDuplicatedNtf();
-        } else {
-            let ntf = new DlNotification(arg.stationId, arg.ft, arg.title);
-            ntf.showNtf();
-            this.ntfList.push(ntf);
-        }
-    }
-
-    // onGetIsDownloadable(data){
-    //     const ntf = this.getNtf(data.stationId, data.ft);
-    //     if (!ntf) return;
-    //
-    //     if (data.status === 'SUCCESS') {
-    // console.log('yeah! let\' DL!!');
-    // this.$status.circleProgress({
-    //     value: 0.4
-    // });
-    // const msg = ProcessCommunicator.generateNtfVal(data);
-    // Util.successNotify('データを確認しています...\n'+ msg);
-    //     ntf.updateAs2nd();
-    // } else {
-    //     const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
-    //     ntf.updateAsFailed(msg);
-    // }
-
-    // const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
-    // Util.dangerNotify(msg);
-    // this.rollbackStatus(data);
-    // }
-
-    onGetFfmpegStart(data){
-        const ntf = this.getNtf(data.stationId, data.ft);
-        if (ntf)
-            ntf.updateAs4th();
-    }
-
-    onGetFfmpegError(data) {
-        console.log(data);
-        const ntf = this.getNtf(data.stationId, data.ft);
-        if (ntf)
-            ntf.updateAsFailed();
-        this.releaseNtf(data.stationId, data.ft);
-    }
-
-    onGetFfmpegEnd(data) {
-        const ntf = this.getNtf(data.stationId, data.ft);
-        if (ntf)
-            ntf.updateAsSuccess();
-        this.releaseNtf(data.stationId, data.ft);
-    }
-
-    onGetPageReached(data) {
-        const ntf = this.getNtf(data.stationId, data.ft);
-        if (ntf)
-            ntf.updateAs3rd();
-    }
-
-    onGetFfmpegProgress(data) {
-        const ntf = this.getNtf(data.stationId, data.ft);
-        if (ntf) {
-            ntf.updateAsPrg(data);
-        }
-    }
-}
+// class ProcessCommunicator{
+//     constructor(){
+//         this.setOnReceiveListeners();
+//         this.ntfList = [];
+//     }
+//
+//     releaseNtf(stationId, ft){
+//         for (let i = 0; i < this.ntfList.length; i++) {
+//             if (this.ntfList[i].stationId === stationId && this.ntfList[i].ft === ft) {
+//                 this.ntfList.splice(i, 1);
+//                 return;
+//             }
+//         }
+//     }
+//
+//     getNtf(stationId, ft){
+//         let ntf = null;
+//         this.ntfList.forEach(function (ele) {
+//             if (ele.stationId === stationId && ele.ft === ft)
+//                 ntf = ele;
+//         });
+//         if (ntf === null) {
+//             console.log('ntf==null');
+//         }
+//         return ntf;
+//     }
+//
+//     static callDL(ft, to, stationId, title, img){
+//         const data = {
+//             ft: ft,
+//             to: to,
+//             stationId: stationId,
+//             title: title,
+//             img: img
+//         };
+//         ipcRenderer.send('startDlWithFt', data);
+//     }
+//
+//     setOnReceiveListeners(){
+//         ipcRenderer.on('startDlWithFt-REPLY', (event, arg) => {
+//             this.onGetStartDlWithFtReply(arg);
+//             // }).on('isDownloadable', (event, data) => {
+//             //     this.onGetIsDownloadable(data);
+//         }).on('startDlChainError', (event, data, e) => {
+//             console.log(e);
+//             this.onGetFfmpegError(data);//startDlChainErrorだけど、レンダラサイドではonGetFfmpegError()と同じ実装。
+//         }).on('pageReached', (event, data) => {
+//             this.onGetPageReached(data);
+//         }).on('ffmpegStart', (event, data) => {
+//             this.onGetFfmpegStart(data);
+//         }).on('ffmpegError', (event, data, e) => {
+//             console.log(e);
+//             this.onGetFfmpegError(data);
+//         }).on('ffmpegEnd', (event, data) => {
+//             this.onGetFfmpegEnd(data);
+//         }).on('ffmpegPrg', (event, data) => {
+//             this.onGetFfmpegProgress(data);
+//         })
+//         .on('unhandledRejection', (event, data) => {
+//             DlNotification.showCancelNtf('処理に失敗しました');
+//         }).on('unhandledRejection', (efvent, data) => {
+//             DlNotification.showCancelNtf('処理に失敗しました');
+//         }).on('FATAL_ERROR', (event, args) => {
+//             console.log(args);
+//         });
+//     }
+//
+//     onGetStartDlWithFtReply(arg){
+//         console.log(arg);
+//         if (arg.duplicated) {
+//             DlNotification.showDuplicatedNtf();
+//         } else {
+//             let ntf = new DlNotification(arg.stationId, arg.ft, arg.title);
+//             ntf.showNtf();
+//             this.ntfList.push(ntf);
+//         }
+//     }
+//
+//     // onGetIsDownloadable(data){
+//     //     const ntf = this.getNtf(data.stationId, data.ft);
+//     //     if (!ntf) return;
+//     //
+//     //     if (data.status === 'SUCCESS') {
+//     // console.log('yeah! let\' DL!!');
+//     // this.$status.circleProgress({
+//     //     value: 0.4
+//     // });
+//     // const msg = ProcessCommunicator.generateNtfVal(data);
+//     // Util.successNotify('データを確認しています...\n'+ msg);
+//     //     ntf.updateAs2nd();
+//     // } else {
+//     //     const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+//     //     ntf.updateAsFailed(msg);
+//     // }
+//
+//     // const msg = data.status === 'UNKNOWN' ? '処理に失敗しました' : data.status;
+//     // Util.dangerNotify(msg);
+//     // this.rollbackStatus(data);
+//     // }
+//
+//     onGetFfmpegStart(data){
+//         const ntf = this.getNtf(data.stationId, data.ft);
+//         if (ntf)
+//             ntf.updateAs4th();
+//     }
+//
+//     onGetFfmpegError(data) {
+//         console.log(data);
+//         const ntf = this.getNtf(data.stationId, data.ft);
+//         if (ntf)
+//             ntf.updateAsFailed();
+//         this.releaseNtf(data.stationId, data.ft);
+//     }
+//
+//     onGetFfmpegEnd(data) {
+//         const ntf = this.getNtf(data.stationId, data.ft);
+//         if (ntf)
+//             ntf.updateAsSuccess();
+//         this.releaseNtf(data.stationId, data.ft);
+//     }
+//
+//     onGetPageReached(data) {
+//         const ntf = this.getNtf(data.stationId, data.ft);
+//         if (ntf)
+//             ntf.updateAs3rd();
+//     }
+//
+//     onGetFfmpegProgress(data) {
+//         const ntf = this.getNtf(data.stationId, data.ft);
+//         if (ntf) {
+//             ntf.updateAsPrg(data);
+//         }
+//     }
+// }
 
 String.prototype.splice = function(start, delCount, newSubStr) {
     return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
