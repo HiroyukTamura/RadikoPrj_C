@@ -40,6 +40,10 @@ const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒�
         const path = app.getPath('downloads') || './output';
         store.set('output_path', path);
     }
+    if (!store.get('temp_path')) {
+        const path = app.getPath('temp') || './TempChunkList';
+        store.set('temp_path', path);
+    }
 
     fs.writeFile(LOG_PATH, '', (err)=>{
         if (err) {
@@ -54,6 +58,7 @@ console.log = function(...val){
     fs.appendFile(LOG_PATH, vals, err => {
         //どうしようもない
     });
+    console.warn('log: ', val);
 };
 
 class PuppeteerOperator {
@@ -63,7 +68,7 @@ class PuppeteerOperator {
         this.URL = null;
         this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
-        this.chunkListDir = new Store().get('output_path');
+        this.chunkListDir = new Store().get('temp_path');
         this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
         this.errMsgSelector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan';
         this.userAgent = 'Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.139 Safari/537.36';
@@ -92,7 +97,9 @@ class PuppeteerOperator {
     }
 
     async closeBrowser(){
-        if (!this.browser || Object.keys(dlTaskList.tasks).length)//非同期だからこういうチェックはちゃんとしないとね
+        // if (!this.browser || Object.keys(dlTaskList.tasks).length)//非同期だからこういうチェックはちゃんとしないとね
+        //     return;
+        if (!this.browser)
             return;
         await this.browser.close();
         this.browser = null;
@@ -132,6 +139,8 @@ class PuppeteerOperator {
             await connectEndToNext();
             return;
         }
+        if (!this.browser)
+            await this.launchPuppeteer();
         if (!this.pageForDl) {
             this.pageForDl = await this.browser.newPage();
             await this.pageForDl.setUserAgent(this.userAgent);
@@ -168,12 +177,18 @@ class PuppeteerOperator {
                     console.log('書き込み完了');
                     if (task.abortFlag)
                         emitter.emit('onErrorHandler');
-                    else
+                    else {
                         runFfmpeg(pathE);
+                        this.closeBrowser().then(() => {
+
+                        }).catch(e=> {
+                            throw e;
+                        });
+                    }
                 }).catch(err => {
                     // sendError('writeFile', err);
                     // Sender.sendErrorLog('FATAL_ERROR', err, 'writeFile', this.constructor.name);
-                    throw err;
+                    throw new Error(err);
                 });
             });
         });
@@ -234,7 +249,8 @@ function createWindow(){
         slashes: true
     }));
 
-    win.webContents.openDevTools();
+    if (!FLAG_RELEASE_BUILD)
+        win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -255,6 +271,8 @@ function createWindow(){
     win.once('ready-to-show', () => {
         win.show();
     });
+
+    progresbar.setBadge(win, app, dlTaskList);
 
     // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
     //     sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
@@ -278,7 +296,10 @@ ipcMain.on('startDlWithFt', (event, arg) => {
         dlTaskList['tasks'][timeStamp] = new DlTask(timeStamp, arg.stationId, arg.ft, arg.to, arg.title, arg.img);
         if (!dlTaskList.working)
             dlTaskList.working = timeStamp;
-        emitter.emit('setTask');
+        if (progresbar)
+            progresbar.setBadge(win, app, dlTaskList);
+        if (dlTaskList.working === timeStamp)
+            emitter.emit('setTask');
     }
     if (sender)
         sender.sendReply(arg.stationId, arg.ft, isDuplicated, arg.title);
@@ -338,21 +359,21 @@ emitter.on('setTask', async() => {
     let isFailed = false;
     await operator.launchPuppeteer().catch(err => {
         console.log(err);
-        emitter.emit('onErrorHandler', err/*, 'launchPuppeteer'*/);
         isFailed = true;
         if (sender)
             sender.sendErrorLog(err, "emitter.on('setTask')");
+        emitter.emit('onErrorHandler', err/*, 'launchPuppeteer'*/);
         // sendError('launchPuppeteer()', e);
     });
     if (isFailed)
         return;
     operator.startDlChain().catch(e => {
         console.log('startDlChain error', e);
-        emitter.emit('onErrorHandler', e);
         if (sender) {
             sender.sendMiddleData('startDlChainError');
             sender.sendErrorLog(e, 'operator.startDlChain()');
         }
+        emitter.emit('onErrorHandler', e);
         // sendError('operator.startDlChain()', e);
     });
 });
@@ -386,7 +407,7 @@ process.on('unhandledRejection', e => {
     if (!sender)
         return;
     sender.sendUnhandledRejection('unhandledRejection');
-    sender.sendErrorLog("process.on('unhandledRejection')", e);
+    sender.sendErrorLog(e, "process.on('unhandledRejection')");
     // sendError('unhandledRejection', e);
 });
 
@@ -589,7 +610,6 @@ function runFfmpeg(pathE){
             }
             deleteFileSync(totalPath);
             emitter.emit('onErrorHandler', err);
-            progresbar.setProgressAsFfmpegErr();
         })
         .on('end', (stdout, stderr) => {
             console.log('Transcoding s  ucceeded !');
@@ -602,7 +622,7 @@ function runFfmpeg(pathE){
                 emitter.emit('connectEndToNext');
             }
             progresbar.setProgressAsFfmpegEnd();
-        }).on('stderr', function(stderrLine){
+        }).on('stderr', stderrLine =>{
             if (stderrLine.includes('time=')/* && progressCounter%3 === 0*/) {
                 const hms = stderrLine.substr(stderrLine.indexOf('time=')+5, 8)
                     .split(':');
@@ -718,28 +738,34 @@ async function onError(e) {
 
 async function connectEndToNext(){
     const chunkFileName = dlTaskList.getWorkingTask().chunkFileName;
-    if (chunkFileName) {
+    if (chunkFileName)
         deleteFileSync(operator.chunkListDir +'/'+ chunkFileName);
-    }
     delete dlTaskList.tasks[dlTaskList.working];
     const taskNext = dlTaskList.switchToNext();
     console.log('taskNext: ', taskNext);
 
-    if (taskNext) {
+    //プログレスバーを取り除き、バッジを更新する
+    if (progresbar)
+        progresbar.setBadge(win, app, dlTaskList);
+    progresbar.setProgressAsFfmpegErr();
+
+    if (taskNext)
         operator.startDlChain().catch(e => {
             console.log('connectEndToNext()内 startDlChain エラー!');
             sender.sendMiddleData('startDlChainError');
             emitter.emit('onErrorHandler', e);
-            sender.sendErrorLog('FATAL_ERROR', e, connectEndToNext.name);
+            sender.sendErrorLog(e, connectEndToNext.name);
             // sendError('connectEndToNext()', e);
         });
-    } else {
+    else
         await operator.closeBrowser();
-    }
 }
 
-function deleteFileSync(path) {
-    if (fs.existsSync(path)){
-        fs.unlinkSync(path);
+function deleteFileSync(path){
+    try {
+        if (fs.existsSync(path))
+            fs.unlinkSync(path);
+    } catch (e) {
+        sender.sendErrorLog(e, 'deleteFileSync');
     }
 }

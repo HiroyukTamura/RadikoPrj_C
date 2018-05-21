@@ -40,19 +40,22 @@ module.exports = class DlTaskList {
     }
 
     getSimpleData(){
-        return {
-            stationId: this.getWorkingTask().stationId,
-            ft: this.getWorkingTask().ft
-        }
+        if (this.getWorkingTask())
+            return {
+                stationId: this.getWorkingTask().stationId,
+                ft: this.getWorkingTask().ft
+            }
     }
 
     getMiddleData(){
         const data = this.getSimpleData();
-        data['title'] = this.getWorkingTask().title;
-        data['timeStamp'] = this.getWorkingTask().timeStamp;
-        data['taskLength'] = Object.keys(this.tasks).length;
-        // console.warn(data);
-        return data;
+        if (data) {
+            data['title'] = this.getWorkingTask().title;
+            data['timeStamp'] = this.getWorkingTask().timeStamp;
+            data['taskLength'] = Object.keys(this.tasks).length;
+            // console.warn(data);
+            return data;
+        }
     }
 
     switchToNext(){

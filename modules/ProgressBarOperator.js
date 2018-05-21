@@ -2,6 +2,7 @@ module.exports = class ProgressBarOperator {
     constructor(win){
         this.win = win;
         this.DlNotification = require('./DlNotification');
+        this.nativeImage = require('electron').nativeImage;
     }
 
     setProgressAsPageReached(){
@@ -18,7 +19,6 @@ module.exports = class ProgressBarOperator {
         }
     }
 
-    //todo 何らかのアイコン変更
     setProgressAsFfmpegErr(){
         if (this.win)
             this.win.setProgressBar(-1);
@@ -32,11 +32,33 @@ module.exports = class ProgressBarOperator {
             this.win.setProgressBar(progress);
     }
 
-    //todo 何らかのアイコン変更
     setProgressAsFfmpegEnd(){
         if (this.win)
-            this.win.setProgressBar(-1);
-        // if (this.win)
-        //     this.win.setProgressBar(0);
+            this.win.setProgressBar(0);
+    }
+
+    setBadge(win, app, dlTaskList){
+        const taskLen = Object.keys(dlTaskList.tasks).length;
+        if (taskLen) {
+            const taskLenStr = taskLen > 9 ? taskLen +'+' : taskLen.toString();
+            switch (process.platform) {
+                case 'darwin':
+                    app.dock.setBadge(taskLenStr);
+                    break;
+                case 'win32':
+                    const path = './img/badge'+ taskLenStr + '.png';
+                    const icon = this.nativeImage.createFromPath(path);
+                    win.setOverlayIcon(icon, taskLenStr);
+                    break;
+            }
+        } else
+            switch (process.platform) {
+                case 'darwin':
+                    app.dock.setBadge(null);
+                    break;
+                case 'win32':
+                    win.setOverlayIcon(null, '');
+                    break;
+            }
     }
 };

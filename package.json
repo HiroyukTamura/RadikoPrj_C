@@ -64,6 +64,8 @@
       "modules/**/*",
       "dist/**/*",
       "public/**/*",
+      "TempChunkList",
+      "output",
       "index.js",
       "debug.log"
     ],

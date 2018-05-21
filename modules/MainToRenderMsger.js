@@ -11,7 +11,9 @@ module.exports = class MainToRenderMsger {
     }
 
     sendMiddleData(command){
-        this.webContents.send(command, this.dlTaskList.getMiddleData());
+        const data = this.dlTaskList.getMiddleData();
+        if (data)
+            this.webContents.send(command, data);
     }
 
     /**
@@ -40,8 +42,10 @@ module.exports = class MainToRenderMsger {
 
     sendFfmpegPrg(percent){
         const data = this.dlTaskList.getMiddleData();
+        if (!data)
+            return;
         data['ffmpegPrg'] = percent;
-        data['to'] =  this.dlTaskList.getWorkingTask().to;
+        data['to'] = this.dlTaskList.getWorkingTask().to;
         this.webContents.send('ffmpegPrg', data);
     }
 
@@ -65,6 +69,10 @@ module.exports = class MainToRenderMsger {
         this.webContents.send('unhandledRejection');
     }
 
+    sendUpdateBadge(taskLen){
+        this.webContents.send('updateBadge', taskLen);
+    }
+
     /**
      * !!!!!{@link #sendMiddleData}などでエラーをレンダラ側に通知する動作には、絶対にログ送信を含めないこと。必ず本メソッドを通じてログ送信を行うこと。!!!!!!
      * @param exception エラー内容を代入。ただし、該当するものがなければなんでもOK
@@ -79,4 +87,4 @@ module.exports = class MainToRenderMsger {
         };
         this.webContents.send('FATAL_ERROR', data);
     }
-}
+};
