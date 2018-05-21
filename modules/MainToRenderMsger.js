@@ -51,6 +51,7 @@ module.exports = class MainToRenderMsger {
 
     sendDlStatus(){
         this.webContents.send('dlStatus_REPLY', JSON.stringify(this.dlTaskList));
+        console.log('送ってる');
     }
 
     sendExplorerErr(){

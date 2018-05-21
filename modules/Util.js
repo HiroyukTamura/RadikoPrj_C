@@ -19,8 +19,8 @@ module.exports = class Util {
             dialogPolyfill.registerDialog(dialog);
     }
 
-    static setDialogListeners(dialog) {
-        dialog.addEventListener('close', (e) => {
+    static setDialogListeners(dialog){
+        dialog.addEventListener('close', e => {
 
         });
         $('.cancel-btn').on('click', () => {

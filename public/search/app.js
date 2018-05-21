@@ -2,6 +2,7 @@
 // const ipcRenderer = require('electron').ipcRenderer;
 const $= require('jquery');
 require('bootstrap');
+require('bootstrap-notify');
 const dialogPolyfill = require('dialog-polyfill');
 const ProgramSearcher = require('../../modules/ProgramSearcher');
 const ProcessCommunicator = require('../../modules/ProcessCommunicator');
@@ -10,7 +11,9 @@ const DlNotification = require('../../modules/DlNotification');
 const FirebaseClient = require('../../modules/FirebaseClient');
 const Util = require('../../modules/Util');
 
-require('bootstrap-notify');
+window.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+};
 
 $(() => {
     class Conductor {
@@ -48,16 +51,16 @@ $(() => {
 
         setOnClickForWindow(){
             const self = this;
-            $(window).on('click', (e) => {
+            $(window).on('click', e => {
                 if (suggester.$dropDown.is(':visible')) {
                     const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!Util.isInRect(rect, e)) {
+                    if (!Util.isInRect(rect, e.currentTarget)) {
                         suggester.$dropDown.hide();
                         return false;
                     }
                 } else if (self.$dialog.prop('open')) {
                     const rect = self.$dialog[0].getBoundingClientRect();
-                    if (!Util.isInRect(rect, e)) {
+                    if (!Util.isInRect(rect, e.currentTarget)) {
                         self.$dialog[0].close();
                         return false;
                     }
@@ -95,8 +98,7 @@ $(() => {
             suggester = new Suggester();
             suggester.init();
             const self = this;
-            this.$suggestDiv.on('click', (e) => {
-                e.preventDefault();
+            this.$suggestDiv.on('click', e => {
                 suggester.onClickWindow();//todo ここでinputにフォーカスを当てたいが当たらない
                 return false;
             });
@@ -142,10 +144,10 @@ $(() => {
         initKeyInput(){
             this.$keyInput.on('keyup', e => {
                 if (this.noInput) {
-                    $(e).attr('required', 'required');
+                    $(e.currentTarget).attr('required', 'required');
                     this.noInput = false;
                 }
-                if (!$(e).val().length) {
+                if (!$(e.currentTarget).val().length) {
                     console.log('こっち');
                     return false;
                 }
@@ -286,7 +288,7 @@ $(() => {
 
         init(){
             this.$suggestA.on('click', e => {
-                const value = $(e).html();
+                const value = $(e.currentTarget).html();
                 searchDom.$keyInput.val(value);
                 return false;
             });
@@ -502,10 +504,10 @@ $(() => {
                     return false;
                 }).hover(e => {
                     if (self.tsNg != 2)
-                        $(e).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
+                        $(e.currentTarget).addClass('is-hovered').removeClass('mdl-shadow--2dp').addClass('mdl-shadow--6dp');
                 }, e => {
                     if (self.tsNg != 2)
-                        $(e).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
+                        $(e.currentTarget).removeClass('is-hovered').addClass('mdl-shadow--2dp').removeClass('mdl-shadow--6dp');
                 });
         }
     }

@@ -307,7 +307,7 @@ ipcMain.on('startDlWithFt', (event, arg) => {
 
 ipcMain.on('dlStatus', (event, arg) => {
     console.log('dlStatus');
-    if (sender)
+    if (sender) {}
         sender.sendDlStatus(dlTaskList);
 });
 

@@ -7,6 +7,10 @@ const DlNotification = require('../../modules/DlNotification');
 const Util = require('../../modules/Util');
 const {EreaChecker} = require('../../modules/Network');
 
+window.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+};
+
 $(()=>{
     const moment = require('moment');
 
@@ -15,7 +19,7 @@ $(()=>{
             const areaId = EreaChecker.getAreaIdFromStorage();
             console.log(areaId);
             if (!areaId || areaId === 'undefined')
-                new EreaChecker().check().then((areaId) => {
+                new EreaChecker().check().then(areaId => {
                     console.log('こっち', areaId);
                     return new InfoClient(areaId).request();
                 }).then(data => {

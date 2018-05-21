@@ -12,6 +12,10 @@ const Util = require('../../modules/Util');
 const DomUtil = require('../../modules/DomUtil');
 const {EreaChecker, ProgramListGetter} = require('../../modules/Network');
 
+window.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+};
+
 $(() => {
     const moment = require('moment');/*グローバルに定義してはいけない??*/
 
@@ -19,6 +23,7 @@ $(() => {
         initialOperate(){
             domFrame.init();
             ereaChecker.check().then(ereaId => {
+                console.log(ereaId);
                 return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
             }).then(data => {
                 new TimeTableDom(data).init();
@@ -41,7 +46,7 @@ $(() => {
             ereaChecker.check().then(ereaId => {
                 localStorage.setItem('ereaId', ereaId);
                 return new ProgramListGetter(domFrame.currentM).setAreaUrl(ereaId).request();
-            }).then((data) => {
+            }).then(data => {
                 new TimeTableDom(data).init();
                 domFrame.setOnCardClickListener();
                 domFrame.show();
@@ -167,12 +172,12 @@ $(() => {
                 conductor.changeDate();
             });
             $('#calendar-menu .mdl-menu__item').on('click', e => {
-                console.log($(e).attr('id'));
-                if ($(e).prop('disabled'))
+                console.log($(e.currentTarget).attr('id'));
+                if ($(e.currentTarget).prop('disabled'))
                     return false;
-                $(e).parents('.mdl-menu__container')
+                $(e.currentTarget).parents('.mdl-menu__container')
                     .removeClass('is-visible');
-                const ymd = $(e).attr('date');
+                const ymd = $(e.currentTarget).attr('date');
                 self.currentM = moment(ymd, 'YYYYMMDD');
                 conductor.changeDate();
             });
@@ -190,8 +195,8 @@ $(() => {
 
         setOnClickPostGetPrg(){
             $('.mdl-layout__tab').on('click', e => {
-                const id = $(e).attr('id');
-                const name = $(e).attr('data-name');
+                const id = $(e.currentTarget).attr('id');
+                const name = $(e.currentTarget).attr('data-name');
                 console.log(id);
                 // const menuItem = $('#station-menu .mdl-menu__item[station="'+ id +'"]');
                 // menuItem.prop('disabled', true);
@@ -203,8 +208,8 @@ $(() => {
 
         setOnStMenuItemClick(){
             $('#station-menu .mdl-menu__item').on('click', e => {
-                const id = $(e).attr('station');
-                const name = $(e).attr('data-name');
+                const id = $(e.currentTarget).attr('station');
+                const name = $(e.currentTarget).attr('data-name');
                 console.log(id);
                 //ここでliをdisabledにしても、なぜかリセットされてしまうので、後ほどdisabledする
                 if (!$(this).prop('disabled'))
@@ -380,7 +385,7 @@ $(() => {
                 opeM.add(-1, 'd');
             }
             tabBar.find('.mdl-layout__tab').on('click', e =>{
-                this.currentM = moment($(e).attr('data-ymd'), 'YYYYMMDD');
+                this.currentM = moment($(e.currentTarget).attr('data-ymd'), 'YYYYMMDD');
                 conductor.changeDate();
                 return false;//target == a href
             });
@@ -467,15 +472,15 @@ $(() => {
         // searcher.onClickWindow(event);
         if (domFrame.$dialog.prop('open')) {
             const rect = domFrame.$dialog[0].getBoundingClientRect();
-            if (!(rect.left < e.clientX && e.clientX < rect.right && rect.bottom > e.clientY && e.clientY > rect.top)) {
+            if (!Util.isInRect(rect, e)) {
                 domFrame.$dialog[0].close();
-                e.stopPropagation();
+                return false;
             }
         } else {
             const $clickedEle = searcher.$dropDown.find('.mouseover');
             if ($clickedEle.length) {
                 searcher.resetSuggestion($clickedEle.text());
-                e.stopPropagation();
+                return false;
             }
         }
     });

@@ -10,7 +10,7 @@ module.exports = class FileExplorerOpener {
     open(){
         console.log(this.path);
         const cd = this.exec('start .', {cwd: this.path});
-        cd.on('error', (err) => {
+        cd.on('error', err => {
             console.log(err);
             if (!this.sender)
                 return;

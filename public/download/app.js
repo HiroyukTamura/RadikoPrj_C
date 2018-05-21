@@ -13,6 +13,10 @@ const Util = require('../../modules/Util');
 // const dialog = remote.require('dialog');
 // const browserWindow = remote.require('browser-window');
 
+window.eval = global.eval = function () {
+    throw new Error(`Sorry, this app does not support window.eval().`)
+};
+
 $(() => {
     const moment = require('moment');
 
@@ -157,7 +161,7 @@ $(() => {
             });
 
             $('input').focus(e => {
-                $(e).blur();
+                $(e.currentTarget).blur();
                 return false;
             });
 
@@ -194,7 +198,7 @@ $(() => {
         buildRateMenu(){
             for (let i = 0; i < this.bpsArr.length; i++) {
                 const disabled = this.bpsArr[i] === this.bps ? 'disabled' : '';
-                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.bpsArr[i] +'</li>').on('click', (e)=> {
+                $('<li class="mdl-menu__item mdl-pre-update" '+ disabled +'>'+ this.bpsArr[i] +'</li>').on('click', e => {
                     this.$bpsInput.val(this.bpsArr[i]);
                     this.bps = this.bpsArr[i];
                     this.store.set('kbps', this.bpsArr[i]);
@@ -228,7 +232,7 @@ $(() => {
         setOnClickCancel(){
             const self = this;
             this.$taskList.find('.cancel-btn').on('click', e =>{
-                const $li = $(e).parents('li');
+                const $li = $(e.currentTarget).parents('li');
                 const timeStamp = $li.attr('data-time-stamp');
                 console.log('キャンセル timeStamp', timeStamp);
                 self.removeItem($li);
@@ -293,6 +297,7 @@ $(() => {
     }
 
     const presenter = new Presenter();
+    const ipcConn = new ProcessCommunicatorFromDL();
     new IpcClient(DlNotification, FirebaseClient);
     Conductor.init();
 });
