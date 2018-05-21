@@ -70,4 +70,24 @@ module.exports = class FirebaseClient {
             });
         });
     }
+
+    /**
+     * 1月前までのお知らせを取得する
+    */
+    getNotice(){
+        const m = this.moment();
+        m.add(-1, 'M');
+        const ymPre = parseInt(m.format('YYYYMM'));
+        return new Promise((resolve, reject) =>{
+            this.db.collection('notice')
+                .where('ym', '>=', ymPre)
+                .get()
+                .then(snapshot => {
+                    resolve(snapshot);
+                })
+                .catch(error => {
+                    reject(error);
+                });
+        });
+    }
 };

@@ -1,4 +1,4 @@
-module.exports = class ProgressBarOperator{
+module.exports = class ProgressBarOperator {
     constructor(win){
         this.win = win;
         this.DlNotification = require('./DlNotification');

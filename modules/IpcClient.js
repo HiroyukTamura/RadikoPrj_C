@@ -1,7 +1,8 @@
 module.exports = class IpcClient {
-    constructor(DlNotification, FirebaseClient){
+    constructor(){
         this.ipcRenderer = require('electron').ipcRenderer;
-        // this.dlNotification = dlNotification;
+        const DlNotification = require('./DlNotification');
+        const FirebaseClient = require('./FirebaseClient');
         // require('FirebaseClient');<=htmlのscriptタグで読み込む
 
         this.ipcRenderer.on('uncaughtException', (event, args) => {

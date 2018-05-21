@@ -33,6 +33,7 @@ $(()=>{
                     console.log(e);
                     $('#notice-radiko .error-big').show();
                 });
+            this.getOriginalInfo();
         }
 
         static onGetInfoData(data){
@@ -53,12 +54,35 @@ $(()=>{
                 presenter.appendRdkInfoItem(dateVal, title, body);
             }
         }
+
+        getOriginalInfo(){
+            const fbClient = new FirebaseClient();
+            fbClient.getNotice().then(snapshot => {
+                this.onGetOriginalInfo(snapshot);
+            }).catch(e => {
+                console.log(e);
+                fbClient.sendError(e, 'getOriginalInfo', this.constructor.name);
+                Presenter.showOriginalInfoErr('データの取得に失敗しました');
+            });
+        }
+
+        onGetOriginalInfo(snapshot){
+            if (snapshot.empty)
+                Presenter.showOriginalInfoErr('お知らせはありません');
+            else
+                snapshot.forEach(doc => {
+                    const date = moment(doc.id, 'YYYYMMDD').format('YYYY年M月D日');
+                    const value = doc.get('value');
+                    presenter.inputCardInfo(doc.get('title'), value, date);
+                });
+        }
     }
 
     class Presenter {
         constructor(){
             this.$rdkNtfW = $('#notice-radiko');
             this.$input = $('#comment');
+            this.$noticeSec = $('#notice');
             // this.$sendBtn = $('#send-btn');
             tippy('#send-btn');
             this.setBtnClick();
@@ -93,9 +117,24 @@ $(()=>{
                 '<div class="news-detail__content">'+ body +'</div>'
             ).appendTo(this.$rdkNtfW);
         }
+
+        inputCardInfo(title, val, date){
+            $(
+                '<div class="mdl-card mdl-shadow--2dp">\n' +
+                    '<h4>'+ title +'</h4>\n' +
+                        '<div class="news-detail__content">'+ val +'</div>\n' +
+                    '<p class="date-btm">'+ date+'</p>\n' +
+                '</div>'
+            ).appendTo(this.$noticeSec);
+        }
+
+        static showOriginalInfoErr(msg){
+            $('#notice.error-big p').html(msg);
+            $('#notice.error-big').show();
+        }
     }
 
-    class InfoClient{
+    class InfoClient {
         constructor(areaId){
             console.log(areaId);
             this.URL ='http://radiko.jp/v2/information2/'+ areaId + '.xml';
@@ -117,6 +156,6 @@ $(()=>{
     }
 
     const presenter = new Presenter();
-    new IpcClient(DlNotification, FirebaseClient);
+    new IpcClient();
     new Conductor().init();
 });

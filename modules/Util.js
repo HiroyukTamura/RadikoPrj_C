@@ -53,7 +53,7 @@ module.exports = class Util {
     /**
      * @returns {number} 1=>DLボタン発見 0=>エラーボタン発見 -1=>エラー(ページの構造が変わったか??)
      */
-    static isCanAvialble($dom) {
+    static isCanAvialble($dom){
         if ($dom.find('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a').length)
             return 1;
         if ($dom.find('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__plan').length)
@@ -61,7 +61,7 @@ module.exports = class Util {
         return -1;
     }
 
-    static unEscapeHTML(str) {
+    static unEscapeHTML(str){
         let s = this.replaceAll(str, '&gt;', '>');
         s = this.replaceAll(s, '&lt;', '<');
         s = this.replaceAll(s, '&nbsp;', ' ');
