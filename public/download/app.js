@@ -86,7 +86,7 @@ $(() => {
                 if (task.abortFlag)
                     continue;
 
-                const startM = new moment(task.ft, 'YYYYMMDDhhmmss');
+                const startM = moment(task.ft, 'YYYYMMDDhhmmss');
                 const dateVal = Util.getMDWithWeekDay(startM) +' '+ startM.format('hh:mm') +' - '+ moment(task.to, 'YYYYMMDDhhmmss').format('hh:mm');
                 const stage = DlNotification.getStageStr(task.stage);
                 const $dlItem = Presenter.createDlItem(taskKeys[i], task.title, dateVal, stage, task.img);
@@ -284,7 +284,7 @@ $(() => {
                 return;
             } //レンダラ側でキャンセル動作と、メインからのsendがバッティングしうる⇒$liが見つからない場合がある
 
-            const num = new DlNotification(Util).calcProgressNum(data);
+            const num = new DlNotification().calcProgressNum(data);
             const stage = DlNotification.getStageStr('ffmpegPrg', num);
             console.log('numnum', num);
             $li.find('.mdl-progress')[0].MaterialProgress.setProgress(num);

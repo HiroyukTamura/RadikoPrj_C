@@ -1,4 +1,4 @@
-class DomUtil {
+module.exports = class DomUtil {
     constructor(data){
         this.data = data;
         this.columnWidth = 258;//px scssより引用
@@ -18,16 +18,16 @@ class DomUtil {
         let str = '';
         for (let i = 0; i < 24; i++)
             str += rowArea;
-        let columnsStr = this.columnWidth/2 + "px ";//時間軸
+        let columnsStr = this.columnWidth/2 + 'px ';//時間軸
         for (let i = 0; i < this.columnLen; i++)
-            columnsStr += (this.columnWidth + "px ");
+            columnsStr += (this.columnWidth + 'px ');
         this.$grid.css('grid-template-areas', str)
             .css('grid-template-columns', columnsStr);
     }
 
     setGridCells(){
         //セル作成
-        for (let i = 1; i < 25; i++) {
+        for (let i = 1; i < 25; i++)
             for (let j = 1; j < this.columnLen+2/*時間軸の分*/; j++) {
                 let cell;
                 if (j === 1) {
@@ -40,7 +40,6 @@ class DomUtil {
                     cell = '<div class="cell" row="'+ i +'" column="'+ j +'" style="grid-row:'+ i +' / span 1; grid-column:'+ j +'/ span 1;"></div>';
                 this.$grid.append(cell);
             }
-        }
     }
 
     inputEachCard($prg, i, stationId){
@@ -87,17 +86,15 @@ class DomUtil {
             if (stationId)
                 $cardOrgin.attr('station', stationId);
 
-            if (tsIn == 2) {
+            if (tsIn == 2)
                 $cardOrgin.addClass('cant-dl');
-            }
 
-            if (endM.diff(this.moment()) > 0) {
+            if (endM.diff(this.moment()) > 0)
                 $cardOrgin.addClass('pre-start');
-            }
 
             let startOpe = startM.clone();
             let count = 0;
-            while (true) {
+            while (true){
 
                 if (count > 5) {
                     console.log('count > 5');//todo エラー処理
@@ -168,12 +165,14 @@ class DomUtil {
         this.columnLen = columnLen;
     }
 
+    // noinspection JSUnusedGlobalSymbols
     init(){
-        throw ('this method must be override');
+        throw new Error('this method must be override');
     }
 
+    // noinspection JSMethodCanBeStatic
     inputCards(){
-        throw ('this method must be override');
+        throw new Error('this method must be override');
     }
 
     static fillInBottomSpace(cell, card){
@@ -189,4 +188,4 @@ class DomUtil {
             .css('border-top-left-radius', 0)
             .css('border-top-right-radius', 0);
     }
-}
+};

@@ -20,14 +20,16 @@ const electron = require('electron');
 const FileExplorerOpener = require('./modules/FileOperator');
 const DlTaskList = require('./modules/DlTaskList');
 const DlTask = require('./modules/DlTask');
-const ChromeInitializer = require('./modules/ChromeInitializer');
+// const ChromeInitializer = require('./modules/ChromeInitializer');
 const MainToRenderMsger = require('./modules/MainToRenderMsger');
+const DlNotification = require('./modules/DlNotification');
+const ProgressBarOperator = require('./modules/ProgressBarOperator');
 let masterJson;
 let vpnJson;
 let postGotJsons;
 
 const HTML_PATH = 'public/timetable/index.html';
-const HTML_PATH_INSTALL = 'public/install/index.html';
+// const HTML_PATH_INSTALL = 'public/install/index.html';
 const LOG_PATH = './debug.log';
 const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒せ
 
@@ -47,9 +49,9 @@ const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒�
     // autoUpdater.setFeedURL(options);
 }();
 
-console.log = function (...val) {
+console.log = function(...val){
     const vals = val.join(' ') + '\n';
-    fs.appendFile(LOG_PATH, vals, (err) => {
+    fs.appendFile(LOG_PATH, vals, err => {
         //どうしようもない
     });
 };
@@ -83,9 +85,8 @@ class PuppeteerOperator {
         let status = 'UNKNOWN';
         if (await page.$(this.playBtnSlector) !== null)
             status = 'SUCCESS';
-        if (await page.$(this.errMsgSelector) !== null) {
+        if (await page.$(this.errMsgSelector) !== null)
             status = await page.$eval(this.errMsgSelector, el => el.innerHTML);
-        }
         await page.close();
         return status;
     }
@@ -115,9 +116,9 @@ class PuppeteerOperator {
                 '--disable-sync',// Disable syncing to a Google account
                 '--no-first-run',// Skip first run wizards
                 '--disable-default-apps',// Disable installation of default apps on first run
-                '--load-extension=' + __dirname,  // eslint-disable-line no-path-concat
+                '--load-extension=' + __dirname,// eslint-disable-line no-path-concat
                 '--no-sandbox',
-                '--disable-setuid-sandbox',
+                '--disable-setuid-sandbox'
                 // No autoplay
                 // '--autoplay-policy=user-gesture-required'
             ]
@@ -177,25 +178,27 @@ class PuppeteerOperator {
             });
         });
         await this.pageForDl.waitFor(2 * 1000);
-        await this.pageForDl.click("#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a");
+        await this.pageForDl.click('#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a');
         await this.pageForDl.waitFor(2 * 1000);
         await this.pageForDl.click('#colorbox--term > p.colorbox__btn > a');
         task.stage = 'pageReached';
         sender.sendMiddleData('pageReached');
+        progresbar.setProgressAsPageReached();
     }
 }
 
-String.prototype.splice = function(start, delCount, newSubStr) {
+String.prototype.splice = function(start, delCount, newSubStr){
     return this.slice(0, start) + newSubStr + this.slice(start + Math.abs(delCount));
 };
 
 let win;//グローバルにしないとGCに回収されてウィンドウが閉じる
 let sender;
+let progresbar;
 let emitter = new events.EventEmitter();
 const dlTaskList = new DlTaskList();
 const operator = new PuppeteerOperator();
 
-function createWindow (){
+function createWindow(){
     // Create the browser window.
     console.log('createWindow');
 
@@ -215,13 +218,14 @@ function createWindow (){
             // nodeIntegration: false,
             // webSecurity: false,
             show: false
-        },
+        }
         // titleBarStyle: 'hiddenInset'
     });
 
     win.maximize();
     Menu.setApplicationMenu(null);
     sender = new MainToRenderMsger(win.webContents, dlTaskList);
+    progresbar = new ProgressBarOperator(win);
 
     // and load the index.html of the app.
     win.loadURL(url.format({
@@ -238,13 +242,12 @@ function createWindow (){
         win = null;
     });
 
-    win.webContents.on('will-navigate', function(e, url) {
+    win.webContents.on('will-navigate', (e, url) =>{
         if (url.includes('public/timetable/index.html') ||
             url.includes('public/download/index.html') ||
             url.includes('public/search/index.html') ||
-            url.includes('public/about/index.html')) {
+            url.includes('public/about/index.html'))
             return;
-        }
         e.preventDefault();
         electron.shell.openExternal(url);
     });
@@ -310,18 +313,16 @@ app.on('window-all-closed', () => {
     console.log('window-all-closed');
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin') {
+    if (process.platform !== 'darwin')
         app.quit()
-    }
 });
 
 app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     console.log('active');
-    if (win === null) {
+    if (win === null)
         createWindow();
-    }
 });
 
 app.on('will-quit', (event)=>{
@@ -356,11 +357,11 @@ emitter.on('setTask', async() => {
     });
 });
 
-emitter.on('onErrorHandler', async (e) => {
+emitter.on('onErrorHandler', async e =>{
     await onError(e);
 });
 
-emitter.on('connectEndToNext', async ()=> {
+emitter.on('connectEndToNext', async ()=>{
     await connectEndToNext();
 });
 
@@ -371,6 +372,7 @@ emitter.on('closeBrowser', async ()=>{
 
 process.on('uncaughtException', e => {
     console.log(e);
+    console.warn(e);
     if (!sender)
         return;
     sender.sendUncaughtException('uncaughtException');
@@ -380,6 +382,7 @@ process.on('uncaughtException', e => {
 
 process.on('unhandledRejection', e => {
     console.log(e);
+    console.warn(e);
     if (!sender)
         return;
     sender.sendUnhandledRejection('unhandledRejection');
@@ -394,13 +397,12 @@ class MasterJson {
     requestJson(){
         const self = this;
         request('http://wppsc.html.xdomain.jp/VpnGate/list.txt', function (error, response, body) {
-            if (error) {
+            if (error)
                 console.log('requestJson', error);
-            } else {
+            else {
                 self.json = JSON.parse(body);
-                if (vpnJson.isComplete && !postGotJsons) {
+                if (vpnJson.isComplete && !postGotJsons)
                     new PostGotJsons();
-                }
             }
         });
     }
@@ -417,18 +419,16 @@ class GateVpnCsv {
         const self = this;
         csv()
             .fromStream(request.get(this.GATE_VPN_URL))
-            .on('csv',(csvRow)=>{
-                if (csvRow[6] === 'JP') {
+            .on('csv', csvRow =>{
+                if (csvRow[6] === 'JP')
                     self.csvRowArr.push(csvRow);
-                }
             })
-            .on('done',(error)=>{
+            .on('done', error =>{
                 const log = error ? error : '成功';
                 console.log('requestCsv', log);
                 self.isComplete = true;
-                if (masterJson.json && !postGotJsons) {
+                if (masterJson.json && !postGotJsons)
                     new PostGotJsons();
-                }
             });
     }
 }
@@ -475,53 +475,50 @@ class OpenVpn {
 
     init(){
         // await this.sudoer.exec(cmd);
-        this.cp.stdout.on('data', function(data) {
+        this.cp.stdout.on('data', data =>{
             // const str = iconv.decode(data, "Shift_JIS");
-            if (data && data.toString().indexOf('All TAP-Windows adapters on this system are currently in use') !== -1) {
+            if (data && data.toString().indexOf('All TAP-Windows adapters on this system are currently in use') !== -1)
                 console.log('↓↓↓↓対応すべきエラーが発生↓↓↓↓');
-            }
             console.log('stdout', data);
         });
-        this.cp.stderr.on('data', function(data) {
+        this.cp.stderr.on('data', data =>{
             // const str = iconv.decode(data, "Shift_JIS");
             console.log('stderr', data);
         });
-        this.cp.on('close', function(code) {
+        this.cp.on('close', code =>{
             console.log('closing code: ' + code);
         });
-        this.cp.on('error', function (err) {
+        this.cp.on('error', err =>{
             console.warn('error', err);
         })
     }
 }
 
-async function writeFile(pathE, response) {
+async function writeFile(pathE, response){
     await fs.outputFile(pathE, await response.buffer());
 }
 
-function isFileExists(filePath) {
-    try {
-        fs.statSync(filePath);
-        return true;
-    } catch(err) {
-        return false;
-    }
-}
+// function isFileExists(filePath){
+//     try {
+//         fs.statSync(filePath);
+//         return true;
+//     } catch(err) {
+//         return false;
+//     }
+// }
 
-function runFfmpeg(pathE) {
+function runFfmpeg(pathE){
     // const path = 'output/'+ dlTaskList.getWorkingTask().stationId;
     const totalPath = getOutputPath();
     const dirName = path.dirname(totalPath);
 
     let err = null;
     try {
-        if (!fs.existsSync(dirName)){
+        if (!fs.existsSync(dirName))
             fs.mkdirSync(dirName);
-        }
-        if (fs.existsSync(totalPath)) {
+        if (fs.existsSync(totalPath))
             fs.unlinkSync(totalPath);//既に同じmp3が存在しているなら削除
-        }
-    } catch (e) {
+    } catch(e) {
         err = e;
     }
 
@@ -560,24 +557,31 @@ function runFfmpeg(pathE) {
     // let progressCounter = 0;
     let isKilled = false;
     let ffmpegPath = ffmpeg_static.path;
+
+    //ビルド時にffmepgはunpackedの方にはの方に入っている
     if (FLAG_RELEASE_BUILD) {
         const key = 'app.asar';
         ffmpegPath = ffmpegPath.splice(ffmpegPath.indexOf(key)+ key.length, 0, '.unpacked');
     }
+
+    const startM = moment(dlTaskList.getWorkingTask().ft, 'YYYYMMDDhhmmss');
+    const endM = moment(dlTaskList.getWorkingTask().to, 'YYYYMMDDhhmmss');
+    const totalSec = endM.diff(startM, 'seconds');
 
     const command = ffmpeg(pathE)
         .setFfmpegPath(ffmpegPath)
         .audioCodec(codecLib)
         .audioBitrate(bps)
         // .videoCodec('copy')
-        .on('start', function(commandLine) {
+        .on('start', commandLine => {
             console.log('Spawned Ffmpeg with command: ' + commandLine);
             if (!dlTaskList.getWorkingTask().abortFlag) {
                 sender.sendMiddleData('ffmpegStart');
                 dlTaskList.getWorkingTask().stage = 'ffmpegStart';
             }
+            progresbar.setProgressAsFfmpegStart();
         })
-        .on('error', function(err, stdout, stderr) {
+        .on('error', (err, stdout, stderr) => {
             console.log('Cannot process video: ' + err.message);
             if (!dlTaskList.getWorkingTask().abortFlag) {
                 sender.sendMiddleData('ffmpegError', err);
@@ -585,8 +589,9 @@ function runFfmpeg(pathE) {
             }
             deleteFileSync(totalPath);
             emitter.emit('onErrorHandler', err);
+            progresbar.setProgressAsFfmpegErr();
         })
-        .on('end', function(stdout, stderr) {
+        .on('end', (stdout, stderr) => {
             console.log('Transcoding s  ucceeded !');
             if (dlTaskList.getWorkingTask().abortFlag) {
                 emitter.emit('onErrorHandler', err);
@@ -596,13 +601,15 @@ function runFfmpeg(pathE) {
                 dlTaskList.getWorkingTask().stage = 'ffmpegEnd';
                 emitter.emit('connectEndToNext');
             }
-        }).on('stderr', function(stderrLine) {
+            progresbar.setProgressAsFfmpegEnd();
+        }).on('stderr', function(stderrLine){
             if (stderrLine.includes('time=')/* && progressCounter%3 === 0*/) {
                 const hms = stderrLine.substr(stderrLine.indexOf('time=')+5, 8)
                     .split(':');
                 const sec = 60*60 * parseInt(hms[0]) + 60*parseInt(hms[1]) + parseInt(hms[2]);
                 console.log(sec);
                 sender.sendFfmpegPrg(sec);
+                progresbar.setProgressAsFfmpegPrg(totalSec, sec);
                 // progressCounter++;
             }
 

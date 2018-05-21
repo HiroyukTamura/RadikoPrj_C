@@ -33,6 +33,7 @@ class ProgramListGetter {
 class EreaChecker {
     constructor(){
         this.URL = 'http://radiko.jp/area';
+        this.$ = require('jquery');
     }
 
     check(){
@@ -66,7 +67,7 @@ class EreaChecker {
     }
 }
 
-exports.module = {
+module.exports = {
     ProgramListGetter: ProgramListGetter,
     EreaChecker: EreaChecker
 };

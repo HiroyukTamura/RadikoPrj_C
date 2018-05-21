@@ -26,7 +26,6 @@ $(() => {
                 domFrame.show();
             }).catch(err => {
                 new FirebaseClient().sendError(err, 'initialOperate', this.constructor.name);
-                //todo エラー処理
                 console.log(err);
             });
             domFrame.scrollTopOffset();
@@ -47,7 +46,7 @@ $(() => {
                 domFrame.setOnCardClickListener();
                 domFrame.show();
             }).catch(err => {
-                //todo エラー処理
+                new FirebaseClient().sendError(err, 'initialOperate', this.constructor.name);
                 console.log(err);
             });
         }
@@ -70,7 +69,6 @@ $(() => {
                 }).catch(e => {
                     console.log(e);
                     new FirebaseClient().sendError(e, 'startChangeToStationTable', this.constructor.name);
-                    //todo エラー処理
                 });
             domFrame.disableStMenuItem(stationId);
         }
@@ -278,7 +276,7 @@ $(() => {
 
         setOnCardClickListener(){
             const self = this;
-            $('.prg-card-w').on('click', function (e) {
+            $('.prg-card-w').on('click', function (e){
                 e.preventDefault();
                 console.log('click');
 

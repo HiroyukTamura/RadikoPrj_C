@@ -40,12 +40,14 @@ module.exports = class FirebaseClient {
 
     /**
      * Note: FireStoreでは、undefinedを値にセットした場合エラーが返される
+     * @param funcName undefinedでありうる
      * @param className undefinedでありうる
      */
     sendError(e, funcName, className){
         this.setUserData();
         this.data['exception'] = e;
-        this.data['function'] = funcName;
+        if (funcName)
+            this.data['function'] = funcName;
         if (className)
             this.data['class'] = className;
 

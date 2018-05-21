@@ -1,12 +1,12 @@
 module.exports = class DlNotification {
-    constructor(Util, stationId, ft, title) {
+    constructor(stationId, ft, title) {
         this.moment = require('moment');
         require('bootstrap-notify');
         this.stationId = stationId;
         this.ft = ft;
         this.title = title;
         const momentM = this.moment(ft, 'YYYYMMDDhhmmss');
-        this.dateVal = momentM.format('M/D') +'('+ Util.getWeekDays()[momentM.day()] +')';
+        this.dateVal = momentM.format('M/D') +'('+ require('./Util').getWeekDays()[momentM.day()] +')';
         this.msg = this.dateVal +'  '+ title;
         this.ntf = null;
     }
@@ -211,7 +211,7 @@ module.exports = class DlNotification {
         });
     }
 
-    static getStageStr(stage, num) {
+    static getStageStr(stage, num){
         switch (stage) {
             case 'UNSET':
                 return 'ダウンロードの開始を待っています...(0%)';
