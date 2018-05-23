@@ -12,7 +12,7 @@ module.exports = class ChromeInitializer {
         //     case 'win32':
         //         break;
         // }
-        return this.fs.existsSync(this.PATH);
+        return !this.fs.existsSync(this.PATH);
     }
 
     dlInstaller(){
@@ -29,7 +29,7 @@ module.exports = class ChromeInitializer {
         });
     }
 
-    setUpChrome(){
+    unZipInstaller(){
 
     }
 };

@@ -28,8 +28,6 @@ let masterJson;
 let vpnJson;
 let postGotJsons;
 
-const HTML_PATH = 'public/timetable/index.html';
-// const HTML_PATH_INSTALL = 'public/install/index.html';
 const LOG_PATH = './debug.log';
 const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒せ
 
@@ -227,38 +225,44 @@ function createWindow(){
     //
     // }
 
-    win = new BrowserWindow({
-        webPreferences: {
-            width: 800,
-            height: 600,
-            // nodeIntegration: false,
-            // webSecurity: false,
+    // and load the index.html of the app.
+    const installer = new ChromeInitializer();
+    const isExistChr = installer.isExistChrome();
+    console.log(isExistChr);
+    const htmlPath = isExistChr ? 'public/timetable/index.html' : 'public/install/index.html';
+    const opstion = isExistChr ?{
+        webPreference: {
             show: false
         }
-        // titleBarStyle: 'hiddenInset'
-    });
+    }:{
+        width: 512,
+        height: 320,
+        maxWidth: 512,
+        maxHeight: 320,
+        closable: false,
+        fullscreenable: false,
+        frame: false,
+        webPreference: {
+            show: false
+        }
+    };
+    console.log(opstion);
 
-    win.maximize();
+    win = new BrowserWindow(opstion);
+
+    // win.maximize();
     Menu.setApplicationMenu(null);
     sender = new MainToRenderMsger(win.webContents, dlTaskList);
     progresbar = new ProgressBarOperator(win);
 
-    // and load the index.html of the app.
-    const installer = new ChromeInitializer();
-    if (installer.isExistChrome()) {
-
-    } else {
-
-    }
-    const path = installer.isExistChrome() ? 'public/timetable/index.html' : 'public/install/index.html';
     win.loadURL(url.format({
-        pathname: path.join(__dirname, path),
+        pathname: path.join(__dirname, htmlPath),
         protocol: 'file:',
         slashes: true
     }));
 
-    if (!FLAG_RELEASE_BUILD)
-        win.webContents.openDevTools();
+    // if (!FLAG_RELEASE_BUILD)
+    //     win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -281,6 +285,15 @@ function createWindow(){
     });
 
     progresbar.setBadge(win, app, dlTaskList);
+
+    if (isExistChr) {
+        installer.dlInstaller().then(()=> {
+            console.log('イントール成功！');
+        }).catch(e => {
+            console.log(e);
+            sender.sendErrorLog(e, createWindow, 'ローンチしようとしてるとこ');
+        });
+    }
 
     // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
     //     sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
@@ -315,7 +328,7 @@ ipcMain.on('startDlWithFt', (event, arg) => {
 
 ipcMain.on('dlStatus', (event, arg) => {
     console.log('dlStatus');
-    if (sender) {}
+    if (sender)
         sender.sendDlStatus(dlTaskList);
 });
 
