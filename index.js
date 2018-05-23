@@ -20,7 +20,7 @@ const electron = require('electron');
 const FileExplorerOpener = require('./modules/FileOperator');
 const DlTaskList = require('./modules/DlTaskList');
 const DlTask = require('./modules/DlTask');
-// const ChromeInitializer = require('./modules/ChromeInitializer');
+const ChromeInitializer = require('./modules/ChromeInitializer');
 const MainToRenderMsger = require('./modules/MainToRenderMsger');
 const DlNotification = require('./modules/DlNotification');
 const ProgressBarOperator = require('./modules/ProgressBarOperator');
@@ -58,7 +58,8 @@ console.log = function(...val){
     fs.appendFile(LOG_PATH, vals, err => {
         //どうしようもない
     });
-    console.warn('log: ', val);
+    if (!FLAG_RELEASE_BUILD)
+        console.warn('log: ', val);
 };
 
 class PuppeteerOperator {
@@ -243,8 +244,15 @@ function createWindow(){
     progresbar = new ProgressBarOperator(win);
 
     // and load the index.html of the app.
+    const installer = new ChromeInitializer();
+    if (installer.isExistChrome()) {
+
+    } else {
+
+    }
+    const path = installer.isExistChrome() ? 'public/timetable/index.html' : 'public/install/index.html';
     win.loadURL(url.format({
-        pathname: path.join(__dirname, HTML_PATH),
+        pathname: path.join(__dirname, path),
         protocol: 'file:',
         slashes: true
     }));

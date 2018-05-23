@@ -54,13 +54,13 @@ $(() => {
             $(window).on('click', e => {
                 if (suggester.$dropDown.is(':visible')) {
                     const rect = suggester.$dropDown[0].getBoundingClientRect();
-                    if (!Util.isInRect(rect, e.currentTarget)) {
+                    if (!Util.isInRect(rect, e)) {
                         suggester.$dropDown.hide();
                         return false;
                     }
                 } else if (self.$dialog.prop('open')) {
                     const rect = self.$dialog[0].getBoundingClientRect();
-                    if (!Util.isInRect(rect, e.currentTarget)) {
+                    if (!Util.isInRect(rect, e)) {
                         self.$dialog[0].close();
                         return false;
                     }
@@ -210,7 +210,7 @@ $(() => {
                 this.$dpBtn.click();
                 return false;
             }).focusin(e => {
-                $(e).blur();
+                $(e.currentTarget).blur();
             });
             return this;
         }
@@ -297,7 +297,7 @@ $(() => {
             const headerRow = $('.mdl-layout__header-row');
             $('.mdl-layout__content').scroll(e => {
                 if (self.$btmSpinWrapper.is(':visible')
-                    && $(this).height()+ headerRow.height() - self.$btmSpinWrapper.offset().top > 32 /*半分以上スピナーラッパーが表示されたら*/){
+                    && $(e.currentTarget).height()+ headerRow.height() - self.$btmSpinWrapper.offset().top > 32 /*半分以上スピナーラッパーが表示されたら*/){
                     self.requestMeta.pageIndex++;
                     self.requestJson();
                     self.$btmSpinWrapper.css('display', 'none');

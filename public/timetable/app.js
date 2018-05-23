@@ -133,7 +133,7 @@ $(() => {
             this.$root.removeClass('shown-spinner');
             // this.$spinner.removeClass('is-active');
             this.$timeTable.show();
-            $('.mdl-layout__tab').show();
+            $('.mdl-layout__tab').css('display', 'inline');//showだとなぜか効かない
             $('.optional-btn').removeAttr('disabled');
         }
 

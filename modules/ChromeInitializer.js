@@ -12,18 +12,21 @@ module.exports = class ChromeInitializer {
         //     case 'win32':
         //         break;
         // }
-        return fs.existsSync(this.PATH);
+        return this.fs.existsSync(this.PATH);
     }
 
     dlInstaller(){
-        this.request(this.URL)
-            .pipe(this.fs.createWriteStream(this.INSTALLER_PATH))
-            .on('error', function(err) {
-                console.log(err);
-            })
-            .on('close', function (){
-                console.log('File written!');
-            });
+        return new Promise((resolve, reject) => {
+            this.request(this.URL)
+                .pipe(this.fs.createWriteStream(this.INSTALLER_PATH))
+                .on('error', err => {
+                    reject(err);
+                    console.log(err);
+                })
+                .on('close', ()=>{
+                    resolve();
+                });
+        });
     }
 
     setUpChrome(){
