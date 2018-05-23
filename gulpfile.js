@@ -10,15 +10,15 @@ const Stream = require('stream');
 
 gulp.task('default', ['css']);
 
-const witchDir = ["timetable", "search", 'download', 'about'];
+const witchDir = ['timetable', 'search', 'download', 'about', 'install'];
 let filePath = '';
 
 gulp.task('css', function (){
-    const index = 3;
+    const index = 4;
     return gulp.src(['./public/'+ witchDir[index] +'/style.scss'])
         .pipe(using())
         .pipe(plumber({
-            errorHandler: notify.onError("Error: <%= error.message %>")
+            errorHandler: notify.onError('Error: <%= error.message %>')
         }))
         .pipe(getFileName(filePath))
         .pipe(sass())
