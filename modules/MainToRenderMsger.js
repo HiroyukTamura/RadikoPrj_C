@@ -70,10 +70,6 @@ module.exports = class MainToRenderMsger {
         this.webContents.send('unhandledRejection');
     }
 
-    sendUpdateBadge(taskLen){
-        this.webContents.send('updateBadge', taskLen);
-    }
-
     /**
      * !!!!!{@link #sendMiddleData}などでエラーをレンダラ側に通知する動作には、絶対にログ送信を含めないこと。必ず本メソッドを通じてログ送信を行うこと。!!!!!!
      * @param exception エラー内容を代入。ただし、該当するものがなければなんでもOK
@@ -87,5 +83,13 @@ module.exports = class MainToRenderMsger {
             className: className
         };
         this.webContents.send('FATAL_ERROR', data);
+    }
+
+    sendDlInstallerPrg(percent){
+        this.webContents.send('dlInstallerPrg', percent);
+    }
+
+    sendUnzipInstallPrg(percent){
+        this.webContents.send('UnzipInstallPrg', percent);
     }
 };

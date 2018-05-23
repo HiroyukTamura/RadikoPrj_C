@@ -21,6 +21,7 @@
     "bootstrap-notify": "^3.1.3",
     "child_process": "^1.0.2",
     "csvtojson": "^1.1.12",
+    "decompress-zip": "^0.3.1",
     "dialog-polyfill": "^0.4.9",
     "electron-store": "^1.3.0",
     "ffmpeg-static": "^2.3.0",
@@ -36,13 +37,16 @@
     "node-unzip-2": "^0.2.7",
     "path": "^0.12.7",
     "popper.js": "^1.14.3",
+    "progress-stream": "^2.0.0",
     "puppeteer": "^1.4.0",
-    "request": "^2.86.0",
-    "tippy.js": "^2.5.2"
+    "request": "^2.87.0",
+    "request-progress": "^3.0.0",
+    "tippy.js": "^2.5.2",
+    "unzip": "^0.1.11"
   },
   "devDependencies": {
-    "electron": "^2.0.1",
-    "electron-builder": "^20.13.4",
+    "electron": "^2.0.2",
+    "electron-builder": "^20.14.7",
     "electron-packager": "^12.1.0",
     "eslint": "^4.19.1",
     "gulp": "^3.9.1",
@@ -71,7 +75,8 @@
     ],
     "extraFiles": [
       "Application/**/*",
-      "img/**/*"
+      "img/**/*",
+      "Installer/**/*"
     ],
     "win": {
       "target": "nsis"

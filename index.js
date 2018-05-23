@@ -32,7 +32,7 @@ const LOG_PATH = './debug.log';
 const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒せ
 
 //todo タイムアウトエラーを作成すること(特にffmpeg)
-!function (){
+(function (){
     const store = new Store();
     if(!store.get('output_path')) {
         const path = app.getPath('downloads') || './output';
@@ -49,7 +49,7 @@ const FLAG_RELEASE_BUILD = false;//todo リリースビルド時フラグを倒�
         }
     });
     // autoUpdater.setFeedURL(options);
-}();
+})();
 
 console.log = function(...val){
     const vals = val.join(' ') + '\n';
@@ -216,18 +216,8 @@ function createWindow(){
     // Create the browser window.
     console.log('createWindow');
 
-    // const initializer = new ChromeInitializer();
-    // const loadUrl = initializer.isExistChrome() ?
-    //     HTML_PATH :
-    // if (initializer.isExistChrome()) {
-    //
-    // } else {
-    //
-    // }
-
-    // and load the index.html of the app.
     const installer = new ChromeInitializer();
-    const isExistChr = installer.isExistChrome();
+    const isExistChr = true/*installer.isExistChrome();*/
     console.log(isExistChr);
     const htmlPath = isExistChr ? 'public/timetable/index.html' : 'public/install/index.html';
     const opstion = isExistChr ?{
@@ -253,6 +243,7 @@ function createWindow(){
     // win.maximize();
     Menu.setApplicationMenu(null);
     sender = new MainToRenderMsger(win.webContents, dlTaskList);
+    installer.setSender(sender);
     progresbar = new ProgressBarOperator(win);
 
     win.loadURL(url.format({
@@ -286,9 +277,15 @@ function createWindow(){
 
     progresbar.setBadge(win, app, dlTaskList);
 
-    if (isExistChr) {
+    if (!isExistChr) {
         installer.dlInstaller().then(()=> {
             console.log('イントール成功！');
+            return installer.unZipInstaller();
+        }).then(() => {
+            console.log('unzip完了！');
+            return installer.executeInstaller();
+        }).then(()=> {
+            console.log('てってれー');
         }).catch(e => {
             console.log(e);
             sender.sendErrorLog(e, createWindow, 'ローンチしようとしてるとこ');
