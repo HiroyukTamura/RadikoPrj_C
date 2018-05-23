@@ -218,7 +218,7 @@ function createWindow(){
     console.log('createWindow');
 
     const installer = new ChromeInitializer();
-    const isExistChr = true/*installer.isExistChrome();*/
+    const isExistChr = true; /*installer.isExistChrome();*/
     console.log(isExistChr);
     const htmlPath = isExistChr ? 'public/timetable/index.html' : 'public/install/index.html';
     const opstion = isExistChr ?{
@@ -253,8 +253,8 @@ function createWindow(){
         slashes: true
     }));
 
-    // if (!FLAG_RELEASE_BUILD)
-    //     win.webContents.openDevTools();
+    if (!FLAG_RELEASE_BUILD)
+        win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
