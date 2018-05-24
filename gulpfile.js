@@ -5,11 +5,13 @@ const notify = require('gulp-notify');
 const using = require('gulp-using');
 const rename = require("gulp-rename");
 const ejs = require("gulp-ejs");
+const htmlmin = require('gulp-htmlmin');
 const fs = require("fs");
 const Stream = require('stream');
 const cleanCSS = require('gulp-clean-css');
 const browserSync = require('browser-sync').create();
-const uglify = require('gulp-uglify');
+// const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 const pump = require('pump');
 
 gulp.task('default', ['css']);
@@ -72,8 +74,26 @@ gulp.task('css:minify', ()=>{
         .pipe(browserSync.stream());
 });
 
-gulp.task('uglifyJs', cb => {
-    pump([gulp.src('lib/*.js'), uglify(), gulp.dest('dist')], cb);
+gulp.task('js:uglify', cb =>{
+    const arr = [
+        gulp.src(['./public/**/**.js', '!./public/**/uglified.js']),
+        uglify(),
+        rename({basename: 'uglified'}),
+        gulp.dest('./public/')
+    ];
+    pump(arr, cb);
+});
+
+gulp.task('html:minify', ()=>{
+    return gulp.src(['./public/**/*.html'])
+        .pipe(htmlmin({
+            collapseWhitespace: true,
+            removeComments: true
+        }))
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .dest('./public/');
 });
 
 function getFileName(){
