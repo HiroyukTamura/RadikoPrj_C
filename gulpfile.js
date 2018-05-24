@@ -7,6 +7,10 @@ const rename = require("gulp-rename");
 const ejs = require("gulp-ejs");
 const fs = require("fs");
 const Stream = require('stream');
+const cleanCSS = require('gulp-clean-css');
+const browserSync = require('browser-sync').create();
+const uglify = require('gulp-uglify');
+const pump = require('pump');
 
 gulp.task('default', ['css']);
 
@@ -32,7 +36,7 @@ gulp.task('css', ()=>{
         .pipe(gulp.dest('./public/'));
 });
 
-gulp.task("ejs", function(){
+gulp.task("ejs", ()=>{
     const json = JSON.parse(fs.readFileSync('ejs/gulpconf.json'));
     return gulp.src(
         ["ejs/origin/*.ejs"] //参照するディレクトリ、出力を除外するファイル
@@ -43,7 +47,7 @@ gulp.task("ejs", function(){
         }))
         .pipe(ejs(json))
         .pipe(getFileName(filePath))
-        .pipe(rename(function(path) {
+        .pipe(rename(path =>{
             console.log(filePath);
             let pathArr = filePath.substr(0, filePath.length-4).split('\\');
             let lastDir = pathArr[pathArr.length-1];
@@ -53,6 +57,23 @@ gulp.task("ejs", function(){
             path.basename = 'index';
         }))
         .pipe(gulp.dest("./public/"));
+});
+
+gulp.task('css:minify', ()=>{
+    return gulp.src([
+        './public/**/**.css',
+        '!./public/**/**.min.css'
+    ])
+        .pipe(cleanCSS())
+        .pipe(rename({
+            suffix: '.min'
+        }))
+        .pipe(gulp.dest('./public/'))
+        .pipe(browserSync.stream());
+});
+
+gulp.task('uglifyJs', cb => {
+    pump([gulp.src('lib/*.js'), uglify(), gulp.dest('dist')], cb);
 });
 
 function getFileName(){
