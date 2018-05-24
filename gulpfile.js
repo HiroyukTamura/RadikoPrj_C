@@ -93,7 +93,8 @@ gulp.task('html:minify', ()=>{
         .pipe(rename({
             suffix: '.min'
         }))
-        .dest('./public/');
+        .pipe(gulp.dest('./public/'))
+        .pipe(browserSync.stream());
 });
 
 function getFileName(){
