@@ -65,7 +65,7 @@ class PuppeteerOperator {
         this.ft = null;
         this.stationId = null;
         this.URL = null;
-        this.USER_DATA_PATH = 'UserData';
+        // this.USER_DATA_PATH = 'UserData';
         this.FLASH_PATH = 'pepflashplayer64_29_0_0_171.dll';
         this.chunkListDir = new Store().get('temp_path');
         this.playBtnSlector = '#now-programs-list > div.live-detail__body.group > div.live-detail__text > p.live-detail__play.disabled > a';
@@ -110,8 +110,8 @@ class PuppeteerOperator {
             return;
         this.browser = await puppeteer.launch({
             // headless: false,
-            // userDataDir: 'UserData',
-            executablePath: 'Application/chrome.exe',
+            userDataDir: ChromeInitializer.getDataPath(),
+            executablePath: /*'Application/chrome.exe'*/ChromeInitializer.getAppPath(),
             args: [
                 // '--auto-open-devtools-for-tabs',
                 // '--auto-select-desktop-capture-source=pickme',
@@ -218,7 +218,7 @@ function createWindow(){
     console.log('createWindow');
 
     const installer = new ChromeInitializer();
-    const isExistChr = true; /*installer.isExistChrome();*/
+    const isExistChr = installer.isExistChrome();
     console.log(isExistChr);
     const htmlPath = isExistChr ? 'public/timetable/index.html' : 'public/install/index.html';
     const opstion = isExistChr ?{
@@ -253,8 +253,8 @@ function createWindow(){
         slashes: true
     }));
 
-    if (!FLAG_RELEASE_BUILD)
-        win.webContents.openDevTools();
+    // if (!FLAG_RELEASE_BUILD)
+    //     win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
@@ -278,20 +278,28 @@ function createWindow(){
 
     progresbar.setBadge(win, app, dlTaskList);
 
-    if (!isExistChr) {
-        installer.dlInstaller().then(()=> {
-            console.log('イントール成功！');
-            return installer.unZipInstaller();
-        }).then(() => {
-            console.log('unzip完了！');
-            return installer.executeInstaller();
+    // if (!isExistChr) {
+    //     installer.dlInstaller().then(()=> {
+    //         console.log('イントール成功！');
+    //         return installer.unZipInstaller();
+    //     }).then(() => {
+    //         console.log('unzip完了！');
+    //         return installer.executeInstaller();
+    //     }).then(()=> {
+    //         console.log('てってれー');
+    //     }).catch(e => {
+    //         console.log(e);
+    //         sender.sendErrorLog(e, createWindow, 'ローンチしようとしてるとこ');
+    //     });
+    // }
+    if (!isExistChr)
+        installer.unzip('APP').then(()=> {
+            return installer.unzip('DATA');
         }).then(()=> {
-            console.log('てってれー');
+            console.log('unzip完了でござる');
         }).catch(e => {
             console.log(e);
-            sender.sendErrorLog(e, createWindow, 'ローンチしようとしてるとこ');
-        });
-    }
+        })
 
     // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
     //     sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');

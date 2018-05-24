@@ -14,7 +14,7 @@ $(()=>{
         $span.html('ChromeInstallerをダウンロードしています...' + percent + '%');
         $progress[0].MaterialProgress.setProgress(percent);
     }).on('UnzipInstallPrg', (event, percent) =>{
-        $span.html('Zipを回答しています...'+ percent +'%');
+        $span.html('RadiCutを初期化しています...'+ percent +'%');
         $progress[0].MaterialProgress.setProgress(percent);
     });
     const val = 'ver '+ app.getVersion();
