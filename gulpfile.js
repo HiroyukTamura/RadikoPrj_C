@@ -12,6 +12,7 @@ const cleanCSS = require('gulp-clean-css');
 const browserSync = require('browser-sync').create();
 // const uglify = require('gulp-uglify');
 const uglify = require('gulp-uglify-es').default;
+const javascriptObfuscator = require('gulp-javascript-obfuscator');
 const pump = require('pump');
 
 gulp.task('default', ['css']);
@@ -78,6 +79,13 @@ gulp.task('js:uglify', cb =>{
     const arr = [
         gulp.src(['./public/**/**.js', '!./public/**/uglified.js']),
         uglify(),
+        javascriptObfuscator({
+            compact: true,
+            sourceMap: true,
+            debugProtection: true,
+            debugProtectionInterval: true,
+            disableConsoleOutput: true
+        }),
         rename({basename: 'uglified'}),
         gulp.dest('./public/')
     ];
