@@ -69,8 +69,21 @@
       "output",
       "index.js",
       "debug.log",
-      "unzip",
-      "!**/node_modules/puppeteer/.local-chromium/**/*"
+      "!**/node_modules/puppeteer/.local-chromium/**/*",
+      "!**/style.scss",
+      "!**/ejs/**/*",
+      "!**/output-build/**/*",
+      "!**/doc/**/*",
+      "!build/**/*",
+      "!**/Application/**/*",
+      "!**/.eslintrc.json",
+      "!**/gulpfile.js",
+      "!n",
+      "!**/pepflashplayer64_29_0_0_171.dll",
+      "!img/**/*",
+      "!**/zipped/**/*",
+      "!**/UserData/**/*",
+      "!**/scss/**/*"
     ],
     "extraFiles": [
       "img/**/*",
