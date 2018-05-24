@@ -13,8 +13,8 @@ gulp.task('default', ['css']);
 const witchDir = ['timetable', 'search', 'download', 'about', 'install'];
 let filePath = '';
 
-gulp.task('css', function (){
-    const index = 4;
+gulp.task('css', ()=>{
+    const index = 0;
     return gulp.src(['./public/'+ witchDir[index] +'/style.scss'])
         .pipe(using())
         .pipe(plumber({

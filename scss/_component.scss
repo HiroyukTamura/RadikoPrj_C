@@ -25,6 +25,10 @@
   }
 }
 
+.mdl-layout {
+  overflow-y: hidden;
+}
+
 .mdl-layout__header {
   background-color: $primaryBlue;
   .mdl-layout__drawer-button {

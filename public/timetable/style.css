@@ -220,6 +220,9 @@ a, button {
       width: auto;
       background-color: inherit; }
 
+.mdl-layout {
+  overflow-y: hidden; }
+
 .mdl-layout__header {
   background-color: #00a7e9; }
   .mdl-layout__header .mdl-layout__drawer-button {

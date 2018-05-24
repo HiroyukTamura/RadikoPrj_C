@@ -119,12 +119,14 @@ class PuppeteerOperator {
                 // 'userDataDir= '+ self.USER_DATA_PATH,
                 // '--disable-infobars',
                 '--mute-audio', // Mute any audio
-                '--disable-sync',// Disable syncing to a Google account
-                '--no-first-run',// Skip first run wizards
-                '--disable-default-apps',// Disable installation of default apps on first run
-                '--load-extension=' + __dirname,// eslint-disable-line no-path-concat
+                '--disable-sync', // Disable syncing to a Google account
+                '--no-first-run', // Skip first run wizards
+                '--disable-default-apps', // Disable installation of default apps on first run
+                // '--load-extension=' + __dirname,// eslint-disable-line no-path-concat
                 '--no-sandbox',
-                '--disable-setuid-sandbox'
+                '--disable-setuid-sandbox',
+                '--disable-background-networking',// Disable various background network services, including extension updating, safe browsing service, upgrade detector, translate, UMA
+                '--safebrowsing-disable-auto-update'// Disable fetching safebrowsing lists, likely redundant due to disable-background-networking
                 // No autoplay
                 // '--autoplay-policy=user-gesture-required'
             ]
@@ -213,6 +215,8 @@ let emitter = new events.EventEmitter();
 const dlTaskList = new DlTaskList();
 const operator = new PuppeteerOperator();
 
+let isPostUnzip = false;
+
 function createWindow(){
     // Create the browser window.
     console.log('createWindow');
@@ -230,7 +234,7 @@ function createWindow(){
         height: 320,
         maxWidth: 512,
         maxHeight: 320,
-        closable: false,
+        // closable: false,
         fullscreenable: false,
         frame: false,
         webPreference: {
@@ -253,12 +257,13 @@ function createWindow(){
         slashes: true
     }));
 
-    // if (!FLAG_RELEASE_BUILD)
-    //     win.webContents.openDevTools();
+    if (!FLAG_RELEASE_BUILD)
+        win.webContents.openDevTools();
 
     win.on('closed', () => {
         // ウィンドウオブジェクトを参照から外す。
         // もし何個かウィンドウがあるならば、配列として持っておいて、対応するウィンドウのオブジェクトを消去するべき。
+        console.log('close event');
         win = null;
     });
 
@@ -273,6 +278,8 @@ function createWindow(){
     });
 
     win.once('ready-to-show', () => {
+        if (isExistChr)
+            win.maximize();
         win.show();
     });
 
@@ -297,9 +304,11 @@ function createWindow(){
             return installer.unzip('DATA');
         }).then(()=> {
             console.log('unzip完了でござる');
+            isPostUnzip = true;
+            win.close();
         }).catch(e => {
             console.log(e);
-        })
+        });
 
     // new Promise(resolve => setTimeout(resolve, 15 * 1000)).then(()=>{
     //     sender.sendErrorLog('setTimeout', createWindow.name, 'TestErrorClass');
@@ -340,9 +349,9 @@ ipcMain.on('dlStatus', (event, arg) => {
 
 ipcMain.on('cancelDl', (event, timeStamp) => {
     console.log('cancelDl', timeStamp);
-    if (dlTaskList['tasks'][timeStamp]) {
+    if (dlTaskList['tasks'][timeStamp])
         dlTaskList['tasks'][timeStamp]['abortFlag'] = true;
-    } else if (sender) {
+    else if (sender) {
         sender.sendMiddleData('cancelError');
         sender.sendErrorLog('cancelError', 'ipcMain.on(cancelDl)');
     }
@@ -361,7 +370,10 @@ app.on('window-all-closed', () => {
     console.log('window-all-closed');
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== 'darwin')
+    if (isPostUnzip) {
+        isPostUnzip = false;
+        createWindow();
+    } else if (process.platform !== 'darwin')
         app.quit()
 });
 

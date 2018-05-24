@@ -104,7 +104,7 @@ body {
   body > div {
     width: 100%;
     height: 100%;
-    padding: 1rem 0 3rem 0;
+    padding: 1rem 0 1rem 0;
     overflow: hidden;
     color: white; }
     body > div #head-up-w {
@@ -116,8 +116,8 @@ body {
         width: fit-content; }
         body > div #head-up-w #head-up img {
           display: block;
-          height: 6rem;
-          width: 6rem;
+          height: 8rem;
+          width: 8rem;
           margin: 0 auto .5rem auto;
           border: 0.5rem solid rgba(255, 255, 255, 0.2);
           border-radius: 50%; }
